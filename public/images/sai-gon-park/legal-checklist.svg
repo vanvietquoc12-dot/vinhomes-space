@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 500" role="img" aria-label="Legal checklist illustration">
+  <rect width="700" height="500" fill="#E8EAF6"/>
+  <text x="350" y="40" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" fill="#1A237E" font-weight="bold">Checklist pháp lý người mua</text>
+  <g font-family="Arial,sans-serif" font-size="15" fill="#283593">
+    <rect x="80" y="70" width="540" height="50" rx="8" fill="#C5CAE9"/>
+    <text x="110" y="100">☐ Thuộc Đơn vị ở đã có văn bản đủ điều kiện bán?</text>
+    <rect x="80" y="135" width="540" height="50" rx="8" fill="#C5CAE9"/>
+    <text x="110" y="165">☐ Pháp nhân trên HĐMB khớp chủ đầu tư?</text>
+    <rect x="80" y="200" width="540" height="50" rx="8" fill="#C5CAE9"/>
+    <text x="110" y="230">☐ Có thư bảo lãnh ngân hàng mang tên bạn?</text>
+    <rect x="80" y="265" width="540" height="50" rx="8" fill="#C5CAE9"/>
+    <text x="110" y="295">☐ Tài khoản nhận tiền đúng bên bán?</text>
+    <rect x="80" y="330" width="540" height="50" rx="8" fill="#C5CAE9"/>
+    <text x="110" y="360">☐ Đối chiếu QHCT 1/500 &amp; mặt bằng căn?</text>
+  </g>
+  <text x="350" y="440" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#5C6BC0">Minh họa biên tập · không thay thế tư vấn pháp lý</text>
+</svg>

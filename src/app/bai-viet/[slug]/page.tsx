@@ -12,6 +12,7 @@ import {
   getProjectBySlug,
 } from "@/lib/content";
 import { formatDateVI } from "@/lib/utils";
+import { ArticleBody } from "@/components/ArticleBody";
 
 export function generateStaticParams() {
   return getAllArticles().map((a) => ({ slug: a.slug }));
@@ -108,11 +109,7 @@ export default async function ArticleDetailPage({
             ))}
           </div>
 
-          <div className="prose-vn mt-10 border-t border-border pt-8">
-            {article.content.map((p, i) => (
-              <p key={i}>{p}</p>
-            ))}
-          </div>
+          <ArticleBody content={article.content} />
 
           <div className="mt-10 rounded-2xl border border-accent/25 bg-accent-soft/60 p-5 text-sm text-foreground/80">
             Bài viết thuộc chuyên mục thông tin độc lập trên Vinhomes Space — không

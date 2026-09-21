@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img" aria-label="Education amenity icon">
+  <rect width="640" height="400" fill="#E3F2FD"/>
+  <rect x="180" y="120" width="280" height="160" fill="#90CAF9" stroke="#1565C0" stroke-width="3" rx="8"/>
+  <polygon points="160,120 320,40 480,120" fill="#42A5F5" stroke="#0D47A1" stroke-width="3"/>
+  <rect x="300" y="200" width="40" height="80" fill="#0D47A1"/>
+  <rect x="220" y="160" width="50" height="40" fill="#BBDEFB"/>
+  <rect x="370" y="160" width="50" height="40" fill="#BBDEFB"/>
+  <circle cx="100" cy="300" r="40" fill="#FFECB3"/>
+  <text x="100" y="308" text-anchor="middle" font-size="28">📚</text>
+  <text x="320" y="340" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" fill="#0D47A1" font-weight="bold">Giáo dục / Đại học</text>
+  <text x="320" y="370" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#546E7A">Icon minh họa tiện ích giáo dục</text>
+</svg>

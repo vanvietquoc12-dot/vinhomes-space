@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img" aria-label="Golf amenity icon">
+  <rect width="640" height="400" fill="#E8F5E9"/>
+  <ellipse cx="320" cy="300" rx="250" ry="60" fill="#81C784"/>
+  <line x1="200" y1="280" x2="200" y2="120" stroke="#5D4037" stroke-width="6"/>
+  <polygon points="200,120 280,150 200,180" fill="#fff" stroke="#37474F" stroke-width="2"/>
+  <circle cx="420" cy="270" r="12" fill="#fff" stroke="#212121" stroke-width="2"/>
+  <text x="320" y="360" text-anchor="middle" font-family="Arial,sans-serif" font-size="20" fill="#1B5E20" font-weight="bold">Sân golf (trong QH ~200ha)</text>
+</svg>

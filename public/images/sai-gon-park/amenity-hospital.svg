@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img" aria-label="Hospital amenity icon">
+  <rect width="640" height="400" fill="#FFEBEE"/>
+  <rect x="220" y="80" width="200" height="220" fill="#EF9A9A" stroke="#C62828" stroke-width="3" rx="6"/>
+  <rect x="290" y="120" width="60" height="140" fill="#fff"/>
+  <rect x="250" y="160" width="140" height="60" fill="#fff"/>
+  <text x="320" y="340" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" fill="#B71C1C" font-weight="bold">Y tế (Vinmec trong QH)</text>
+  <text x="320" y="370" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#546E7A">Icon minh họa · chưa khẳng định vận hành</text>
+</svg>

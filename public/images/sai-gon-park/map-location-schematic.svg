@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 700" role="img" aria-label="Location map schematic Hóc Môn">
+  <rect width="800" height="700" fill="#ECEFF1"/>
+  <rect x="40" y="60" width="720" height="580" fill="#CFD8DC" rx="8"/>
+  <text x="400" y="40" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" fill="#263238" font-weight="bold">Vị trí minh họa · Tây Bắc TP.HCM</text>
+  <!-- Rough HCMC outline blob -->
+  <ellipse cx="480" cy="380" rx="200" ry="220" fill="#B0BEC5" opacity="0.5"/>
+  <text x="520" y="400" font-family="Arial,sans-serif" font-size="16" fill="#455A64">TP.HCM</text>
+  <!-- Project pin NW -->
+  <circle cx="220" cy="200" r="48" fill="#43A047" stroke="#1B5E20" stroke-width="3"/>
+  <text x="220" y="195" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#fff" font-weight="bold">Sài Gòn</text>
+  <text x="220" y="212" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#fff" font-weight="bold">Park</text>
+  <text x="220" y="270" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#1B5E20">Xuân Thới Sơn</text>
+  <text x="220" y="290" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#546E7A">(Hóc Môn)</text>
+  <line x1="260" y1="230" x2="400" y2="340" stroke="#EF6C00" stroke-width="3" stroke-dasharray="8 4"/>
+  <text x="360" y="280" font-family="Arial,sans-serif" font-size="12" fill="#E65100">~ cửa ngõ Tây Bắc</text>
+  <text x="400" y="670" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#78909C">Không phải bản đồ chính thức · chỉ mang tính định hướng</text>
+</svg>

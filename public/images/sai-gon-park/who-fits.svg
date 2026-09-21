@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" role="img" aria-label="Who fits buyer personas">
+  <rect width="900" height="400" fill="#E0F2F1"/>
+  <text x="450" y="40" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" fill="#004D40" font-weight="bold">Ai phù hợp? (khung biên tập)</text>
+  <rect x="40" y="80" width="250" height="260" rx="12" fill="#80CBC4"/>
+  <text x="165" y="130" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="bold" fill="#004D40">Gia đình trẻ</text>
+  <text x="165" y="170" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#00695C">Ưu tiên trường học,</text>
+  <text x="165" y="190" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#00695C">mảng xanh, an cư</text>
+  <rect x="325" y="80" width="250" height="260" rx="12" fill="#4DB6AC"/>
+  <text x="450" y="130" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="bold" fill="#004D40">Nhà đầu tư F0</text>
+  <text x="450" y="170" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#00695C">Giữ dài hạn,</text>
+  <text x="450" y="190" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#00695C">đón hạ tầng</text>
+  <rect x="610" y="80" width="250" height="260" rx="12" fill="#26A69A"/>
+  <text x="735" y="130" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="bold" fill="#fff">Kinh doanh</text>
+  <text x="735" y="170" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#E0F2F1">Shophouse / NPTM</text>
+  <text x="735" y="190" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#E0F2F1">cần chờ mật độ</text>
+</svg>

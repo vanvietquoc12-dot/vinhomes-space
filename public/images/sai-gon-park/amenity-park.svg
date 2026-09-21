@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Park amenity icon illustration">
+  <rect width="800" height="500" fill="#E8F5E9"/>
+  <ellipse cx="400" cy="380" rx="320" ry="80" fill="#A5D6A7"/>
+  <circle cx="280" cy="220" r="90" fill="#43A047"/>
+  <circle cx="360" cy="200" r="70" fill="#66BB6A"/>
+  <circle cx="500" cy="230" r="85" fill="#2E7D32"/>
+  <rect x="340" y="280" width="30" height="100" fill="#6D4C41"/>
+  <rect x="480" y="290" width="28" height="90" fill="#5D4037"/>
+  <path d="M100 400 Q250 320 400 360 T700 340" stroke="#29B6F6" stroke-width="18" fill="none" stroke-linecap="round"/>
+  <circle cx="150" cy="360" r="25" fill="#FFEB3B"/>
+  <text x="400" y="60" text-anchor="middle" font-family="Arial,sans-serif" font-size="26" fill="#1B5E20" font-weight="bold">Công viên &amp; mảng xanh</text>
+  <text x="400" y="95" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" fill="#455A64">Amenity schematic · generic illustration</text>
+</svg>

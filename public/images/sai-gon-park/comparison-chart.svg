@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" role="img" aria-label="Comparison chart schematic">
+  <rect width="900" height="520" fill="#FAFAFA"/>
+  <text x="450" y="40" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" fill="#212121" font-weight="bold">So sánh nhanh đại đô thị (minh họa)</text>
+  <!-- Axes -->
+  <line x1="100" y1="450" x2="850" y2="450" stroke="#424242" stroke-width="2"/>
+  <line x1="100" y1="450" x2="100" y2="80" stroke="#424242" stroke-width="2"/>
+  <!-- Bars: scale ha -->
+  <rect x="160" y="150" width="80" height="300" fill="#43A047"/>
+  <text x="200" y="140" text-anchor="middle" font-size="12" fill="#1B5E20">SGP ~1080ha</text>
+  <rect x="320" y="220" width="80" height="230" fill="#1E88E5"/>
+  <text x="360" y="210" text-anchor="middle" font-size="12" fill="#0D47A1">Grand Park ~271ha</text>
+  <rect x="480" y="280" width="80" height="170" fill="#8E24AA"/>
+  <text x="520" y="270" text-anchor="middle" font-size="12" fill="#4A148C">Ocean Park ~420ha*</text>
+  <rect x="640" y="320" width="80" height="130" fill="#FB8C00"/>
+  <text x="680" y="310" text-anchor="middle" font-size="12" fill="#E65100">Smart City ~~*</text>
+  <text x="450" y="490" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#757575">*Số liệu tham khảo công bố công khai; cột mang tính minh họa quy mô tương đối</text>
+</svg>

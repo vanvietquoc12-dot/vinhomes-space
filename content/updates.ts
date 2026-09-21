@@ -10,22 +10,32 @@ export interface Update {
 
 export const updates: Update[] = [
   {
-    slug: "sai-gon-park-theo-doi-thong-tin-mo-ban",
-    title: "Sài Gòn Park: tiếp tục theo dõi lộ trình thông tin mở bán",
+    slug: "sai-gon-park-mo-ban-thap-tang-9-2026",
+    title: "Sài Gòn Park: quỹ liền kề đang mở bán (cập nhật 9/2026)",
     summary:
-      "Thị trường khu Đông đang chờ các cập nhật chính thức về tiến độ và chính sách. Chúng tôi sẽ bổ sung khi có nguồn công khai đáng tin cậy.",
+      "Theo nguồn đại lý đối chiếu Market, Ivy/Global đang có bảng hàng liền kề; giá theo dãy tham chiếu từ ~5,83 tỷ/căn thô — luôn lấy báo giá mã căn mới nhất.",
     projectSlug: "vinhomes-sai-gon-park",
-    publishedAt: "2026-09-10",
+    publishedAt: "2026-09-16",
     category: "thi-truong",
     categoryLabel: "Thị trường",
   },
   {
-    slug: "sai-gon-park-ha-tang-khu-dong",
-    title: "Ghi nhận diễn biến hạ tầng xung quanh khu Đông TP.HCM",
+    slug: "sai-gon-park-phap-ly-dvo4-bao-lanh",
+    title: "Pháp lý: 1.802 căn ĐVO-4 đủ điều kiện bán + cam kết bảo lãnh",
     summary:
-      "Các trục kết nối và đô thị hóa Thủ Đức tiếp tục là yếu tố then chốt ảnh hưởng kỳ vọng với dự án mới phía Đông.",
+      "Nguồn thứ cấp trích văn bản 28497/SXD-PTĐT (06/08/2026) và cam kết Techcombank cho quỹ thấp tầng Đơn vị ở số 4 — phạm vi hẹp, không phủ toàn dự án.",
     projectSlug: "vinhomes-sai-gon-park",
-    publishedAt: "2026-08-18",
+    publishedAt: "2026-09-10",
+    category: "phap-ly",
+    categoryLabel: "Pháp lý",
+  },
+  {
+    slug: "sai-gon-park-giao-dat-giai-doan-1",
+    title: "Giao đất giai đoạn 1 ~827 ha tại Xuân Thới Sơn",
+    summary:
+      "Theo nguồn pháp lý thứ cấp, QĐ 1426/QĐ-UBND (12/3/2026) giao khoảng 826,76 ha GĐ1; phần 880 ha 1/500 và 1.080 ha marketing là các lớp số liệu khác nhau.",
+    projectSlug: "vinhomes-sai-gon-park",
+    publishedAt: "2026-08-20",
     category: "tien-do",
     categoryLabel: "Tiến độ",
   },

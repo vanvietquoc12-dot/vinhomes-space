@@ -68,3 +68,23 @@ body {
   background: linear-gradient(90deg, var(--accent), transparent);
   border-radius: 999px;
 }
+
+.prose-vn h2 {
+  margin-top: 2.25rem;
+  margin-bottom: 0.85rem;
+  line-height: 1.3;
+}
+
+.prose-vn ul {
+  margin-bottom: 1.1rem;
+}
+
+.prose-vn strong {
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.prose-vn figure {
+  margin-left: 0;
+  margin-right: 0;
+}

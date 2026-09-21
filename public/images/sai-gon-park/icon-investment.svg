@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Investment icon">
+  <rect width="200" height="200" rx="24" fill="#C8E6C9"/>
+  <polyline points="40,150 80,110 110,130 160,60" fill="none" stroke="#2E7D32" stroke-width="8" stroke-linecap="round"/>
+  <polygon points="160,60 145,90 175,85" fill="#2E7D32"/>
+  <text x="100" y="185" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" fill="#1B5E20">Đầu tư</text>
+</svg>

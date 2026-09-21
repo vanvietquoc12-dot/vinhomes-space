@@ -16,6 +16,7 @@ export {
   getFeaturedArticles,
   getRecentArticles,
   type Article,
+  type ContentBlock,
 } from "../../content/articles";
 
 export {
