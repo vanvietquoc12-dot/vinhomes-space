@@ -41,7 +41,7 @@ Tháng 9/2026, quỹ đang giao dịch thực tế chủ yếu là nhà liền k
     highlights: [
       "Vị trí Hóc Môn / Tây Bắc — QL22, Vành đai 3, định hướng Metro 2",
       "Quy mô ~1.080 ha marketing / ~880 ha đô thị 1/500 / ~827 ha giao GĐ1",
-      "Năm phân khu: Ivy, Global, Laguna, Zen, Golf",
+      "Năm phân khu + bài sâu từng khu (Ivy/Global đang bán; Laguna/Zen/Golf chưa)",
       "Đang mở bán thấp tầng; tiện ích lớn phần lớn còn trên quy hoạch",
     ],
     facts: [

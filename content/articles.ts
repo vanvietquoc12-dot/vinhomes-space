@@ -224,9 +224,374 @@ export const articles: Article[] = [
         `**Săn view hồ / golf / thiền:** chờ mở bán & mặt bằng; đừng trả premium dựa trên render khu chưa bán.`,
         `**Ưu tiên pháp lý rõ + giỏ hàng thật:** ở giai đoạn này thường là dãy thuộc quỹ đang mở tại Ivy/Global và **đúng Đơn vị ở đã có văn bản đủ điều kiện bán**.`
       ] },
+      { type: "h2", text: `Đọc sâu từng phân khu` },
+      { type: "p", text: `Bài này là bản đồ tổng. Nếu bạn đang lọc đúng một khu, đọc tiếp các bài chuyên sâu (cập nhật tuần 22–26/09/2026):` },
+      { type: "ul", items: [
+        `**Ivy Park** — đang mở bán liền kề / giáo dục: \`/bai-viet/phan-khu-ivy-park-vinhomes-sai-gon-park\``,
+        `**Global Park** — đang mở bán / thương mại: \`/bai-viet/phan-khu-global-park-vinhomes-sai-gon-park\``,
+        `**Laguna Park** — chưa mở bán / VinWonders–nước: \`/bai-viet/phan-khu-laguna-park-vinhomes-sai-gon-park\``,
+        `**Zen Park** — chưa mở bán / Karuizawa: \`/bai-viet/phan-khu-zen-park-vinhomes-sai-gon-park\``,
+        `**Golf Park** — chưa mở bán / golf ngoài ranh 880 ha: \`/bai-viet/phan-khu-golf-park-vinhomes-sai-gon-park\``
+      ] },
       { type: "h2", text: `Kết luận` },
       { type: "p", text: `Năm phân khu là ngôn ngữ bán hàng để định vị lifestyle. Với người mua năm 2026, bản đồ hữu ích nhất vẫn là: **khu nào đang bán**, **căn có thuộc ĐVO đã clear pháp lý không**, và **tiện ích nào đã có trong quy hoạch versus mới trên brochure**. Cảm hứng Boston hay Barcelona chỉ nên là lớp trang trí sau cùng.` },
       { type: "p", text: `*Tham khảo: newgeninvest.vn/mat-bang-vinhomes-sai-gon-park/; market.vinhomes.vn. Biên tập: 09/2026.*` }
+    ],
+  },
+  {
+    slug: "phan-khu-ivy-park-vinhomes-sai-gon-park",
+    title: `Phân khu Ivy Park Vinhomes Sài Gòn Park: Công viên Tri Thức (Boston–Cambridge)`,
+    excerpt:
+      `Ivy Park — khu đang mở bán liền kề (9/2026), gắn cụm đại học ~150 ha trong 1/500. Định vị brochure vs quy hoạch, sản phẩm giãn xây và rủi ro giai đoạn đầu.`,
+    projectSlug: "vinhomes-sai-gon-park",
+    publishedAt: "2026-09-22",
+    coverImage: "/images/sai-gon-park/amenity-education.webp",
+    tags: ["Ivy Park", "Phân khu", "Sài Gòn Park", "Công viên Tri Thức"],
+    readingMinutes: 11,
+    featured: true,
+    content: [
+      { type: "p", text: `Ivy Park (Công viên Tri Thức) là phân khu được tài liệu giới thiệu đặt **đầu dải** năm khu của Vinhomes Sài Gòn Park, lấy cảm hứng Boston–Cambridge. Tháng 9/2026, đây là một trong hai khu **đang có quỹ liền kề mở bán** theo nguồn thứ cấp — cùng Global Park. Bài này tách lớp brochure, chỉ tiêu quy hoạch 1/500 và thực tế mua bán để bạn đọc chậm trước khi đặt cọc.` },
+      { type: "image", src: `/images/sai-gon-park/zones-5-parks.webp`, alt: `Sơ đồ 5 phân khu minh họa — Ivy thường ở đầu dải` },
+      { type: "h2", text: `Định vị brochure: Boston–Cambridge nghĩa là gì?` },
+      { type: "p", text: `Trên tổng mặt bằng giới thiệu của chủ đầu tư (đối chiếu phân tích mặt bằng Newgen, 9/2026), Ivy Park gắn với hình ảnh thành phố đại học: cụm đào tạo–nghiên cứu ở lõi, nhà ở thấp tầng xếp quanh kênh cảnh quan. Cảm hứng marketing không phải cam kết pháp lý — nhưng nó giải thích vì sao khu này được gắn với narrative **TOD / Metro số 2 / Vành đai 3** nhiều hơn các khu sâu trong dải.` },
+      { type: "p", text: `⚠️ Lưu ý hướng bản vẽ: tổng mặt bằng 5 khu đôi khi đặt **Nam lên trên**, khác bản đồ 1/500 (Bắc lên trên). Đọc sai hướng sẽ đảo “đầu dải gần vành đai” với “cuối dải”.` },
+      { type: "h2", text: `Vị trí trên mặt bằng tổng thể` },
+      { type: "ul", items: [
+        `Nằm **Khu 1** trên dải Ivy → Global → Laguna → Zen (trục thường nêu đường Tam Tân).`,
+        `Brochure / phân tích mặt bằng đặt Ivy phía gần hướng **nút Vành đai 3** và định hướng **Metro số 2**.`,
+        `Lõi khu trùng với đất **đào tạo, nghiên cứu** trên bản đồ quy hoạch chi tiết 1/500 (~880 ha đô thị).`,
+        `Golf Park **tách riêng**, không nằm trên cùng dải chính.`
+      ] },
+      { type: "image", src: `/images/sai-gon-park/map-location-schematic.webp`, alt: `Sơ đồ vị trí Tây Bắc / Hóc Môn — minh họa schematic` },
+      { type: "h2", text: `Quy hoạch giáo dục: số liệu nào đã có trên 1/500?` },
+      { type: "p", text: `Theo tổng hợp đối chiếu quyết định phê duyệt 1/500 (nguồn thứ cấp Newgen đọc QĐ 273/QĐ-UBND, ngày trên văn bản cần sao y đối chiếu):` },
+      { type: "table", headers: [`Hạng mục`, `Con số thường nêu`, `Cách đọc độc lập`], rows: [
+                [`Đất đào tạo–nghiên cứu`, `~**151,42 ha** (QH) / ~150 ha brochure`, `Chỉ tiêu đất — chưa = trường đang mở`],
+                [`Lô đại học / KTX`, `16 lô ĐH + 3 lô KTX (bảng công trình ngầm)`, `Mỗi lô tối đa 2 tầng hầm theo nguồn này`],
+                [`Chỉ tiêu công trình ĐH/KTX`, `Mật độ XD tối đa ~40%, cao tối đa ~12 tầng`, `⚠️ Theo nguồn thứ cấp — kiểm tra phụ lục`],
+                [`Trường liên cấp toàn dự án`, `Marketing hay nêu “36 trường”`, `⚠️ Toàn khu, không riêng Ivy; tiến độ từng cấp khác nhau`]
+            ] },
+      { type: "p", text: `Câu hỏi thực dụng: bạn mua nhà năm 2026 để **ở gần trường đã vận hành**, hay để **giữ chỗ gần cụm sẽ hình thành sau này**? Hai kịch bản khác nhau về dòng tiền và kỳ vọng giá thuê.` },
+      { type: "image", src: `/images/sai-gon-park/amenity-education.webp`, alt: `Icon tiện ích giáo dục — minh họa schematic` },
+      { type: "h2", text: `Sản phẩm đang gắn với Ivy (tháng 9/2026)` },
+      { type: "p", text: `Nguồn bảng hàng / chính sách bán hàng đối chiếu Vinhomes Market (qua Newgen) nêu quỹ căn **liền kề thô giãn xây** tại khu Công viên Tri Thức, áp dụng chính sách bản **V07** từ **25/08/2026**. Đây là quỹ đang giao dịch thực tế — không phải biệt thự hay căn hộ (hai dòng sau nhiều nguồn ghi **chưa công bố giá chính thức**).` },
+      { type: "ul", items: [
+        `**Loại hình:** nhà liền kề / nhà phố thấp tầng (nhóm dãy giãn xây thường được gắn mã kiểu AS… trên tài liệu đại lý).`,
+        `**Hình thức:** giãn xây — phần đất + tiền mặt bằng trả trước; phần xây dựng theo lịch (thường nêu từ khoảng D+540 trên chính sách — ⚠️ có thể đổi).`,
+        `**Giá tham khảo toàn dự án (không chỉ Ivy):** dải liền kề theo dãy khoảng **5,83 – 12,04 tỷ**/căn (Newgen 9/2026) — giá theo dãy, chưa phải từng mã căn.`,
+        `Chi tiết dòng tiền: xem bài **Giá Vinhomes Sài Gòn Park tháng 9/2026** (\`/bai-viet/gia-vinhomes-sai-gon-park-gian-xay\`).`
+      ] },
+      { type: "image", src: `/images/sai-gon-park/floorplan-schematic.webp`, alt: `Sơ đồ mặt bằng nhà phố minh họa — schematic` },
+      { type: "image", src: `/images/sai-gon-park/price-payment-flow.webp`, alt: `Luồng thanh toán / giãn xây minh họa` },
+      { type: "h2", text: `Ai phù hợp với Ivy ở giai đoạn này?` },
+      { type: "p", text: `**Phù hợp hơn nếu bạn:**` },
+      { type: "ul", items: [
+        `Ưu tiên môi trường **học tập / nghiên cứu dài hạn** và chấp nhận tiện ích giáo dục vận hành theo lộ trình nhiều năm.`,
+        `Nhìn tới nhu cầu thuê gắn giảng viên, chuyên gia, sinh viên **khi** cụm đại học đi vào hoạt động — không cần dòng tiền thuê năm đầu.`,
+        `Muốn căn thuộc quỹ **đang mở bán** và có thể đối chiếu pháp lý theo đơn vị ở (xem checklist ĐVO-4).`,
+        `Sẵn sàng tự đo commute Tây Bắc (QL22, Vành đai 3) thay vì tin mốc “X phút” trên landing.`
+      ] },
+      { type: "p", text: `**Áp lực hơn nếu bạn:**` },
+      { type: "ul", items: [
+        `Cần trường quốc tế / đại học **ngay năm đầu** trong bán kính đi bộ.`,
+        `Mua shophouse để kinh doanh mật độ cao ngay — góc đó nghiêng về Global hơn, và vẫn có rủi ro chờ cư dân.`,
+        `Kỳ vọng “view đại học” đã hiện hữu như ảnh concept.`
+      ] },
+      { type: "h2", text: `Rủi ro & checklist pháp lý riêng cho người nhìn Ivy` },
+      { type: "ul", items: [
+        `Xác nhận căn / dãy có thuộc **1.802 căn Đơn vị ở số 4** đủ điều kiện bán + bảo lãnh (văn bản 28497/SXD-PTĐT 06/08/2026 theo nguồn thứ cấp) hay nằm ngoài phạm vi đó.`,
+        `Đối chiếu **mặt bằng định vị kiến trúc** — không ước khoảng cách tới lô đại học bằng mắt trên ảnh tổng thể.`,
+        `Đọc phụ lục: phí quản lý, tiến độ hạ tầng nội khu, hình thức bàn giao giãn xây.`,
+        `Nhớ chủ đầu tư pháp lý thường nêu là **CTCP Đô thị Đại học Quốc tế Berjaya Việt Nam** — tên trên HĐMB phải khớp, không chỉ logo Vinhomes.`
+      ] },
+      { type: "p", text: `Chi tiết: bài **Pháp lý Vinhomes Sài Gòn Park** (\`/bai-viet/phap-ly-vinhomes-sai-gon-park-checklist\`) và tổng quan (\`/bai-viet/vinhomes-sai-gon-park-la-gi-tong-quan\`).` },
+      { type: "h2", text: `Bảng nhanh — Ivy Park` },
+      { type: "table", headers: [`Hạng mục`, `Trạng thái / nội dung (⚠️ nguồn thứ cấp 9/2026)`], rows: [
+                [`Tên marketing`, `Ivy Park — Công viên Tri Thức`],
+                [`Cảm hứng brochure`, `Boston–Cambridge`],
+                [`Mở bán`, `**Đang mở bán** (liền kề / giãn xây theo chính sách V07)`],
+                [`Sản phẩm chính đang nói tới`, `Nhà liền kề thấp tầng`],
+                [`Tiện ích gắn khu`, `Cụm đại học / đào tạo–nghiên cứu (~150–151 ha trong QH)`],
+                [`Lưu ý pháp lý`, `Chỉ mua căn thuộc quỹ đã có văn bản đủ ĐKB + bảo lãnh nếu đó là tiêu chí của bạn`],
+                [`Bài liên quan`, `5 phân khu · Giá & giãn xây · Pháp lý checklist`]
+            ] },
+      { type: "h2", text: `Kết luận` },
+      { type: "p", text: `Ivy Park là phân khu “đầu dải” với định vị giáo dục rõ nhất trên brochure và trên chỉ tiêu đất đào tạo–nghiên cứu trong 1/500. Với người mua 9/2026, giá trị thực dụng nằm ở **quỹ liền kề đang bán + vị trí gần hướng hạ tầng vùng**, chứ chưa phải trải nghiệm đại học đã vận hành. Cảm hứng Boston chỉ nên là lớp trang trí sau khi bạn đã khớp mã căn, chính sách giãn xây và phạm vi pháp lý.` },
+      { type: "p", text: `*Tham khảo: newgeninvest.vn/mat-bang-vinhomes-sai-gon-park/; newgeninvest.vn/bang-gia-vinhomes-sai-gon-park/; market.vinhomes.vn. Biên tập độc lập vinhomes.space · 09/2026. Không phải trang CĐT.*` }
+    ],
+  },
+  {
+    slug: "phan-khu-global-park-vinhomes-sai-gon-park",
+    title: `Phân khu Global Park Vinhomes Sài Gòn Park: Công viên Quốc Tế (Canary Wharf)`,
+    excerpt:
+      `Global Park đang mở bán liền kề thô/hoàn thiện (9/2026). Global Village, phố thương mại và rủi ro chờ mật độ cư dân — đọc trước khi mua NPTM.`,
+    projectSlug: "vinhomes-sai-gon-park",
+    publishedAt: "2026-09-23",
+    coverImage: "/images/sai-gon-park/amenity-mall.webp",
+    tags: ["Global Park", "Phân khu", "Sài Gòn Park", "Công viên Quốc Tế"],
+    readingMinutes: 11,
+    featured: true,
+    content: [
+      { type: "p", text: `Global Park (Công viên Quốc Tế) là phân khu thứ hai trên dải chính của Vinhomes Sài Gòn Park, lấy cảm hứng **Canary Wharf** (London). Tháng 9/2026, nguồn thứ cấp ghi khu này **đang mở bán** quỹ liền kề thô và hoàn thiện — song song với Ivy. Đây cũng là khu được brochure gắn dày đặc nhất với **thương mại, ẩm thực, giải trí đa quốc gia**.` },
+      { type: "image", src: `/images/sai-gon-park/zones-5-parks.webp`, alt: `Sơ đồ 5 phân khu minh họa — Global liền kề Ivy` },
+      { type: "h2", text: `Định vị Canary Wharf vs thực tế quy hoạch` },
+      { type: "p", text: `Canary Wharf gợi hình ảnh cụm văn phòng–thương mại mật độ cao bên sông. Trên mặt bằng giới thiệu Sài Gòn Park, Global được mô tả theo dạng **ô bàn cờ**: dãy nhà phố song song, mã màu theo mẫu nhà, bao quanh khối công trình và quảng trường trung tâm. Cảm hứng marketing khác với mật độ và giai đoạn vận hành thực tế năm 2026 — đại đô thị cửa ngõ Tây Bắc vẫn đang ở pha **khởi động hạ tầng + mở bán thấp tầng**.` },
+      { type: "p", text: `Khu 2 nằm **liền kề Khu 1 (Ivy)** trên cùng bản vẽ định vị kiến trúc. Người mua nên yêu cầu file định vị độ phân giải cao của đúng dãy, không suy vị trí từ ảnh tổng thể.` },
+      { type: "h2", text: `Tiện ích brochure gắn Global` },
+      { type: "p", text: `Theo tài liệu giới thiệu đối chiếu Newgen / Market (⚠️ có thể điều chỉnh):` },
+      { type: "table", headers: [`Tiện ích (brochure)`, `Quy mô hay nêu`, `Ghi chú biên tập`], rows: [
+                [`Global Village`, `~**19,3 ha**`, `Trung tâm ẩm thực–văn hóa–giải trí quốc tế — chưa = đang mở`],
+                [`Little Hong Kong (phố thương mại)`, `~**7,5 ha**`, `Góc NPTM / shophouse`],
+                [`Trendy Fashion Town`, `~**2,3 ha**`, `⚠️ Brochure`],
+                [`Galaxy Park (công viên chủ đề)`, `~**3,9 ha**`, `Bộ đôi công viên thiên văn trên tài liệu giới thiệu`]
+            ] },
+      { type: "image", src: `/images/sai-gon-park/amenity-mall.webp`, alt: `Icon thương mại / mall — minh họa schematic` },
+      { type: "image", src: `/images/sai-gon-park/amenity-park.webp`, alt: `Công viên / không gian xanh minh họa` },
+      { type: "h2", text: `Sản phẩm đang bán tại Global (9/2026)` },
+      { type: "ul", items: [
+        `Quỹ căn **thô** và **hoàn thiện** theo chính sách khu Công viên Quốc Tế công bố trên Vinhomes Market (qua nguồn đại lý).`,
+        `Nhiều dãy liền kề được gắn mã nhóm **TL…** trên bảng hàng thứ cấp.`,
+        `Dải giá tham khảo toàn dự án liền kề theo dãy khoảng **5,83 – 12,04 tỷ**/căn; đơn giá quy đổi đại lý ~**91–140 triệu/m² đất** hoặc ~**33–51 triệu/m² sàn** — ⚠️ không phải báo giá ràng buộc từng mã.`,
+        `Chiết khấu ví dụ hay được nêu: khoảng **18%** (thô) / **22,5%** (hoàn thiện) ở Global; vay tối đa ~70% — **cơ sở tính thường trên phần đất + tiền mặt bằng** với sản phẩm giãn xây / chính sách tương ứng. CSBH có thể đổi theo bản chính sách mới.`,
+        `Đọc kỹ bài **Giá & giãn xây** (\`/bai-viet/gia-vinhomes-sai-gon-park-gian-xay\`) trước khi so “giá net”.`
+      ] },
+      { type: "image", src: `/images/sai-gon-park/price-payment-flow.webp`, alt: `Luồng thanh toán minh họa — schematic` },
+      { type: "image", src: `/images/sai-gon-park/floorplan-schematic.webp`, alt: `Schematic nhà phố / liền kề minh họa` },
+      { type: "h2", text: `Shophouse & nhà phố thương mại: cơ hội và “thời gian chờ”` },
+      { type: "p", text: `Global là khu hấp dẫn nhất với khách mua để **kinh doanh dịch vụ**. Rủi ro thực dụng ở mọi đại đô thị giai đoạn đầu:` },
+      { type: "ul", items: [
+        `**Mật độ cư dân nội khu** cần vài năm mới đủ nuôi phố ẩm thực / thời trang.`,
+        `Giai đoạn công trường ảnh hưởng trải nghiệm khách vãng lai.`,
+        `Chi phí vận hành shophouse (điện, nhân sự, marketing) có thể âm dòng tiền 2–3 năm đầu nếu bạn mua vì “sắp có Global Village”.`,
+        `Quyền kinh doanh, giờ hoạt động, phí quản lý mặt tiền phải đọc **phụ lục HĐMB / quy chế**, không suy từ render.`
+      ] },
+      { type: "p", text: `Stress-test đơn giản: giả định doanh thu bằng **0 trong 24 tháng** — bạn còn chịu được không? Nếu không, cân nhắc căn ở thuần hoặc timeline dài hơn.` },
+      { type: "h2", text: `Ai phù hợp / không phù hợp` },
+      { type: "p", text: `**Phù hợp hơn:** nhà đầu tư hoặc hộ kinh doanh có vốn đệm; người muốn gần cụm thương mại tương lai và chấp nhận pha ủ mật độ; khách mua liền kề để ở nhưng thích không khí đô thị sôi động hơn Zen/Laguna.` },
+      { type: "p", text: `**Áp lực hơn:** F0 cần dòng tiền thuê/kinh doanh ngay; người dị ứng tiếng ồn phố thương mại; ai chỉ muốn “view hồ / golf” — các góc đó thuộc Laguna/Golf và **chưa mở bán**.` },
+      { type: "image", src: `/images/sai-gon-park/who-fits.webp`, alt: `Minh họa persona người mua — schematic` },
+      { type: "h2", text: `Pháp lý — đừng để tiện ích che mất ĐVO` },
+      { type: "p", text: `Dù căn nằm Global hay Ivy, câu hỏi then chốt vẫn là: **có thuộc quỹ Đơn vị ở đã đủ điều kiện bán + có thư bảo lãnh không?** Nguồn thứ cấp mô tả phạm vi **1.802 căn thấp tầng ĐVO-4** (văn bản 06/08/2026) kèm cam kết Techcombank — không tự động phủ mọi dãy trên brochure. Xem \`/bai-viet/phap-ly-vinhomes-sai-gon-park-checklist\`.` },
+      { type: "h2", text: `Bảng nhanh — Global Park` },
+      { type: "table", headers: [`Hạng mục`, `Trạng thái / nội dung (⚠️ 9/2026)`], rows: [
+                [`Tên marketing`, `Global Park — Công viên Quốc Tế`],
+                [`Cảm hứng brochure`, `Canary Wharf, London`],
+                [`Mở bán`, `**Đang mở bán** (liền kề thô / hoàn thiện)`],
+                [`Sản phẩm`, `Nhà liền kề; NPTM/shophouse là góc định vị — kiểm tra giỏ hàng thực tế`],
+                [`Tiện ích gắn khu`, `Global Village, Little Hong Kong, Fashion Town, Galaxy Park (brochure)`],
+                [`Rủi ro chính`, `Chờ mật độ + tiện ích thương mại vận hành`],
+                [`Bài liên quan`, `\`/bai-viet/5-phan-khu-vinhomes-sai-gon-park\` · giá · pháp lý · ai nên mua`]
+            ] },
+      { type: "h2", text: `Kết luận` },
+      { type: "p", text: `Global Park là “cực thương mại” trên bản đồ năm khu. Tháng 9/2026 bạn có thể tiếp cận **giỏ liền kề thật**, nhưng câu chuyện Canary Wharf / Global Village vẫn chủ yếu là **định hướng**. Mua để ở gần tương lai phố quốc tế thì hợp lý; mua để kinh doanh ngay thì cần kịch bản dòng tiền lạnh.` },
+      { type: "p", text: `*Tham khảo: newgeninvest.vn/mat-bang-vinhomes-sai-gon-park/; newgeninvest.vn/bang-gia-vinhomes-sai-gon-park/; market.vinhomes.vn. Biên tập độc lập · 09/2026.*` }
+    ],
+  },
+  {
+    slug: "phan-khu-laguna-park-vinhomes-sai-gon-park",
+    title: `Phân khu Laguna Park Vinhomes Sài Gòn Park: Công viên Biển Xanh (Barcelona)`,
+    excerpt:
+      `Laguna Park chưa mở bán (9/2026). Brochure gắn VinWonders / công viên nước ~23 ha, Botanica ~27 ha — tách kỳ vọng view hồ khỏi quyết định đặt chỗ.`,
+    projectSlug: "vinhomes-sai-gon-park",
+    publishedAt: "2026-09-24",
+    coverImage: "/images/sai-gon-park/canal-walk.webp",
+    tags: ["Laguna Park", "Phân khu", "Sài Gòn Park", "Công viên Biển Xanh"],
+    readingMinutes: 10,
+    featured: false,
+    content: [
+      { type: "p", text: `Laguna Park (Công viên Biển Xanh) là phân khu thứ ba trên dải chính, lấy cảm hứng **Barcelona**. Trên brochure, đây là khu “nước” nổi bật nhất — hồ lớn, công viên nước / **VinWonders**, Botanica. Theo nguồn theo dõi tháng 9/2026, Laguna **chưa mở bán** và mặt bằng phân lô chi tiết **chưa** được chủ đầu tư công bố đầy đủ như hai khu đang bán.` },
+      { type: "image", src: `/images/sai-gon-park/zones-5-parks.webp`, alt: `Sơ đồ 5 phân khu minh họa — Laguna ở giữa dải` },
+      { type: "h2", text: `Vị trí trên dải năm khu` },
+      { type: "ul", items: [
+        `Nằm **giữa** dải: sau Global, trước Zen.`,
+        `Tổng mặt bằng giới thiệu nhấn cụm **công viên nước + mặt hồ**, nhà thấp tầng bao quanh.`,
+        `Không nên suy “view hồ bảo đảm” từ ảnh concept khi chưa có mặt bằng định vị kiến trúc chính thức cho đợt mở bán.`
+      ] },
+      { type: "image", src: `/images/sai-gon-park/canal-walk.webp`, alt: `Đường dạo ven nước minh họa — schematic / stock style` },
+      { type: "h2", text: `Tiện ích brochure gắn Laguna` },
+      { type: "table", headers: [`Hạng mục (brochure)`, `Quy mô hay nêu`, `Độ tin cậy biên tập`], rows: [
+                [`Công viên nước / VinWonders`, `~**22,7 ha**`, `⚠️ Brochure — chưa = đang vận hành`],
+                [`Botanica Park (rừng bách thảo)`, `~**27 ha**`, `⚠️ Brochure (+ một phần narrative QH toàn khu)`],
+                [`Vườn hoa nhà kính`, `~**1,5 ha**`, `⚠️`],
+                [`Saigon Startup Village`, `~**1,6 ha**`, `⚠️ Làng khởi nghiệp trên tài liệu giới thiệu`],
+                [`Cheers Town (làng ẩm thực)`, `~**1,8 ha**`, `⚠️`]
+            ] },
+      { type: "p", text: `Toàn dự án còn narrative Canal Park ~5 km, đường dạo ven nước ~21 km, “70–100+ công viên” — con số lệch giữa các bài Market. Laguna “thừa hưởng” câu chuyện nước nhưng **không đồng nghĩa** mọi tiện ích nước đều nằm trong ranh phân khu này.` },
+      { type: "image", src: `/images/sai-gon-park/amenity-park.webp`, alt: `Công viên xanh minh họa` },
+      { type: "image", src: `/images/sai-gon-park/stock-green-park.webp`, alt: `Ảnh stock công viên xanh — minh họa generic, không phải ảnh marketing CĐT` },
+      { type: "h2", text: `Trạng thái mở bán & sản phẩm` },
+      { type: "p", text: `**Chưa mở bán** theo Newgen / đối chiếu Market tháng 9/2026. Hệ quả thực dụng:` },
+      { type: "ul", items: [
+        `Chưa có bảng giá chính thức theo dãy cho Laguna trên các nguồn chúng tôi đối chiếu.`,
+        `Chưa nên “giữ chỗ mù” chỉ vì narrative view hồ / gần VinWonders.`,
+        `Biệt thự / căn hộ cao tầng trên toàn dự án nhiều nguồn ghi **chưa công bố giá chính thức** — càng không nên gắn giá tin đồn cho Laguna.`,
+        `Nếu môi giới chào “căn Laguna”, hãy đòi **mã chính sách bán hàng + mặt bằng định vị + văn bản đủ điều kiện bán** (nếu đã có).`
+      ] },
+      { type: "h2", text: `Ai nên theo dõi Laguna — và khi nào?` },
+      { type: "p", text: `**Nên theo dõi nếu bạn:** ưu tiên lifestyle nước / công viên giải trí gia đình; sẵn sàng chờ đợt mở bán và so sánh giá với Ivy/Global đã có lịch sử giao dịch; đầu tư dài hạn theo quy hoạch, không cần căn năm 2026.` },
+      { type: "p", text: `**Không nên ưu tiên đặt cọc “để giữ” nếu bạn:** cần pháp lý rõ + giỏ hàng thật ngay; ngân sách chỉ đủ một căn và đang phân vân với dãy ĐVO-4 đang bán; dễ bị ảnh render dẫn dắt.` },
+      { type: "image", src: `/images/sai-gon-park/hero-urban-park.webp`, alt: `Ảnh stock đô thị–công viên — minh họa mood, không phải render Laguna` },
+      { type: "h2", text: `Rủi ro giai đoạn “chưa mở bán”` },
+      { type: "ul", items: [
+        `Vị trí căn trên mặt bằng có thể đổi giữa các bản phát hành brochure.`,
+        `Tiến độ VinWonders / công viên nước gắn với toàn dự án nhiều năm (kế hoạch hoàn tất đại đô thị có nguồn nêu kéo dài tới ~2034–2035 — ⚠️).`,
+        `Premium “view hồ” chỉ có ý nghĩa khi phụ lục HĐMB và quy chế tiện ích xác nhận tầm nhìn / khoảng lùi — không suy từ Photoshop.`,
+        `Pháp lý giai đoạn 2 / phần đất chưa giao vẫn là ẩn số lớn hơn câu chuyện phân khu.`
+      ] },
+      { type: "p", text: `Đọc thêm: \`/bai-viet/5-phan-khu-vinhomes-sai-gon-park\`, \`/bai-viet/tien-ich-vinhomes-sai-gon-park-quy-hoach\`, \`/bai-viet/ai-nen-mua-vinhomes-sai-gon-park\`.` },
+      { type: "h2", text: `Bảng nhanh — Laguna Park` },
+      { type: "table", headers: [`Hạng mục`, `Trạng thái / nội dung (⚠️ 9/2026)`], rows: [
+                [`Tên marketing`, `Laguna Park — Công viên Biển Xanh`],
+                [`Cảm hứng brochure`, `Barcelona`],
+                [`Mở bán`, `**Chưa mở bán**`],
+                [`Sản phẩm`, `Chưa có giỏ hàng chính thức trên nguồn đối chiếu`],
+                [`Tiện ích gắn khu`, `VinWonders / công viên nước, Botanica, làng ẩm thực–startup (brochure)`],
+                [`Lưu ý`, `Đợi mặt bằng phân lô + CSBH; đừng trả premium dựa trên render`],
+                [`Thay thế giai đoạn này`, `Ivy / Global nếu cần mua thật trong 2026`]
+            ] },
+      { type: "h2", text: `Kết luận` },
+      { type: "p", text: `Laguna Park là lớp “biển xanh” đẹp nhất trên brochure năm khu — và cũng là khu dễ khiến người mua F0 **trả giá cho thứ chưa bán**. Cách độc lập: ghi nhận tiện ích nước như định hướng quy hoạch/marketing, theo dõi đợt mở bán chính thức, còn quyết định tiền thật năm 2026 hãy neo vào quỹ đã clear pháp lý ở Ivy/Global.` },
+      { type: "p", text: `*Tham khảo: newgeninvest.vn/mat-bang-vinhomes-sai-gon-park/; market.vinhomes.vn. Biên tập độc lập · 09/2026.*` }
+    ],
+  },
+  {
+    slug: "phan-khu-zen-park-vinhomes-sai-gon-park",
+    title: `Phân khu Zen Park Vinhomes Sài Gòn Park: Công viên Thiền (Karuizawa)`,
+    excerpt:
+      `Zen Park chưa mở bán (9/2026). Định vị Karuizawa, Kiyomi Park ~10 ha trên brochure — phù hợp góc an cư tĩnh, nhưng chưa có giỏ hàng và tiện ích hiện hữu.`,
+    projectSlug: "vinhomes-sai-gon-park",
+    publishedAt: "2026-09-25",
+    coverImage: "/images/sai-gon-park/stock-green-park.webp",
+    tags: ["Zen Park", "Phân khu", "Sài Gòn Park", "Công viên Thiền"],
+    readingMinutes: 10,
+    featured: false,
+    content: [
+      { type: "p", text: `Zen Park (Công viên Thiền) là phân khu thứ tư trên dải chính của Vinhomes Sài Gòn Park, lấy cảm hứng vùng nghỉ dưỡng **Karuizawa** (Nhật Bản). Trên tài liệu giới thiệu, Zen nằm ở **phần cuối, thu hẹp dần** của dải năm khu — định hướng lối sống tĩnh, cảnh quan và tiện ích mang văn hóa Nhật. Tháng 9/2026: **chưa mở bán**.` },
+      { type: "image", src: `/images/sai-gon-park/zones-5-parks.webp`, alt: `Sơ đồ 5 phân khu minh họa — Zen ở cuối dải chính` },
+      { type: "h2", text: `Karuizawa trên brochure nghĩa là gì?` },
+      { type: "p", text: `Karuizawa gợi không gian nghỉ dưỡng cao nguyên, nhà thấp, nhiều cây, nhịp sống chậm. Trên mặt bằng Sài Gòn Park, Zen được dùng để cân bằng các cực “ồn” hơn (Global thương mại, Laguna giải trí nước). Đây là **ngôn ngữ lifestyle**, không phải cam kết mật độ xây dựng hay tiến độ greenery đã trồng xong.` },
+      { type: "p", text: `Người mua dễ nhầm: chọn Zen trong đầu rồi… đặt cọc nhầm dãy đang bán ở Global vì “cùng dự án”. Hãy giữ checklist: **đúng khu · đúng dãy · đúng ĐVO**.` },
+      { type: "h2", text: `Tiện ích gắn Zen theo tài liệu giới thiệu` },
+      { type: "table", headers: [`Hạng mục`, `Quy mô hay nêu`, `Ghi chú`], rows: [
+                [`Kiyomi Park (công viên Nhật)`, `~**10 ha**`, `⚠️ Brochure`],
+                [`Làng cổ văn hóa & ẩm thực Nhật`, `~**1,5 ha**`, `⚠️ Brochure`],
+                [`Vị trí trên dải`, `Cuối dải chính (sau Laguna)`, `Xa hơn hướng Vành đai 3 / Metro trên narrative tổng mặt bằng`]
+            ] },
+      { type: "image", src: `/images/sai-gon-park/amenity-park.webp`, alt: `Icon công viên minh họa` },
+      { type: "image", src: `/images/sai-gon-park/stock-green-park.webp`, alt: `Ảnh stock công viên xanh — minh họa mood Zen, không phải ảnh CĐT` },
+      { type: "image", src: `/images/sai-gon-park/stock-family-park.webp`, alt: `Ảnh stock gia đình trong công viên — minh họa generic` },
+      { type: "h2", text: `Trạng thái sản phẩm` },
+      { type: "ul", items: [
+        `**Chưa mở bán** theo nguồn thứ cấp 9/2026.`,
+        `Chưa có bảng giá / mặt bằng phân lô chi tiết công bố tương tự Ivy–Global trên các nguồn đối chiếu.`,
+        `Toàn dự án vẫn có chỉ tiêu thấp tầng / biệt thự / cao tầng trên 1/500 — nhưng **gán sản phẩm vào Zen** khi chưa mở bán là suy diễn.`,
+        `Nếu được mời đặt chỗ Zen: yêu cầu văn bản CSBH có ngày hiệu lực, mã file, và xác nhận phạm vi đủ điều kiện bán.`
+      ] },
+      { type: "h2", text: `Ai phù hợp với định vị Zen?` },
+      { type: "p", text: `**Góc hợp lý để theo dõi:** gia đình muốn an cư ít thương mại mặt tiền; người dị ứng mật độ shophouse; khách so sánh “ở trong công viên” với các phân khu ồn hơn.` },
+      { type: "p", text: `**Góc chưa hợp để xuống tiền ngay:** ai cần căn 2026 có pháp lý rõ; nhà đầu tư cần thanh khoản sơ cấp đang chạy; người trả premium chỉ vì ảnh concept Nhật.` },
+      { type: "image", src: `/images/sai-gon-park/who-fits.webp`, alt: `Schematic persona người mua` },
+      { type: "h2", text: `So nhanh với các khu khác (giai đoạn này)` },
+      { type: "table", headers: [`Nhu cầu`, `Khu nên nhìn trước (9/2026)`, `Vì sao`], rows: [
+                [`Mua thật + pháp lý ĐVO`, `Ivy / Global`, `Đang mở bán; có quỹ đối chiếu`],
+                [`Kinh doanh phố`, `Global`, `Narrative thương mại dày hơn`],
+                [`View nước / công viên giải trí`, `Laguna (theo dõi)`, `Chưa bán — đợi mặt bằng`],
+                [`Không gian tĩnh / Nhật`, `Zen (theo dõi)`, `Chưa bán — đừng đặt cọc mù`],
+                [`Golf / Palm Beach`, `Golf Park (theo dõi)`, `Ngoài ranh 880 ha theo Newgen — đọc phụ lục`]
+            ] },
+      { type: "h2", text: `Rủi ro biên tập độc lập muốn nhấn` },
+      { type: "ul", items: [
+        `Cuối dải có thể **xa hơn** các cực hạ tầng vùng được marketing gắn với đầu dải (Vành đai 3 / Metro) — tự kiểm trên mặt bằng khi có file chính thức.`,
+        `Tiện ích Nhật trên brochure có thể điều chỉnh theo quyết định CĐT (Market thường ghi thông tin mang tính tương đối).`,
+        `Đừng dùng cảm xúc “thiền” để bỏ qua bài **pháp lý checklist** (\`/bai-viet/phap-ly-vinhomes-sai-gon-park-checklist\`).`
+      ] },
+      { type: "h2", text: `Bảng nhanh — Zen Park` },
+      { type: "table", headers: [`Hạng mục`, `Trạng thái / nội dung (⚠️ 9/2026)`], rows: [
+                [`Tên marketing`, `Zen Park — Công viên Thiền`],
+                [`Cảm hứng brochure`, `Karuizawa, Nhật Bản`],
+                [`Mở bán`, `**Chưa mở bán**`],
+                [`Sản phẩm`, `Chưa có giỏ hàng chính thức trên nguồn đối chiếu`],
+                [`Tiện ích gắn khu`, `Kiyomi Park ~10 ha; làng văn hóa–ẩm thực Nhật ~1,5 ha (brochure)`],
+                [`Lưu ý`, `Tách mood concept khỏi quyết định đặt cọc khu đang bán`],
+                [`Bài liên quan`, `\`/bai-viet/5-phan-khu-vinhomes-sai-gon-park\` · tiện ích · ai nên mua`]
+            ] },
+      { type: "h2", text: `Kết luận` },
+      { type: "p", text: `Zen Park hoàn thiện “bảng màu” lifestyle của Sài Gòn Park: sau tri thức, quốc tế và biển xanh là lớp **tĩnh – Nhật**. Năm 2026, đó vẫn là lớp trên brochure. Người mua thực dụng ghi Zen vào watchlist, còn tiền thật ưu tiên quỹ đã mở và đã rõ phạm vi pháp lý.` },
+      { type: "p", text: `*Tham khảo: newgeninvest.vn/mat-bang-vinhomes-sai-gon-park/; market.vinhomes.vn. Biên tập độc lập · 09/2026.*` }
+    ],
+  },
+  {
+    slug: "phan-khu-golf-park-vinhomes-sai-gon-park",
+    title: `Phân khu Golf Park Vinhomes Sài Gòn Park: Công viên Golf (Palm Beach)`,
+    excerpt:
+      `Golf Park chưa mở bán. Sân golf ~200 ha (Vinpearl Golf Léman) nằm ngoài ranh 880 ha 1/500 theo Newgen — đọc kỹ quyền lợi view/thành viên trước khi trả premium.`,
+    projectSlug: "vinhomes-sai-gon-park",
+    publishedAt: "2026-09-26",
+    coverImage: "/images/sai-gon-park/amenity-golf.webp",
+    tags: ["Golf Park", "Phân khu", "Sài Gòn Park", "Công viên Golf"],
+    readingMinutes: 11,
+    featured: false,
+    content: [
+      { type: "p", text: `Golf Park (Công viên Golf) là phân khu thứ năm — và **khác biệt cấu trúc** nhất — trong bộ năm khu của Vinhomes Sài Gòn Park. Cảm hứng brochure: **Palm Beach** (Florida). Tổ chức quanh sân golf 36 hố (tên hay nêu **Vinpearl Golf Léman**), quy mô khoảng **200 ha**. Tháng 9/2026: **chưa mở bán**, chưa có thông tin sản phẩm chính thức trên các nguồn chúng tôi đối chiếu.` },
+      { type: "image", src: `/images/sai-gon-park/zones-5-parks.webp`, alt: `Sơ đồ 5 phân khu minh họa — Golf tách riêng khỏi dải chính` },
+      { type: "h2", text: `Vì sao Golf không giống bốn khu còn lại?` },
+      { type: "ul", items: [
+        `Bốn khu Ivy–Global–Laguna–Zen nằm trên **một dải** dọc trục chính.`,
+        `Golf Park **tách riêng**, bao quanh cụm sân golf trên tổng mặt bằng giới thiệu.`,
+        `Điểm biên tập then chốt (theo phân tích Newgen đối chiếu 1/500): khu vực sân golf ~200 ha nằm **ngoài ranh** đồ án quy hoạch chi tiết đô thị ~**880 ha**.`,
+        `Hệ quả: tiện ích golf là định hướng/brochure và/hoặc hạng mục ngoài ranh nhà ở — **không** tự động suy ra từ quyết định QHCT phần đô thị.`
+      ] },
+      { type: "image", src: `/images/sai-gon-park/amenity-golf.webp`, alt: `Icon sân golf minh họa — schematic` },
+      { type: "h2", text: `Ba lớp quy mô bạn phải thuộc lòng` },
+      { type: "table", headers: [`Con số`, `Ý nghĩa`, `Liên quan Golf`], rows: [
+                [`~**1.080 ha**`, `Quy mô quảng bá “đại đô thị” (thường = đô thị + golf)`, `Hay gồm ~200 ha golf`],
+                [`~**880 ha**`, `Phần đô thị có QHCT 1/500 (VIUT)`, `Golf **ngoài** ranh theo Newgen`],
+                [`~**827 ha**`, `Giao đất giai đoạn 1 (QĐ 1426/12/3/2026, nguồn thứ cấp)`, `Không đồng nghĩa đã giao phần golf`]
+            ] },
+      { type: "p", text: `Nhầm 1.080 ha với “đã quy hoạch nhà ở hết” hoặc “đã giao hết” sẽ làm sai lệch kỳ vọng tiến độ và pháp lý. Xem thêm \`/bai-viet/vinhomes-sai-gon-park-la-gi-tong-quan\`.` },
+      { type: "image", src: `/images/sai-gon-park/map-location-schematic.webp`, alt: `Sơ đồ vị trí minh họa — schematic` },
+      { type: "h2", text: `Sản phẩm & trạng thái mở bán` },
+      { type: "ul", items: [
+        `**Chưa mở bán** (⚠️ nguồn thứ cấp 9/2026).`,
+        `Chưa có bảng giá / giỏ hàng chính thức cho Golf Park trên Newgen / đối chiếu Market.`,
+        `Biệt thự “view golf” trên các landing bên thứ ba thường là **ước lệ marketing** — ưu tiên ghi “chưa công bố” cho đến CSBH chính thức.`,
+        `Nếu được chào bán sớm: kiểm tra pháp nhân, ranh thửa, và liệu căn có nằm trong phần đô thị 1/500 đã có đủ điều kiện bán hay không.`
+      ] },
+      { type: "h2", text: `Quyền lợi golf: đừng suy từ thương hiệu` },
+      { type: "p", text: `Câu hỏi người mua hay bỏ qua:` },
+      { type: "ul", items: [
+        `“View golf” có được **bảo vệ bằng phụ lục** (tầm nhìn, khoảng lùi, độ cao công trình đối diện) không?`,
+        `Thành viên sân golf / phí duy trì có **đi kèm HĐMB** hay bán riêng?`,
+        `Sân golf thuộc chủ thể nào — cùng pháp nhân dự án nhà ở hay đơn vị vận hành khác?`,
+        `Tiến độ 36 hố và mở cửa từng giai đoạn là gì trên văn bản — không chỉ trên brochure?`
+      ] },
+      { type: "p", text: `⚠️ Nếu golf ngoài ranh 880 ha, việc “ở trong Vinhomes Sài Gòn Park” **không tự động** = thành viên Vinpearl Golf. Mọi quyền lợi phải đọc chữ trên hợp đồng.` },
+      { type: "image", src: `/images/sai-gon-park/legal-checklist.webp`, alt: `Checklist pháp lý minh họa — schematic` },
+      { type: "image", src: `/images/sai-gon-park/comparison-chart.webp`, alt: `Biểu đồ so sánh minh họa — dùng để nhắc tách lớp quy mô` },
+      { type: "h2", text: `Ai phù hợp theo dõi Golf Park?` },
+      { type: "p", text: `**Phù hợp watchlist:** khách chơi golf / nghỉ dưỡng đô thị; nhà đầu tư siêu dài hạn theo narrative 1.080 ha; người đã có căn ĐVO đang bán và muốn theo dõi đợt sau.` },
+      { type: "p", text: `**Không phù hợp xuống tiền cảm xúc ngay:** F0 lần đầu chỉ nghe “Palm Beach”; người trả premium view golf khi chưa có mặt bằng và phụ lục; ai cần thanh khoản sơ cấp đang chạy năm 2026.` },
+      { type: "h2", text: `Rủi ro tập trung` },
+      { type: "ul", items: [
+        `**Ranh giới pháp lý** khác ranh giới marketing.`,
+        `Tiến độ sân golf và nhà ở có thể **lệch pha**.`,
+        `Phí tiện ích có điều kiện / phí thành viên làm đội chi phí sở hữu.`,
+        `Thanh khoản thứ cấp của sản phẩm “view golf” phụ thuộc uy tín vận hành sân — yếu tố ngoài HĐMB nhà ở.`
+      ] },
+      { type: "p", text: `Đọc kèm: \`/bai-viet/5-phan-khu-vinhomes-sai-gon-park\`, \`/bai-viet/phap-ly-vinhomes-sai-gon-park-checklist\`, \`/bai-viet/ai-nen-mua-vinhomes-sai-gon-park\`.` },
+      { type: "h2", text: `Bảng nhanh — Golf Park` },
+      { type: "table", headers: [`Hạng mục`, `Trạng thái / nội dung (⚠️ 9/2026)`], rows: [
+                [`Tên marketing`, `Golf Park — Công viên Golf`],
+                [`Cảm hứng brochure`, `Palm Beach, Florida`],
+                [`Mở bán`, `**Chưa mở bán**`],
+                [`Sản phẩm`, `Chưa có thông tin chính thức trên nguồn đối chiếu`],
+                [`Tiện ích gắn khu`, `Sân golf 36 hố ~200 ha (Vinpearl Golf Léman thường được nêu)`],
+                [`Đặc điểm pháp lý quan trọng`, `Golf ~200 ha **ngoài** ranh 880 ha 1/500 (theo Newgen)`],
+                [`Lưu ý`, `Quyền view/thành viên → phụ lục HĐMB & quy chế, không suy từ logo`]
+            ] },
+      { type: "h2", text: `Kết luận` },
+      { type: "p", text: `Golf Park là cực “Palm Beach” của bộ năm khu — hấp dẫn trên ảnh, nhưng là khu cần **nhiều caveat pháp lý nhất** vì lớp ranh giới đô thị vs sân golf. Năm 2026 hãy để Golf ở chế độ theo dõi; quyết định mua hãy neo vào quỹ thấp tầng đang mở (Ivy/Global) và văn bản đủ điều kiện bán có số hiệu.` },
+      { type: "p", text: `*Tham khảo: newgeninvest.vn/mat-bang-vinhomes-sai-gon-park/; newgeninvest.vn/phap-ly-vinhomes-saigon-park/; market.vinhomes.vn; cafeland.vn. Biên tập độc lập vinhomes.space · 09/2026. Không phải trang CĐT.*` }
     ],
   },
   {
