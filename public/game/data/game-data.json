@@ -650,7 +650,7 @@
     "loanModel": "mortgage",
     "_loanModelNote": "legacy = dung rules.loan (engine v2). Khi engine v3 san sang, coder doi thanh \"mortgage\" de dung rules.mortgage + mortgageDilemmas.",
     "deposit12mPctYear": 6.8,
-    "_deposit12mNote": "Lãi tiết kiệm 12 tháng tại nhóm 4 ngân hàng lớn (Big4), tra ngày 28/9/2026. Chỉ dùng để so sánh trên màn kết quả, không cộng lãi cho tiền mặt.",
+    "_deposit12mNote": "Lãi tiết kiệm 12 tháng tại nhóm 4 ngân hàng lớn (Big4), tra ngày 28/9/2026. Tiền mặt nằm im trong game được hưởng lãi này (quy ra theo quý, trả trên tiền mặt còn lại sau khi mua bán trong quý), đồng thời là mốc so sánh trên màn kết quả.",
     "quietMaxChangePct": 5,
     "_quietNote": "15 tin nhỏ được gắn quiet: true; phần giá do tin tạo ra tối đa 5% (giảm một nửa so với bản trước). Cộng tăng giá thường và dao động ngẫu nhiên, giá phân khu trong quý yên ắng thường đổi 3 đến 5%, có lúc tới 10% ở biệt thự. Chỉ thu gọn từ ván 12 quý; khoảng 1 trong 4,4 quý (người không vay) đến 1 trong 5 quý (người vay). Tin có baseRateChangePct hoặc ltvCapPct, quý hết ưu đãi và quý phát mãi luôn hiện đầy đủ. r-bond không đổi lãi cơ sở nên giữ quiet. Tăng giá các phân khu được nâng thêm 1,2%/năm để bù."
   },
@@ -702,7 +702,7 @@
       "type": "Căn hộ",
       "price": 800,
       "risk": 0.2,
-      "growth": 0.062,
+      "growth": 0.075,
       "rentPctPerQuarter": 1.1,
       "map": {
         "xPct": 6,
@@ -716,7 +716,7 @@
       "type": "Liền kề",
       "price": 1800,
       "risk": 0.45,
-      "growth": 0.077,
+      "growth": 0.09,
       "rentPctPerQuarter": 0.8,
       "map": {
         "xPct": 56,
@@ -730,7 +730,7 @@
       "type": "Shophouse",
       "price": 2400,
       "risk": 0.65,
-      "growth": 0.087,
+      "growth": 0.1,
       "rentPctPerQuarter": 1,
       "map": {
         "xPct": 30,
@@ -744,7 +744,7 @@
       "type": "Biệt thự",
       "price": 3500,
       "risk": 0.8,
-      "growth": 0.102,
+      "growth": 0.115,
       "rentPctPerQuarter": 0.75,
       "map": {
         "xPct": 58,
@@ -758,7 +758,7 @@
       "type": "Căn hộ",
       "price": 900,
       "risk": 0.2,
-      "growth": 0.062,
+      "growth": 0.084,
       "rentPctPerQuarter": 1.1,
       "map": {
         "xPct": 9,
@@ -772,7 +772,7 @@
       "type": "Liền kề",
       "price": 1900,
       "risk": 0.45,
-      "growth": 0.077,
+      "growth": 0.099,
       "rentPctPerQuarter": 0.8,
       "map": {
         "xPct": 54,
@@ -786,7 +786,7 @@
       "type": "Shophouse",
       "price": 2200,
       "risk": 0.65,
-      "growth": 0.087,
+      "growth": 0.109,
       "rentPctPerQuarter": 1,
       "map": {
         "xPct": 9,
@@ -800,7 +800,7 @@
       "type": "Biệt thự biển",
       "price": 3200,
       "risk": 0.8,
-      "growth": 0.102,
+      "growth": 0.124,
       "rentPctPerQuarter": 0.75,
       "map": {
         "xPct": 54,
@@ -817,7 +817,10 @@
       "source": "Hội nhóm đầu tư",
       "reliability": 0.5,
       "zones": [
-        "*"
+        "sgp-town",
+        "sgp-shop",
+        "gp-town",
+        "gp-shop"
       ],
       "change": 16,
       "falseChange": -4
@@ -854,11 +857,14 @@
       "id": "g-slow",
       "project": "*",
       "kind": "news",
-      "text": "Chuyên gia dự báo thị trường chững lại, thanh khoản giảm.",
+      "text": "Chuyên gia dự báo phân khúc biệt thự và nhà phố thương mại chững lại, thanh khoản giảm.",
       "source": "Báo kinh tế",
       "reliability": 0.75,
       "zones": [
-        "*"
+        "sgp-villa",
+        "sgp-shop",
+        "gp-villa",
+        "gp-shop"
       ],
       "change": -5,
       "falseChange": 2,
@@ -998,7 +1004,8 @@
       "source": "Hội nhóm đầu tư",
       "reliability": 0.35,
       "zones": [
-        "*sgp"
+        "sgp-apt",
+        "sgp-shop"
       ],
       "change": 16,
       "falseChange": -14
@@ -1318,7 +1325,10 @@
       "source": "Môi giới",
       "reliability": 0.45,
       "zones": [
-        "*"
+        "sgp-apt",
+        "sgp-shop",
+        "gp-apt",
+        "gp-shop"
       ],
       "change": 4,
       "falseChange": -4,
@@ -1367,7 +1377,10 @@
       "source": "Báo kinh tế",
       "reliability": 0.7,
       "zones": [
-        "*"
+        "sgp-villa",
+        "sgp-town",
+        "gp-villa",
+        "gp-town"
       ],
       "change": -10,
       "falseChange": 2
@@ -1472,11 +1485,14 @@
       "id": "g-yearend",
       "project": "*",
       "kind": "news",
-      "text": "Cao điểm cuối năm, nhu cầu mua nhà để ở tăng rõ.",
+      "text": "Cao điểm cuối năm, nhu cầu mua căn hộ và nhà phố để ở tăng rõ.",
       "source": "Báo kinh tế",
       "reliability": 0.85,
       "zones": [
-        "*"
+        "sgp-apt",
+        "sgp-town",
+        "gp-apt",
+        "gp-town"
       ],
       "change": 3,
       "falseChange": -1,
@@ -1501,11 +1517,14 @@
       "id": "g-stock-crash",
       "project": "*",
       "kind": "news",
-      "text": "Chứng khoán giảm sâu, một phần dòng tiền tìm về bất động sản.",
+      "text": "Chứng khoán giảm sâu, một phần dòng tiền tìm về biệt thự và nhà phố thương mại.",
       "source": "Báo kinh tế",
       "reliability": 0.65,
       "zones": [
-        "*"
+        "sgp-villa",
+        "sgp-shop",
+        "gp-villa",
+        "gp-shop"
       ],
       "change": 3,
       "falseChange": -2,
@@ -1515,11 +1534,14 @@
       "id": "g-stock-boom",
       "project": "*",
       "kind": "news",
-      "text": "Chứng khoán bùng nổ, dòng tiền đầu cơ rời bất động sản.",
+      "text": "Chứng khoán bùng nổ, dòng tiền đầu cơ rời biệt thự và nhà mặt phố thương mại.",
       "source": "Báo kinh tế",
       "reliability": 0.7,
       "zones": [
-        "*"
+        "sgp-villa",
+        "sgp-shop",
+        "gp-villa",
+        "gp-shop"
       ],
       "change": -3,
       "falseChange": 1,
@@ -1562,7 +1584,10 @@
       "source": "Tin nhắn lạ",
       "reliability": 0.2,
       "zones": [
-        "*"
+        "sgp-town",
+        "sgp-villa",
+        "gp-town",
+        "gp-villa"
       ],
       "change": -16,
       "falseChange": 10
@@ -1602,7 +1627,8 @@
       "source": "Báo địa phương",
       "reliability": 0.75,
       "zones": [
-        "*sgp"
+        "sgp-town",
+        "sgp-shop"
       ],
       "change": 12,
       "falseChange": -4
@@ -1671,7 +1697,8 @@
       "source": "Báo địa phương",
       "reliability": 0.7,
       "zones": [
-        "*gp"
+        "gp-town",
+        "gp-shop"
       ],
       "change": 16,
       "falseChange": -6
@@ -2004,8 +2031,7 @@
       "name": "Huyền thoại địa ốc",
       "desc": "Đọc tin chuẩn, vào lệnh chuẩn, lãi vượt trội.",
       "when": {
-        "minProfitPct": 45,
-        "minAnnualProfitPct": 30
+        "minOverDepositPts": 36
       }
     },
     {
@@ -2014,8 +2040,7 @@
       "desc": "Mua nhanh bán nhanh, sóng nào cũng bắt được.",
       "when": {
         "minTrades": 8,
-        "minProfitPct": 10,
-        "minAnnualProfitPct": 4.9
+        "minOverDepositPts": 11
       }
     },
     {
@@ -2024,8 +2049,7 @@
       "desc": "Dám vay, dám thắng, biết lúc dừng.",
       "when": {
         "usedLoan": true,
-        "minProfitPct": 15,
-        "minAnnualProfitPct": 7.2
+        "minOverDepositPts": 6
       }
     },
     {
@@ -2033,9 +2057,8 @@
       "name": "Nhà đầu tư dòng tiền",
       "desc": "Tiền thuê đều đặn, ngủ ngon mỗi đêm.",
       "when": {
-        "minRentPct": 8,
-        "minProfitPct": 0,
-        "minAnnualProfitPct": 0
+        "minRentPct": 10,
+        "minOverDepositPts": 2
       }
     },
     {
@@ -2044,9 +2067,8 @@
       "desc": "Bạn phân biệt tin thật tin giả rất giỏi.",
       "when": {
         "minRumorCallPct": 70,
-        "minProfitPct": 5,
-        "minAnnualProfitPct": 2.5,
-        "minTrades": 4
+        "minTrades": 4,
+        "minOverDepositPts": 3
       }
     },
     {
@@ -2055,8 +2077,7 @@
       "desc": "Chọn đúng lúc, giữ đúng chỗ bên bờ biển.",
       "when": {
         "project": "gp",
-        "minProfitPct": 10,
-        "minAnnualProfitPct": 4.9
+        "minOverDepositPts": 2
       }
     },
     {
@@ -2065,8 +2086,7 @@
       "desc": "Giữ tài sản xanh giữa lòng thành phố.",
       "when": {
         "project": "sgp",
-        "minProfitPct": 10,
-        "minAnnualProfitPct": 4.9
+        "minOverDepositPts": 2
       }
     },
     {
@@ -2074,8 +2094,7 @@
       "name": "Nhà đầu tư an toàn",
       "desc": "Không lỗ là đã thắng.",
       "when": {
-        "minProfitPct": 0,
-        "minAnnualProfitPct": 0
+        "minProfitPct": 0
       }
     },
     {
@@ -2085,7 +2104,7 @@
       "when": {}
     }
   ],
-  "_titleRules": "Duyet tu tren xuong, lay danh hieu dau tien khop. trades = so lan mua+ban. minRentPct = tong tien thue / von ban dau (%). minRumorCallPct = % so quy nguoi choi mua khi tin tot thanh that hoac ban/dung ngoai khi tin xau thanh that. Zones '*' = tat ca, '*sgp' / '*gp' = moi phan khu cua du an do. minAnnualProfitPct = lai quy doi theo nam: ((1+profit)^(4/Q)-1)*100. Gia tri = quy doi cua minProfitPct o van 8 quy (2 nam), nen voi Q=8 hai dieu kien tuong duong; voi Q>8 dieu kien nam chat hon => engine v3 co the kiem ca hai (AND) hoac chi minAnnualProfitPct. Engine v2 bo qua truong nay. t-reader (Tham tu tin don) can them minTrades 4 (tu 28/9/2026) de khong dat duoc chi nho dung ngoai.",
+  "_titleRules": "Duyet tu tren xuong, lay danh hieu dau tien khop. trades = so lan mua+ban. minRentPct = tong tien thue ca van / von ban dau (%). minRumorCallPct = % so quy nguoi choi mua khi tin tot thanh that hoac ban/dung ngoai khi tin xau thanh that. minOverDepositPts (tu 28/9/2026, thay minProfitPct/minAnnualProfitPct) = so diem lai quy doi theo nam vuot lai tiet kiem: annualPct - rules.deposit12mPctYear >= gia tri; annualPct = ((1+profit)^(4/Q)-1)*100. Doi lai suat tiet kiem thi nguong tu dich theo. t-safe giu minProfitPct 0 (khong lo). Nguong chinh bang sim 2000 van x (8,12,20 quy) x 2 du an x 2 che do du phong: cac cach choi chu dong (headline, ev_aware, ev_lever_safe) khong danh hieu nao qua 40%, Huyen thoai toi da 9%.",
   "cta": {
     "label": "Nhắn Zalo tư vấn",
     "zaloUrl": "https://zalo.me/0868581888",
