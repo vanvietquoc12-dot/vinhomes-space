@@ -652,7 +652,7 @@
     "deposit12mPctYear": 6.8,
     "_deposit12mNote": "Lãi tiết kiệm 12 tháng tại nhóm 4 ngân hàng lớn (Big4), tra ngày 28/9/2026. Chỉ dùng để so sánh trên màn kết quả, không cộng lãi cho tiền mặt.",
     "quietMaxChangePct": 5,
-    "_quietNote": "15 tin nhỏ được gắn quiet: true, giá đổi tối đa 5% (giảm một nửa so với bản trước). Thực tế khoảng 1 trong 4 quý trôi nhanh. Tin có baseRateChangePct hoặc ltvCapPct, quý hết ưu đãi và quý phát mãi luôn hiện đầy đủ. Tăng giá các phân khu được nâng thêm 1,2%/năm để bù lại."
+    "_quietNote": "15 tin nhỏ được gắn quiet: true; phần giá do tin tạo ra tối đa 5% (giảm một nửa so với bản trước). Cộng tăng giá thường và dao động ngẫu nhiên, giá phân khu trong quý yên ắng thường đổi 3 đến 5%, có lúc tới 10% ở biệt thự. Chỉ thu gọn từ ván 12 quý; khoảng 1 trong 4,4 quý (người không vay) đến 1 trong 5 quý (người vay). Tin có baseRateChangePct hoặc ltvCapPct, quý hết ưu đãi và quý phát mãi luôn hiện đầy đủ. r-bond không đổi lãi cơ sở nên giữ quiet. Tăng giá các phân khu được nâng thêm 1,2%/năm để bù."
   },
   "projects": [
     {
@@ -2045,7 +2045,8 @@
       "when": {
         "minRumorCallPct": 70,
         "minProfitPct": 5,
-        "minAnnualProfitPct": 2.5
+        "minAnnualProfitPct": 2.5,
+        "minTrades": 4
       }
     },
     {
@@ -2084,7 +2085,7 @@
       "when": {}
     }
   ],
-  "_titleRules": "Duyet tu tren xuong, lay danh hieu dau tien khop. trades = so lan mua+ban. minRentPct = tong tien thue / von ban dau (%). minRumorCallPct = % so quy nguoi choi mua khi tin tot thanh that hoac ban/dung ngoai khi tin xau thanh that. Zones '*' = tat ca, '*sgp' / '*gp' = moi phan khu cua du an do. minAnnualProfitPct = lai quy doi theo nam: ((1+profit)^(4/Q)-1)*100. Gia tri = quy doi cua minProfitPct o van 8 quy (2 nam), nen voi Q=8 hai dieu kien tuong duong; voi Q>8 dieu kien nam chat hon => engine v3 co the kiem ca hai (AND) hoac chi minAnnualProfitPct. Engine v2 bo qua truong nay.",
+  "_titleRules": "Duyet tu tren xuong, lay danh hieu dau tien khop. trades = so lan mua+ban. minRentPct = tong tien thue / von ban dau (%). minRumorCallPct = % so quy nguoi choi mua khi tin tot thanh that hoac ban/dung ngoai khi tin xau thanh that. Zones '*' = tat ca, '*sgp' / '*gp' = moi phan khu cua du an do. minAnnualProfitPct = lai quy doi theo nam: ((1+profit)^(4/Q)-1)*100. Gia tri = quy doi cua minProfitPct o van 8 quy (2 nam), nen voi Q=8 hai dieu kien tuong duong; voi Q>8 dieu kien nam chat hon => engine v3 co the kiem ca hai (AND) hoac chi minAnnualProfitPct. Engine v2 bo qua truong nay. t-reader (Tham tu tin don) can them minTrades 4 (tu 28/9/2026) de khong dat duoc chi nho dung ngoai.",
   "cta": {
     "label": "Nhắn Zalo tư vấn",
     "zaloUrl": "https://zalo.me/0868581888",

@@ -1,6 +1,7 @@
 // Nhà Đầu Tư Tí Hon — game engine v3 (pure logic, dùng chung cho trình duyệt và mô phỏng Node)
 // v3: chọn độ dài ván (8–20 quý), vay thế chấp ngân hàng theo từng căn (rules.mortgage), lãi cơ sở thả nổi,
 //     tin "giữa ván" (phase:"mid"), tin đổi lãi cơ sở (baseRateChangePct), phát mãi khi thiếu tiền góp.
+// v3.4: E.marketWide (tin ảnh hưởng toàn thị trường), E.lesson (1 câu bài học cuối ván từ số liệu ván), res.acts/res.held để biết mua/bán theo tin nào.
 // v3.2: kết quả quý có res.breakdown = lời/lỗ quý tách theo thành phần (giá, thuê, lãi, phát mãi, phạt, phí, ưu đãi, tình huống), đã làm tròn khớp tổng.
 (function (root) {
   function rng(seed) { let s = seed >>> 0 || 1; return () => { s ^= s << 13; s ^= s >>> 17; s ^= s << 5; return ((s >>> 0) % 1e9) / 1e9; }; }
@@ -101,7 +102,7 @@
     G.ev = G.sched[G.round - 1];
     G.evTruth = G.r() < G.ev.reliability; G.revealed = false; G.perks = {}; G.stats.boughtThisQ = false;
     G.dilemma = null; G.w0 = worth(G); // tài sản ròng đầu quý (để tính lời/lỗ quý)
-    G.qb = { fee: 0, perk: 0, penalty: 0, dilemma: 0 }; // lời/lỗ phát sinh trong quý do thao tác (xem breakdown)
+    G.qb = { fee: 0, perk: 0, penalty: 0, dilemma: 0 }; G.qa = { buy: [], sell: [] }; // qa: phân khu đã mua/bán trong quý // lời/lỗ phát sinh trong quý do thao tác (xem breakdown)
     if (G.dQuarters.has(G.round)) { const i = G.dilemmas.findIndex(d => eligible(G, d)); if (i >= 0) G.dilemma = G.dilemmas.splice(i, 1)[0]; }
   }
 
@@ -168,7 +169,7 @@
     if (q.dev) G.perks.devSupport = null; // hỗ trợ CĐT dùng cho 1 lần mua
     if (G.perks.discount) { if (G.perks.discount.lock) u.lockUntil = G.round + G.perks.discount.lock; G.perks.discount = null; }
     if (u.loan) G.stats.usedLoan = true;
-    G.units.push(u); G.stats.trades++; G.stats.boughtThisQ = true; return u;
+    G.units.push(u); G.stats.trades++; G.stats.boughtThisQ = true; if (G.qa) G.qa.buy.push(id); return u;
   }
   function sellValue(G, z) { return z.cur * (1 + (G.perks.premium || 0) / 100) * (1 - G.fee); }
   function sellQuote(G, u) {
@@ -179,7 +180,7 @@
   function sell(G, id) {
     const u = sellTarget(G, id); if (!u) return false; const q = sellQuote(G, u); if (!q.ok) return false;
     G.qb.perk += q.gross - zone(G, id).cur * (1 - G.fee); G.qb.penalty -= q.penalty; // người mua trả thêm (+), phạt tất toán (−)
-    G.cash += q.net; G.stats.penalties += q.penalty; G.perks.premium = 0; G.units.splice(G.units.indexOf(u), 1); G.stats.trades++; return q;
+    G.cash += q.net; G.stats.penalties += q.penalty; G.perks.premium = 0; G.units.splice(G.units.indexOf(u), 1); G.stats.trades++; if (G.qa) G.qa.sell.push(id); return q;
   }
   function prepayQuote(G, uid, amt) {
     const u = unit(G, uid); if (!u || !u.loan) return null; const a = Math.min(amt, u.loan.bal), pct = penaltyPct(G, u), pen = a * pct / 100;
@@ -287,7 +288,8 @@
     // popup gọn chỉ ở ván dài (>= compactMinQuarters, mặc định 12), kể cả tin gắn quiet:true; quiet:false thì luôn đầy đủ
     const quietEv = !rateEv && G.Q >= G.compactMinQ && (ev.quiet === true || (ev.quiet !== false && ev.phase !== 'mid' && Math.max(Math.abs(ev.change || 0), Math.abs(ev.falseChange || 0)) <= G.quietMax));
     const res = { ev, truth, delta, rent: rentQ, pay: { p: P, i: I, total: P + I }, promoEnds, baseFrom, baseTo: G.baseRate, baseEvent, ltvCap, fireSales, forced: fireSales.length,
-      worth: worth(G), pnl: worth(G) - G.w0, debt: debt(G), round: G.round };
+      worth: worth(G), pnl: worth(G) - G.w0, debt: debt(G), round: G.round, marketWide: marketWide(G, ev),
+      acts: G.qa ? { buy: G.qa.buy.slice(), sell: G.qa.sell.slice() } : { buy: [], sell: [] }, held: [...new Set(held)] };
     res.quiet = quietEv && !promoEnds.length && !fireSales.length && !ltvCap && Math.abs(res.baseTo - res.baseFrom) < 0.25 && !baseEvent;
     const f = G.fee, qb = G.qb || { fee: 0, perk: 0, penalty: 0, dilemma: 0 };
     res.breakdown = breakdown(G, res, {
@@ -299,6 +301,48 @@
     G.history.push(res); G.round++;
     if (G.round <= G.Q) startQuarter(G); else G.done = true;
     return res;
+  }
+  // tin ảnh hưởng toàn thị trường: chạm mọi phân khu của dự án, không nhắm phân khu nào, hoặc tin lãi cơ sở / hạn mức vay (LTV)
+  function marketWide(G, ev) {
+    ev = ev || G.ev; if (!ev) return false;
+    if (ev.baseRateChangePct || ev.falseBaseRateChangePct || ev.ltvCapPct != null) return true;
+    if (!ev.zones || !ev.zones.length) return true;
+    return G.zones.every(z => hits(ev, z));
+  }
+  // ---- 1 câu bài học cuối ván, lấy từ số liệu của chính ván đó; ưu tiên:
+  // phát mãi > lãi vay ăn >= 30% phần lời trước lãi (hoặc biến lời thành lỗ) > mắc/né tin giả > đứng ngoài (<= 1 giao dịch)
+  // > phí mua bán (>= 8 giao dịch) > phạt trả nợ sớm > tiền thuê > giá nhà (mặc định)
+  const LESSON = { interestShare: 0.3, minInterestPct: 2, fakeMin: 2, activeTrades: 4, fewTrades: 1, feeTrades: 8, minFeePct: 3, minPenPct: 1, rentShare: 0.2, minRentPct: 1 };
+  function lesson(G) {
+    const L = LESSON, cap = G.p.startCapital, s = G.stats, H = G.history, profit = worth(G) - cap;
+    const tr = n => Math.round(Math.abs(n)).toLocaleString('vi-VN') + ' tr', pc = x => Math.round(x * 100) + '%';
+    const sum = k => H.reduce((a, h) => a + (h.breakdown ? h.breakdown.raw[k] || 0 : 0), 0);
+    const fireN = H.reduce((a, h) => a + h.fireSales.length, 0), fireLoss = -sum('phatmai'), firePen = H.reduce((a, h) => a + h.fireSales.reduce((b, x) => b + (x.penalty || 0), 0), 0);
+    const I = s.interest, gross = profit + I, fees = -sum('phi'), pen = -sum('phat') - firePen, rent = s.rent, price = sum('gia');
+    // tin giả: mua phân khu được tin tốt nhắc tới / bán phân khu bị tin xấu nhắc tới, rồi tin hóa ra sai => mắc bẫy.
+    // né: người chơi chủ động (>= 4 giao dịch) không mua theo tin tốt giả, hoặc đang giữ căn bị tin xấu giả nhắc tới mà không bán
+    let fb = 0, fs = 0, db = 0, ds = 0; const active = s.trades >= L.activeTrades;
+    H.forEach(h => { if (h.truth || !h.ev.change) return; const A = G.zones.filter(z => hits(h.ev, z)).map(z => z.id), a = h.acts || { buy: [], sell: [] }, held = h.held || [];
+      if (h.ev.change > 0) { if (a.buy.some(id => A.includes(id))) fb++; else if (active) db++; }
+      else { if (a.sell.some(id => A.includes(id))) fs++; else if (active && held.some(id => A.includes(id))) ds++; } });
+    const dodged = db + ds;
+    const fell = fb + fs, out = (key, text, v) => ({ key, text, v: v || {} });
+    if (fireN) return out('fireSale', `Bị ngân hàng phát mãi ${fireN} căn: mất ${tr(fireLoss)} vì bán tháo dưới giá thị trường${firePen >= 0.5 ? `, thêm ${tr(firePen)} phạt trả nợ sớm` : ''}.`, { n: fireN, loss: fireLoss, penalty: firePen });
+    if (I >= cap * L.minInterestPct / 100 && (gross <= 0 || I / gross >= L.interestShare)) {
+      if (profit > 0) return out('interest', `Tiền lãi vay đã ăn mất ${tr(I)}, bằng ${pc(I / gross)} phần lời trước lãi.`, { interest: I, gross, share: I / gross });
+      if (gross > 0) return out('interest', `Trước lãi vay bạn lời ${tr(gross)}, nhưng ${tr(I)} tiền lãi đã biến ván thành lỗ.`, { interest: I, gross });
+      return out('interest', `Chưa tính lãi vay ván đã lỗ, trả thêm ${tr(I)} tiền lãi khiến lỗ nặng hơn.`, { interest: I, gross });
+    }
+    if (fell >= L.fakeMin) return out('fakeFell', `Bạn mắc bẫy ${fell} tin giả (${[fb ? `mua theo ${fb} tin tốt` : '', fs ? `bán theo ${fs} tin xấu` : ''].filter(Boolean).join(', ')}): hãy xem kỹ nguồn tin trước khi xuống tiền.`, { fell, buy: fb, sell: fs });
+    if (dodged >= L.fakeMin && dodged > fell) return out('fakeDodged', `Bạn né được ${dodged} tin giả (${[db ? `không mua theo ${db} tin tốt` : '', ds ? `không bán tháo theo ${ds} tin xấu` : ''].filter(Boolean).join(', ')}).`, { dodged, buy: db, sell: ds, fell });
+    if (s.trades <= L.fewTrades) return out('fewTrades', s.trades ? `Bạn đứng ngoài quá nhiều: chỉ 1 giao dịch trong ${G.Q} quý.` : `Bạn đứng ngoài cả ván: không giao dịch nào, tiền mặt nằm im không sinh lời.`, { trades: s.trades });
+    if (s.trades >= L.feeTrades && fees >= cap * L.minFeePct / 100) return out('fees', `${s.trades} giao dịch mua bán đã tốn ${tr(fees)} tiền phí.`, { trades: s.trades, fees });
+    if (pen >= cap * L.minPenPct / 100) return out('penalty', `Phạt trả nợ trước hạn đã tốn ${tr(pen)}.`, { penalty: pen });
+    if (rent > 0 && (profit > 0 ? rent / profit >= L.rentShare : rent >= cap * L.minRentPct / 100))
+      return out('rent', profit > 0 ? `Tiền thuê góp ${tr(rent)}, bằng ${pc(rent / profit)} phần lời của bạn.` : `Tiền thuê ${tr(rent)} đã giúp bù bớt lỗ.`, { rent, profit });
+    if (Math.round(price) > 0) return out('price', `Giá các căn bạn giữ tăng, mang về ${tr(price)}.`, { price });
+    if (Math.round(price) < 0) return out('price', `Giá các căn bạn giữ giảm, làm mất ${tr(price)}.`, { price });
+    return out('flat', `Tài sản ròng ${tr(cap)} → ${tr(worth(G))} sau ${G.Q} quý.`, {});
   }
   function result(G) {
     const pct = (worth(G) / G.p.startCapital - 1) * 100, s = G.stats, ann = annualize(pct, G.Q);
@@ -317,6 +361,6 @@
   function rentQuote(G, z, quarters, bonusPct) { return z.cur * (z.rentPctPerQuarter || 0) / 100 * (1 + (bonusPct || 0) / 100) * (quarters == null ? LEASE_Q : quarters); }
   const API = { LEASE_Q, rentQuote, revealText, newGame, zone, unit, worth, debt, propValue, headroom, buy, buyQuote, buyPrice, sell, sellTarget, sellQuote, sellValue,
     prepay, prepayQuote, rent, unitRentQ, leased, choose, endQuarter, result, locked, hits, quarterPreview, loanRateNow, promoLeftMonths, penaltyPct,
-    mortRules, quarterOptions, annualize, schedule, maxLtv, eligible, stressQuarter, DEV_ID, roundParts, BD_LOSS_PCT };
+    mortRules, quarterOptions, annualize, schedule, maxLtv, eligible, stressQuarter, DEV_ID, roundParts, BD_LOSS_PCT, marketWide, lesson, LESSON };
   if (typeof module !== 'undefined') module.exports = API; else root.Engine = API;
 })(this);
