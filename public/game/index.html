@@ -91,6 +91,16 @@ button.ghost.cfg{font-size:12.5px;padding:4px;opacity:.9}
 .rulesb{display:block;margin:0 auto 8px;font-size:.8em;padding:5px 12px;background:#2c6b62;color:#fff}
 #rules ul{padding-left:18px;margin:6px 0;font-size:.9em;line-height:1.45}#rules li{margin:3px 0}#rules .warn{text-align:left;margin:8px 0}
 #buyp .acts,#prep .acts{display:flex;gap:8px;margin-top:8px}#buyp .acts button{flex:1}#prep .acts.col button{width:100%;margin:3px 0}
+#buyp .card{padding:14px}#buyp h3{margin:0 0 2px;font-size:19px}.bpsub{font-size:12.5px;opacity:.8;margin-bottom:10px}
+.bphero{background:#0b2421;border-radius:12px;padding:10px 12px;border:1.5px solid var(--gold)}.bpbig{display:flex;gap:8px}.bpbig>div{flex:1}.bpbig small{display:block;font-size:11.5px;opacity:.75}.bpbig b{font-size:21px}
+.bpok{margin-top:6px;font-size:12.5px;line-height:1.4}.bpwarn{margin-top:6px;font-size:12.5px;color:var(--down);line-height:1.4}.bpinfo{margin-top:6px;font-size:12.5px;opacity:.85;line-height:1.4}
+#buyp .lab{font-size:12.5px;margin:10px 0 0}#buyp .chips{margin-top:5px;flex-wrap:nowrap}#buyp .chipb{min-width:0;padding:7px 2px;font-size:14px;line-height:1.2}#buyp .chipb small{font-size:10.5px}
+.bplink{background:none;color:var(--gold);padding:0;font-weight:600;font-size:13px;white-space:nowrap}.bplab{display:flex;justify-content:space-between;align-items:center}
+.bppk{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#0b2421;border:1.5px solid var(--gold);border-radius:10px;padding:7px 10px;font-size:13.5px;margin-top:5px}.bppk small{display:block;font-size:11.5px;opacity:.75;font-weight:400}
+.bpdet{display:block;margin-top:8px;font-size:12.5px;font-weight:500;text-decoration:underline;white-space:normal;text-align:left}.bpdetail{margin:5px 0 0;padding:6px 10px;font-size:13px}.bpdetail .row{padding:1px 0}.bpdetail .note{margin-top:3px;line-height:1.3}
+.bppl{background:#0b2421;border-radius:10px;overflow:hidden;margin-top:5px}.bppr{display:grid;grid-template-columns:1fr auto auto;gap:8px;width:100%;padding:7px 10px;font-size:13px;border-top:1px solid #1d544c;border-radius:0;align-items:center;text-align:left;background:none;color:var(--tx);font-weight:400}
+.bppr:first-child{border-top:0}.bppr.on{background:#e7b84b22;box-shadow:inset 3px 0 0 var(--gold)}.bppr small{display:block;font-size:11px;opacity:.7;font-weight:400}.bppr .r{font-weight:700;text-align:right;white-space:nowrap}.bppr .r small{font-weight:400}.bppr .m{font-size:12px;text-align:right;opacity:.9;min-width:44px}.bppr.hd{font-size:11px;opacity:.65;padding:5px 10px}
+.bpfix{font-size:12.5px;text-decoration:underline;white-space:normal;text-align:left}.bpfoot{font-size:11.5px;opacity:.75;margin-top:6px}#buyp .acts{margin-top:9px}#buyp .acts button.bpgo{flex:2.2;line-height:1.25;font-size:14px;font-weight:700}#buyp .acts button.bpgo small{display:block;font-size:11.5px;font-weight:500}#buyp #bpshort{font-size:12.5px;margin:8px 0 0}
 </style></head><body><div class="wrap" id="app"></div><div id="bar" class="bar"></div><div id="sheet"></div><div id="modal"></div>
 <script src="engine.js"></script>
 <script>
@@ -295,22 +305,40 @@ function why(z,k){const o=own(z.id);if(!o.length)return '<small class="why">Chư
 /* ---------- bảng tùy chỉnh khoản vay ---------- */
 function ltvChoices(){const m=E.maxLtv(G);return [...new Set(G.M.ltvOptionsPct.filter(x=>x<=m).concat([m]))].sort((a,b)=>a-b)}
 function devPkg(){const d=G.perks.devSupport;return {id:E.DEV_ID,name:'Hỗ trợ lãi suất của chủ đầu tư',bank:`giá +${pr(d.priceMarkupPct||0)}${d.grace?', ân hạn gốc':''}`,promoRatePctYear:d.customerRatePctYear||0,promoMonths:d.months||0,floatMarginPct:G.M.packages[0].floatMarginPct}}
-function openBuy(id){const M=G.M;BP={id,ltv:Math.min(M.defaultLtvPct,E.maxLtv(G)),term:M.defaultTermYears,pkg:G.perks.devSupport?E.DEV_ID:M.packages[0].id};drawBuy()}
+function openBuy(id){const M=G.M;BP={id,ltv:Math.min(M.defaultLtvPct,E.maxLtv(G)),term:M.defaultTermYears,pkg:G.perks.devSupport?E.DEV_ID:M.packages[0].id,open:false,det:false};drawBuy()}
 function closeModal(){BP=null;$('modal','')}
-function drawBuy(){if(!BP)return;const M=G.M,z=E.zone(G,BP.id),q=E.buyQuote(G,BP.id,{ltvPct:BP.ltv,termYears:BP.term,pkgId:BP.pkg});
- const style=M.repayment==='annuity'?'góp đều hằng tháng':'gốc chia đều, lãi tính trên dư nợ giảm dần';
- $('modal',`<div class="modal" id="buyp"><div class="card"><h3>🏦 Mua ${esc(z.name)}</h3><div class="row"><span>Giá mua</span><b>${fmt(q.price)}</b></div>
- <div class="lab">Tỷ lệ vay</div>${q.capped?`<small class="note">Ngân hàng đang siết tín dụng: vay tối đa ${q.maxLtvPct}% (bình thường ${M.maxLtvPct}%).</small>`:''}<div class="chips">${ltvChoices().map(v=>`<button class="chipb${v===q.ltvPct?' on':''}" data-ltv="${v}" onclick="BP.ltv=${v};drawBuy()">${v?v+'%':'Không vay'}</button>`).join('')}</div>
- ${q.loan?`<div class="lab">Thời hạn vay</div><div class="chips">${M.termYearsOptions.map(t=>`<button class="chipb${t===q.termYears?' on':''}" data-term="${t}" onclick="BP.term=${t};drawBuy()">${t} năm</button>`).join('')}</div>
- <div class="lab">Gói vay</div><div class="chips col">${(G.perks.devSupport?[devPkg()]:[]).concat(M.packages).map(k=>`<button class="chipb pk${k.id===q.pkg.id?' on':''}" data-pkg="${k.id}" onclick="BP.pkg='${k.id}';drawBuy()">${esc(k.name)}<small>${k.bank?esc(k.bank)+' · ':''}${pr(k.promoRatePctYear)} × ${k.promoMonths} tháng, rồi cơ sở + ${pr(k.floatMarginPct)}</small></button>`).join('')}</div>`:''}
- <div class="sum"><div class="row"><span>Tiền mặt trả trước</span><b>${fmt(q.down)}</b></div>
- ${q.loan?`<div class="row"><span>Số vay</span><b>${fmt(q.loan)}</b></div>
- <div class="row"><span>Lãi suất</span><b>${pr(q.promoRate)}/năm trong ${q.promoMonths} tháng</b></div><small class="note" style="display:block;text-align:right">rồi thả nổi ≈ ${pr(q.floatRate)}/năm (lãi cơ sở ${pr(q.base)} + biên độ ${pr(q.margin)})</small>
- ${q.reserve>0?`<div class="row"><span>Cần giữ lại để góp 1 quý</span><b>${fmt(q.reserve)}</b></div>`:''}
-<div class="row"><span>Trả góp tháng đầu</span><b id="bpm">≈ ${mTxt(q.firstMonth.total)}/tháng</b></div>
- <small class="note">Gốc ${mTxt(q.firstMonth.p)} + lãi ${mTxt(q.firstMonth.i)} (${style}${M.graceMonths?`, ân hạn gốc ${M.graceMonths} tháng`:''}). Mỗi quý trừ 3 tháng trả góp, quý đầu ≈ ${fmt(q.firstQuarter.total)}. Bán căn hoặc trả nợ trước hạn: phạt ${M.prepayPenaltyPctByYear.map(pr).join(' / ')} dư nợ theo năm vay thứ 1 / 2 / …</small>`:''}</div>
- ${q.ok?'':`<p class="down" id="bpshort">${buyWhy(q)}. ${q.why==='down'?'Hãy tăng tỷ lệ vay hoặc bán bớt căn khác.':'Hãy giảm tỷ lệ vay, chọn căn rẻ hơn hoặc bán bớt căn khác.'}</p>`}
- <div class="acts"><button id="buyok" ${q.ok?'':'disabled'} onclick="confirmBuy()">Mua${q.loan?' · vay '+fmt(q.loan):''}</button><button class="alt" onclick="closeModal()">Thôi</button></div></div></div>`)}
+/* v3.6: số tiền lên đầu (trả trước, góp/tháng, tiền mặt còn lại, cảnh báo hết ưu đãi); gói vay thu 1 dòng + "Đổi gói" mở bảng 3 cột; thời hạn ghi tiền góp; gốc/lãi + phạt vào "Chi tiết" */
+const qTxt=m=>m%3===0?(m/3)+' quý':m+' tháng'; // tháng -> quý (ưu đãi 6/12/18/24 tháng = 2/4/6/8 quý)
+// gợi ý khi không mua được: thiết lập gần nhất mà engine thấy đủ tiền (bấm để áp dụng); không có thì chọn căn rẻ hơn / bán bớt
+function fixText(f,pkgs){const a=[];if(f.changed.ltv)a.push(f.ltvPct?'vay '+f.ltvPct+'%':'không vay');if(f.changed.term)a.push(f.termYears+' năm');if(f.changed.pkg){const k=pkgs.find(k=>k.id===f.pkgId);a.push('gói '+(k?k.name:f.pkgId))}return 'Chọn '+a.join(', ')+' thì đủ'}
+function fixHTML(f,pkgs){return f?`<button class="bplink bpfix" id="bpfix" data-fix="${f.ltvPct}|${f.termYears}|${f.pkgId}" onclick="BP.ltv=${f.ltvPct};BP.term=${f.termYears};BP.pkg='${f.pkgId}';drawBuy()">${esc(fixText(f,pkgs))} ›</button>`:'Chọn căn rẻ hơn hoặc bán bớt căn khác.'}
+function drawBuy(){if(!BP)return;const M=G.M,z=E.zone(G,BP.id),o={ltvPct:BP.ltv,termYears:BP.term,pkgId:BP.pkg},q=E.buyQuote(G,BP.id,o);
+ const pkgs=(G.perks.devSupport?[devPkg()]:[]).concat(M.packages),cur=pkgs.find(k=>k.id===q.pkg.id)||q.pkg,margins=[...new Set(pkgs.map(k=>k.floatMarginPct))],oneM=margins.length===1;
+ const style=M.repayment==='annuity'?'góp đều hằng tháng':'gốc chia đều, lãi tính trên dư nợ giảm dần',disc=G.perks.discount?` (đã giảm ${pr(G.perks.discount.pct)})`:'';
+ const pp=q.postPromo,grace=q.dev&&G.perks.devSupport&&G.perks.devSupport.grace?G.perks.devSupport.months||0:(M.graceMonths||0);
+ const cv=q.cover,cash=!cv?'':`<div class="bpok${q.ok?'':' down'}" id="bpcash">Sau khi mua còn <b>${fmt(q.cashAfter)}</b> tiền mặt${!cv.loans?', không phải góp ngân hàng.':cv.n>=cv.left?`, đủ góp <b>đến hết ván</b>`:cv.n?`, đủ góp khoảng <b>${cv.n} quý</b>`:`, <b>chưa đủ góp 1 quý</b>`}${cv.loans?(q.reserve>0&&q.why!=='reserve'?` (cần tối thiểu ${fmt(q.reserve)} cho 1 quý, tính theo lãi thả nổi).`:'.'):''}</div>`;
+ const up=pp&&q.promoMonths>0?(pp.lastPromoMonthly!=null&&pp.monthly>pp.lastPromoMonthly+0.05
+   ?`<div class="bpwarn" id="bppost">⚠️ Hết ưu đãi sau ${qTxt(q.promoMonths)}: ${pp.lastPromoMonthly<0.5?'bắt đầu góp':`góp tăng thêm ≈ ${mTxt(pp.monthly-pp.lastPromoMonthly)}, lên`} ≈ ${mTxt(pp.monthly)}/tháng (lãi thả nổi ≈ ${pr(pp.rate)}/năm${grace>=q.promoMonths?', bắt đầu trả gốc':''}).</div>`
+   :`<div class="bpinfo" id="bppost">Hết ưu đãi sau ${qTxt(q.promoMonths)}: góp ≈ ${mTxt(pp.monthly)}/tháng (lãi thả nổi ≈ ${pr(pp.rate)}/năm).</div>`):'';
+ const hero=`<div class="bphero"><div class="bpbig"><div><small>Trả trước</small><b id="bpdown">${fmt(q.down)}</b></div><div><small>Góp mỗi tháng</small><b id="bpm">${q.loan?'≈ '+mTxt(q.firstMonth.total):'Không vay'}</b></div></div>${BP.open?'':cash}${up}</div>`;
+ const rateTxt=k=>`${pr(k.promoRatePctYear)}<small>${k.promoMonths} tháng</small>`; // 2 dòng: tên gói thật dài hơn mock, nhường chỗ cho cột tên
+ const table=`<div class="lab bplab">Chọn gói vay <button class="bplink" id="bpfold" onclick="BP.open=false;drawBuy()">Thu gọn ˄</button></div>
+ <div class="bppl" id="bppl"><div class="bppr hd"><span>Gói</span><span>Ưu đãi</span><span>Tháng đầu</span></div>${pkgs.map(k=>{const f=E.buyQuote(G,BP.id,Object.assign({},o,{pkgId:k.id})).firstMonth.total;
+   return `<button class="bppr${k.id===q.pkg.id?' on':''}" data-pkg="${k.id}" onclick="BP.pkg='${k.id}';BP.open=false;drawBuy()"><span><b>${esc(k.name)}</b><small>${esc(k.bank||'')}</small></span><span class="r">${rateTxt(k)}${oneM?'':`<small>rồi cơ sở + ${pr(k.floatMarginPct)}</small>`}</span><span class="m" data-first="${k.id}">${mTxt(f)}</span></button>`}).join('')}</div>
+ ${oneM?`<div class="bpfoot" id="bpmargin">Mọi gói sau ưu đãi đều thả nổi: lãi cơ sở + ${pr(margins[0])} (hiện ≈ ${pr(q.base+margins[0])}/năm).</div>`:''}`;
+ const opts=`${q.capped?`<small class="note">Ngân hàng đang siết tín dụng: vay tối đa ${q.maxLtvPct}% (bình thường ${M.maxLtvPct}%).</small>`:''}
+ <div class="lab">Tỷ lệ vay</div><div class="chips">${ltvChoices().map(v=>`<button class="chipb${v===q.ltvPct?' on':''}" data-ltv="${v}" onclick="BP.ltv=${v};drawBuy()">${v?v+'%':'Không<br>vay'}</button>`).join('')}</div>
+ ${q.loan?`<div class="lab">Thời hạn vay</div><div class="chips">${M.termYearsOptions.map(t=>`<button class="chipb${t===q.termYears?' on':''}" data-term="${t}" onclick="BP.term=${t};drawBuy()">${t} năm<small data-tm="${t}">${mTxt(E.buyQuote(G,BP.id,Object.assign({},o,{termYears:t})).firstMonth.total)}/th</small></button>`).join('')}</div>
+ <div class="lab">Gói vay</div><div class="bppk" id="bppk"><div><b>${esc(cur.name)}</b><small>${pr(q.promoRate)} trong ${q.promoMonths} tháng, rồi thả nổi</small></div><button class="bplink" id="bpchg" onclick="BP.open=true;drawBuy()">Đổi gói (${pkgs.length}) ›</button></div>
+ <button class="bplink bpdet" id="bpdet" onclick="BP.det=!BP.det;drawBuy()">Chi tiết: gốc/lãi tháng đầu, phí phạt trả trước hạn ${BP.det?'˄':'›'}</button>
+ ${BP.det?`<div class="sum bpdetail" id="bpdetail"><div class="row"><span>Số vay</span><b>${fmt(q.loan)}</b></div>
+ <div class="row"><span>Tháng đầu</span><b>gốc ${mTxt(q.firstMonth.p)} + lãi ${mTxt(q.firstMonth.i)}</b></div>
+ <small class="note">Lãi ${pr(q.promoRate)}/năm trong ${q.promoMonths} tháng, rồi thả nổi ≈ ${pr(q.floatRate)}/năm (lãi cơ sở ${pr(q.base)} + biên độ ${pr(q.margin)}). ${style[0].toUpperCase()+style.slice(1)}${grace?`, ân hạn gốc ${grace} tháng`:''}. Mỗi quý trừ 3 tháng trả góp, quý đầu ≈ ${fmt(q.firstQuarter.total)}.</small>
+ <small class="note" id="bppen">Bán căn hoặc trả nợ trước hạn: phạt ${M.prepayPenaltyPctByYear.map(pr).join(' / ')} dư nợ theo năm vay thứ 1 / 2 / …</small></div>`:''}`:''}`;
+ $('modal',`<div class="modal" id="buyp"><div class="card"><h3>🏦 Mua ${esc(z.name)}</h3><div class="bpsub">Giá ${fmt(q.price)}${disc} · bạn đang có ${fmt(G.cash)} tiền mặt</div>
+ ${hero}${BP.open&&q.loan?table:opts}
+ ${q.ok?'':`<p class="down" id="bpshort">${buyWhy(q)}. ${fixHTML(E.buyFix(G,BP.id,o),pkgs)}</p>`}
+ <div class="acts"><button id="buyok" class="bpgo" ${q.ok?'':'disabled'} onclick="confirmBuy()">Mua · trả trước ${fmt(q.down)}${q.loan?`<small>vay ${fmt(q.loan)}</small>`:''}</button><button class="alt" onclick="closeModal()">Thôi</button></div></div></div>`)}
 function confirmBuy(){if(!BP)return;const o={ltvPct:BP.ltv,termYears:BP.term,pkgId:BP.pkg},id=BP.id;BP=null;$('modal','');E.buy(G,id,o);draw()}
 /* ---------- trả bớt nợ ---------- */
 function askPrepay(uid){const u=E.unit(G,uid);if(!u||!u.loan)return;const bal=u.loan.bal,pct=E.penaltyPct(G,u),z=E.zone(G,u.zone);

@@ -164,7 +164,47 @@
     const okDown = G.cash >= down - 1e-9, okRes = G.cash - down >= reserve - 1e-9;
     return { zone: id, price, ltvPct: ltv, maxLtvPct: cap, capped: cap < M.maxLtvPct, termYears, pkg: k, dev, loan, down, reserve, reserveQuarters: rq,
       ok: okDown && okRes, why: !okDown ? 'down' : !okRes ? 'reserve' : '', short: Math.max(0, down + reserve - G.cash),
-      firstMonth: first, firstQuarter: q1, promoRate: k.promoRatePctYear, promoMonths: k.promoMonths || 0, margin: k.floatMarginPct, base: G.baseRate, floatRate: G.baseRate + k.floatMarginPct };
+      firstMonth: first, firstQuarter: q1, promoRate: k.promoRatePctYear, promoMonths: k.promoMonths || 0, margin: k.floatMarginPct, base: G.baseRate, floatRate: G.baseRate + k.floatMarginPct,
+      postPromo: postPromo(G, L), cashAfter: G.cash - down, cover: okDown ? coverQuarters(G, L, G.cash - down) : null };
+  }
+  // v3.6: tiền góp tháng đầu tiên SAU ưu đãi nếu lãi cơ sở giữ nguyên như hiện tại (đúng monthStep mà payQuarter sẽ tính ở tháng fixedUntil)
+  function postPromo(G, L) {
+    if (!L) return null; const fu = fixedUntil(L); let bal = L.bal, last = null;
+    for (let m = L.m; m < fu && bal > 1e-9; m++) { const s = monthStep(G, L, m, bal); last = s; bal -= s.p; }
+    if (fu >= L.termMonths || bal <= 0.5) return null;
+    const s = monthStep(G, L, Math.max(L.m, fu), bal);
+    return { monthly: s.p + s.i, p: s.p, i: s.i, rate: rateAt(G, L, Math.max(L.m, fu)), afterMonths: Math.max(0, fu - L.m), bal, lastPromoMonthly: last ? last.p + last.i : null };
+  }
+  // v3.6: sau khi trả trước, tiền mặt còn lại đủ góp bao nhiêu quý (mọi khoản vay, theo lịch thật: ưu đãi rồi thả nổi với lãi cơ sở hiện tại;
+  // chưa tính tiền thuê/lãi tiền gửi => ước tính thận trọng); tối đa = số quý còn lại của ván (kể cả quý này, vì cuối quý này đã trừ góp)
+  function coverQuarters(G, extra, cash) {
+    const left = Math.max(0, G.Q - G.round + 1), ls = G.units.filter(u => u.loan).map(u => u.loan).concat(extra ? [extra] : []).map(L => ({ L, m: L.m, bal: L.bal }));
+    if (!ls.length) return { n: left, left, loans: 0 };
+    let n = 0;
+    for (; n < left; n++) { let t = 0;
+      for (const x of ls) { if (x.bal <= 0) continue; for (let k = 0; k < 3 && x.bal > 1e-9; k++) { const s = monthStep(G, x.L, x.m, x.bal); t += s.p + s.i; x.bal -= s.p; x.m++; }
+        if (x.bal <= 0.5 || x.m >= x.L.termMonths) { t += Math.max(0, x.bal); x.bal = 0; } }
+      if (cash < t - 1e-9) break; cash -= t; }
+    return { n, left, loans: ls.length };
+  }
+  // v3.6: các mức LTV được chọn (giống nút trong bảng vay: mốc ≤ trần + đúng trần)
+  function ltvOptions(G) { const m = maxLtv(G); return [...new Set(G.M.ltvOptionsPct.filter(x => x <= m).concat([m]))].sort((a, b) => a - b); }
+  // v3.6: khi không mua được (thiếu tiền trả trước / dự phòng 1 quý), tìm thiết lập GẦN NHẤT làm buyQuote.ok = true.
+  // Ưu tiên: đổi 1 thứ (thời hạn hoặc tỷ lệ vay, ít nấc nhất; hòa thì đổi thời hạn) > đổi cả hai > có đổi gói. Không có => null.
+  function buyFix(G, id, o) {
+    o = o || {}; const q0 = buyQuote(G, id, o); if (q0.ok) return null;
+    const L = ltvOptions(G), T = G.M.termYearsOptions.slice(), P = (G.perks.devSupport ? [DEV_ID] : []).concat(G.M.packages.map(k => k.id));
+    const l0 = q0.ltvPct, t0 = q0.termYears, p0 = q0.pkg.id, idx = (a, v) => { const i = a.indexOf(v); return i >= 0 ? i : a.reduce((b, x, j) => (Math.abs(x - v) < Math.abs(a[b] - v) ? j : b), 0); };
+    const li = idx(L, l0), ti = idx(T, t0), cands = [];
+    for (const l of L) for (const t of T) for (const p of P) {
+      const cl = l !== l0, ct = t !== t0, cp = p !== p0; if (!cl && !ct && !cp) continue;
+      if (l === 0 && (ct || cp)) continue; // không vay thì thời hạn/gói vô nghĩa
+      const d = Math.abs(L.indexOf(l) - li) + Math.abs(T.indexOf(t) - ti);
+      cands.push({ ltvPct: l, termYears: t, pkgId: p, changed: { ltv: cl, term: ct, pkg: cp }, cost: (cp ? 100 : 0) + (cl && ct ? 10 : 0) + d + (cl && !ct ? 0.1 : 0) });
+    }
+    cands.sort((a, b) => a.cost - b.cost);
+    for (const c of cands) { const q = buyQuote(G, id, { ltvPct: c.ltvPct, termYears: c.termYears, pkgId: c.pkgId }); if (q.ok) { c.q = q; return c; } }
+    return null;
   }
   function buy(G, id, o) {
     const q = buyQuote(G, id, o); if (!q.ok) return false;
@@ -372,7 +412,7 @@
     return G.revealed === 'direction' ? 'quý này giá sẽ ' + (d >= 0 ? 'TĂNG' : 'GIẢM') + ' theo tin' : 'tin này ' + (G.evTruth ? 'là THẬT' : 'là GIẢ'); }
   // tiền thuê dự kiến cho cả thời gian khóa (theo giá hiện tại), có tính thưởng thuê của tình huống
   function rentQuote(G, z, quarters, bonusPct) { return z.cur * (z.rentPctPerQuarter || 0) / 100 * (1 + (bonusPct || 0) / 100) * (quarters == null ? LEASE_Q : quarters); }
-  const API = { LEASE_Q, rentQuote, revealText, newGame, zone, unit, worth, debt, propValue, headroom, buy, buyQuote, buyPrice, sell, sellTarget, sellQuote, sellValue,
+  const API = { LEASE_Q, rentQuote, revealText, newGame, zone, unit, worth, debt, propValue, headroom, buy, buyQuote, buyFix, ltvOptions, buyPrice, sell, sellTarget, sellQuote, sellValue,
     prepay, prepayQuote, rent, unitRentQ, leased, choose, endQuarter, result, locked, hits, quarterPreview, loanRateNow, promoLeftMonths, penaltyPct,
     mortRules, quarterOptions, depositRateQ, annualize, schedule, maxLtv, eligible, stressQuarter, DEV_ID, roundParts, BD_LOSS_PCT, marketWide, lesson, LESSON };
   if (typeof module !== 'undefined') module.exports = API; else root.Engine = API;

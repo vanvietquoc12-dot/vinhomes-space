@@ -32,7 +32,7 @@
       "packages": [
         {
           "id": "mkt-12",
-          "name": "Cố định 12 tháng · mặt bằng thị trường",
+          "name": "Thị trường · cố định 12 tháng",
           "bank": "Tham khảo nhiều ngân hàng",
           "promoRatePctYear": 9.5,
           "promoMonths": 12,
@@ -74,7 +74,7 @@
         },
         {
           "id": "sacom-12",
-          "name": "Cố định từ 12 tháng · đối tác dự án",
+          "name": "Đối tác dự án · từ 12 tháng",
           "bank": "Sacombank",
           "promoRatePctYear": 10.5,
           "promoMonths": 12,
