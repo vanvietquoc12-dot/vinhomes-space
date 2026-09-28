@@ -15,7 +15,7 @@
 .src{font-size:.8em;opacity:.8;margin-top:4px}
 .zone{display:grid;grid-template-columns:1fr auto;gap:4px 8px;align-items:center}
 .zone .nm{font-weight:600}.zone small{opacity:.75}
-.price{text-align:right;font-weight:700}.up{color:var(--up)}.down{color:var(--down)}
+.price{text-align:right;font-weight:700}.up{color:var(--up)}.down{color:var(--down)}.flat{color:#c9d6d2}
 .acts{grid-column:1/3;display:flex;gap:6px}.acts button{flex:1;padding:8px 4px;font-size:.8em}
 button{font:inherit;background:var(--gold);color:#1b1b1b;border:0;border-radius:10px;padding:9px 12px;font-weight:600;cursor:pointer}
 button.alt{background:#2c6b62;color:#fff}button.ghost{background:transparent;color:var(--tx);text-decoration:underline;padding:6px}
@@ -35,7 +35,7 @@ h1,h2,h3{margin:.3em 0}
 .tile{position:absolute;background:#0f2e2aee;color:var(--tx);border-radius:10px;padding:3px 8px;box-shadow:0 3px 8px #0006;border:1.5px solid #ffffff22;display:flex;flex-direction:column;justify-content:center;cursor:pointer;line-height:1.25;-webkit-tap-highlight-color:transparent}
 .tile b{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tile .pr{font-size:12px;font-weight:600;white-space:nowrap}
-.tile .pr i{font-style:normal;margin-left:3px}
+.tile .pr i{font-style:normal;margin-left:3px}.tile .pr i.fl{font-size:10.5px;font-weight:500}
 .tile:active{transform:scale(.97)}
 .tile.sel{border-color:#fff}
 .tile.hot{border:2px solid var(--gold);animation:glow 1.6s ease-in-out infinite}
@@ -56,7 +56,7 @@ h1,h2,h3{margin:.3em 0}
 .spark{display:block;width:100%;height:auto;margin:8px 0 4px}
 .chip{display:inline-block;font-size:11.5px;background:#0b2421;border-radius:6px;padding:3px 7px;margin:2px 4px 2px 0}
 .chip.hotc{border:1px solid var(--gold)}
-.sheet .acts{display:flex;gap:8px;margin-top:10px}.sheet .acts button{flex:1;font-size:13px;line-height:1.35;padding:9px 3px}.acts button small{display:block;font-size:12px;white-space:nowrap}
+.sheet .acts{display:flex;gap:8px;margin-top:10px}.sheet .acts button{flex:1;font-size:13px;line-height:1.35;padding:9px 3px}.acts button small{display:block;font-size:12px;white-space:nowrap}.acts button small.why{white-space:normal;font-size:10.5px;font-weight:500;opacity:.9;margin-top:2px}.sheet .acts button.loanbuy{flex:1.45}.loanbuy small.why{margin:0 0 1px}
 /* popup cuối quý */
 .pnl{text-align:center;padding:4px 0 10px;margin-bottom:8px;border-bottom:1px solid #ffffff22}
 .pnl small{display:block;font-size:.9em;opacity:.85}
@@ -70,7 +70,9 @@ let D,G,sel=null,sheetAnim=false;const E=Engine;
 const $=(id,h)=>document.getElementById(id).innerHTML=h;
 const fmt=n=>(n<0?'-':'')+Math.round(Math.abs(n)).toLocaleString('vi-VN')+' tr';
 const sgn=n=>{const v=Math.round(n);return (v>0?'+':v<0?'\u2212':'')+Math.abs(v).toLocaleString('vi-VN')+' tr'};
-const pc=n=>(n>=0?'▲ +':'▼ ')+n.toFixed(1)+'%';
+const flat=n=>Math.abs(+n.toFixed(1))===0; // làm tròn ra 0,0% => đứng giá
+const pc=n=>flat(n)?'đứng giá':(n>=0?'▲ +':'▼ ')+n.toFixed(1)+'%';
+const chc=n=>flat(n)?'flat':n>=0?'up':'down';
 const vol=r=>r<0.3?'Biến động thấp':r<0.5?'Biến động vừa':'Biến động cao';
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 async function load(){for(const f of['data/game-data.json','data/sample-data.json']){try{const r=await fetch(f,{cache:'no-cache'});if(r.ok){D=await r.json();return}}catch(e){}}}
@@ -141,14 +143,14 @@ function mapSVG(zs){
  // lô đất dưới mỗi ô
  R.forEach((r,i)=>{const c=PARCEL[i%PARCEL.length];fg+=`<rect x="${X(r.x-2.5)}" y="${Y(r.y-3)}" width="${X(r.w+5)}" height="${Y(r.h+6)}" rx="12" fill="${c[0]}" stroke="${c[1]}" stroke-width="2"/>`});
  return `<svg class="bg" viewBox="0 0 ${MW} ${MH}" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7cc4d8"/><stop offset="1" stop-color="#3f93b5"/></linearGradient><pattern id="wave" width="30" height="12" patternUnits="userSpaceOnUse"><path d="M0 6 q7.5 -5 15 0 t15 0" fill="none" stroke="#ffffff55" stroke-width="1.5"/></pattern></defs><rect width="${MW}" height="${MH}" fill="#d7ead9"/>${bg}${fg}${ov}${lab}</svg>`} // thứ tự: nền (rừng, biển, công viên, đường) → lô đất → hồ → nhãn
-function tileHTML(z){const r=rectOf(z),o=own(z.id).length,l=leasing(z.id).length,arr=G.round>1&&z.last?`<i class="${z.last>=0?'up':'down'}">${z.last>=0?'▲':'▼'}</i>`:'';
+function tileHTML(z){const r=rectOf(z),o=own(z.id).length,l=leasing(z.id).length,arr=G.round>1?(flat(z.last)?'<i class="flat fl">đứng giá</i>':`<i class="${z.last>=0?'up':'down'}">${z.last>=0?'▲':'▼'}</i>`):'';
  return `<div class="tile${hot(z)?' hot':''}${sel===z.id?' sel':''}" role="button" tabindex="0" data-zone="${z.id}" style="left:${r.x}%;top:${r.y}%;width:${r.w}%;height:${r.h}%" onclick="openZone('${z.id}')" title="${esc(z.name)}">
  <b>${esc(short(z))}</b><span class="pr">${fmt(z.cur)}${arr}</span>${o?`<em class="own">×${o}</em>`:''}${l?`<em class="lock" title="Đang cho thuê">🔒</em>`:''}</div>`}
 function cardHTML(x){ // dạng thẻ cũ (khi phân khu không có tọa độ bản đồ)
  const o=own(x.id),f=free(x.id),leased=o.filter(u=>u.leaseUntil).length,bp=E.buyPrice(G,x);
  return `<div class="card zone"><div><div class="nm">${x.name}</div><small>${x.type} · ${vol(x.risk)}</small>
   ${o.length?`<br><small>Đang giữ ${o.length}${leased?` · ${leased} đang cho thuê`:''}${o.length-f.length-leased>0?` · ${o.length-f.length-leased} đang khóa`:''}</small>`:''}</div>
-  <div class="price">${fmt(x.cur)}<br><small class="${x.last>=0?'up':'down'}">${G.round>1?pc(x.last):''}</small></div>
+  <div class="price">${fmt(x.cur)}<br><small class="${chc(x.last)}">${G.round>1?pc(x.last):''}</small></div>
   <div class="acts"><button ${G.cash<bp?'disabled':''} onclick="act('buy','${x.id}')">Mua<br>${fmt(bp)}</button>
   <button class="alt" ${f.length?'':'disabled'} onclick="act('sell','${x.id}')">Bán, nhận<br>${fmt(E.sellValue(G,x))}</button>
   <button class="alt" ${f.some(u=>!u.leaseUntil)?'':'disabled'} onclick="act('rent','${x.id}')">Cho thuê<br>${rentTxt(E.rentQuote(G,x),E.LEASE_Q)}</button></div></div>`}
@@ -192,18 +194,38 @@ function drawSheet(){if(!sel||!G||G.done){$('sheet','');return}
  const left=ls.reduce((a,u)=>a+E.rentQuote(G,z,u.leaseUntil-G.round,u.rentBonus||0),0),lq=ls.length?Math.max(...ls.map(u=>u.leaseUntil-G.round)):0;
  const a=sheetAnim?' anim':'';sheetAnim=false;
  $('sheet',`<div class="dim${a}" onclick="closeSheet()"></div><div class="sheet${a}" id="zsheet" role="dialog" aria-label="${esc(z.name)}"><div class="grab"></div><button class="x" onclick="closeSheet()" aria-label="Đóng">✕</button>
- <div class="hd"><div><b>${esc(z.name)}</b><br><small>${z.type} · ${vol(z.risk)}</small></div><div style="text-align:right"><b>${fmt(z.cur)}</b><br><small class="${z.last>=0?'up':'down'}">${G.round>1?pc(z.last)+' quý trước':'Giá mở bán'}</small></div></div>
+ <div class="hd"><div><b>${esc(z.name)}</b><br><small>${z.type} · ${vol(z.risk)}</small></div><div style="text-align:right"><b>${fmt(z.cur)}</b><br><small class="${chc(z.last)}">${G.round>1?pc(z.last)+' quý trước':'Giá mở bán'}</small></div></div>
  ${chart(z)}
  <div>${hot(z)?'<span class="chip hotc">📰 Tin quý này nhắc tới phân khu này</span>':''}<span class="chip">Bạn đang giữ ${o.length} căn</span>${ls.length?`<span class="chip">🔒 ${ls.length} căn đang cho thuê · còn nhận ${rentTxt(left,lq)}</span>`:''}${lk.length?`<span class="chip">⛓ ${lk.length} căn khóa chuyển nhượng · còn ${Math.max(...lk.map(u=>u.lockUntil-G.round))} quý</span>`:''}${G.perks.discount?`<span class="chip">🎟️ Mua rẻ hơn ${G.perks.discount.pct}%, khóa ${G.perks.discount.lock} quý</span>`:''}</div>
- <div class="acts"><button data-act="buy" ${G.cash<bp?'disabled':''} onclick="act('buy','${z.id}')">Mua${G.perks.discount?' (−'+G.perks.discount.pct+'%)':''}<small>${fmt(bp)}</small></button>
- <button data-act="sell" class="alt" ${f.length?'':'disabled'} onclick="act('sell','${z.id}')">Bán, nhận<small>${fmt(E.sellValue(G,z))}</small></button>
- <button data-act="rent" class="alt" ${canRent?'':'disabled'} onclick="act('rent','${z.id}')">Cho thuê<small>${rentTxt(E.rentQuote(G,z),E.LEASE_Q)}</small></button></div></div>`)}
+ <div class="acts">${buyBtn(z,bp)}
+ <button data-act="sell" class="alt" ${f.length?'':'disabled'} onclick="act('sell','${z.id}')">Bán, nhận<small>${fmt(E.sellValue(G,z))}</small>${f.length?'':why(z,'sell')}</button>
+ <button data-act="rent" class="alt" ${canRent?'':'disabled'} onclick="act('rent','${z.id}')">Cho thuê<small>${rentTxt(E.rentQuote(G,z),E.LEASE_Q)}</small>${canRent?'':why(z,'rent')}</button></div></div>`)}
+/* mua thiếu tiền: vay đúng phần thiếu (làm tròn lên bước 100 tr như engine) nếu hạn mức vay hiện tại đủ */
+const LOAN_STEP=100;
+function loanPlan(z){const bp=E.buyPrice(G,z),short=bp-G.cash;if(short<=0)return null;
+ const loan=Math.ceil(short/LOAN_STEP)*LOAN_STEP,head=E.maxBorrow(G); // hạn mức = đúng số nút Vay có thể vay lúc này (căn sắp mua chưa tính làm tài sản đảm bảo)
+ return {bp,short,loan,head,ok:loan<=head,interest:loan*G.rate/100}}
+const rateTxt=()=>G.rate.toLocaleString('vi-VN')+'%/quý';
+function buyBtn(z,bp){const L=loanPlan(z),disc=G.perks.discount?' (−'+G.perks.discount.pct+'%)':'';
+ if(!L)return `<button data-act="buy" onclick="act('buy','${z.id}')">Mua${disc}<small>${fmt(bp)}</small></button>`;
+ if(L.ok)return `<button data-act="buy" data-loan="${L.loan}" data-interest="${Math.round(L.interest)}" class="loanbuy" onclick="askLoanBuy('${z.id}')"><small class="why">Thiếu ${fmt(L.short)}</small>Vay ${fmt(L.loan)} và mua<small>lãi ${fmt(L.interest)}/quý</small></button>`;
+ return `<button data-act="buy" disabled>Mua${disc}<small>${fmt(bp)}</small><small class="why">Thiếu ${fmt(L.short)} · vay tối đa được ${fmt(L.head)}</small></button>`}
+function askLoanBuy(id){const z=E.zone(G,id),L=loanPlan(z);if(!L||!L.ok)return;
+ $('modal',`<div class="modal" id="loanask"><div class="card"><h3>💳 Vay để mua?</h3><p>Vay ${fmt(L.loan)} và mua · lãi ${fmt(L.interest)}/quý (lãi ${rateTxt()})<br><small style="opacity:.8">${esc(z.name)} giá ${fmt(L.bp)}, bạn đang thiếu ${fmt(L.short)}. Nợ sau khi vay: ${fmt(G.loan+L.loan)}.</small></p>
+ <button id="loanok" style="margin:4px" onclick="loanBuy('${id}')">Vay ${fmt(L.loan)} và mua</button><button class="alt" style="margin:4px" onclick="$('modal','')">Thôi</button></div></div>`)}
+function loanBuy(id){const z=E.zone(G,id),L=loanPlan(z);$('modal','');if(L&&L.ok&&E.borrow(G,L.loan))E.buy(G,id);draw()}
+function why(z,k){const o=own(z.id);if(!o.length)return '<small class="why">Chưa có căn</small>';
+ const ls=o.filter(u=>u.leaseUntil&&u.leaseUntil>G.round),lk=o.filter(u=>E.locked(G,u));
+ if(k==='rent'&&ls.length===o.length)return `<small class="why">Đang cho thuê, còn ${Math.min(...ls.map(u=>u.leaseUntil-G.round))} quý</small>`;
+ const n=Math.min(...lk.map(u=>u.lockUntil-G.round));
+ return `<small class="why">${lk.some(u=>u.leaseUntil)?'Đang cho thuê':'Đang khóa'}, mở lại sau ${n} quý</small>`}
 function act(k,id){if(k==='buy')E.buy(G,id);if(k==='sell')E.sell(G,id);if(k==='rent')E.rent(G,id);if(k==='borrow')E.borrow(G,Math.min(1000,E.maxBorrow(G)));if(k==='repay')E.repay(G,Math.min(G.loan,G.cash));draw()}
 function choose(i){E.choose(G,i);draw()}
-function next(){sel=null;$('sheet','');const r=E.endQuarter(G),p=Math.round(r.pnl);
+function next(){sel=null;$('sheet','');showQuarter(E.endQuarter(G))}
+function showQuarter(r){const p=Math.round(r.pnl);
  $('bar','');$('modal',`<div class="modal"><div class="card" id="qpop"><div class="pnl" id="pnl"><small>Quý này bạn ${p>0?'lời':p<0?'lỗ':'hòa vốn'}</small><div class="big ${p>=0?'up':'down'}">${sgn(r.pnl)}</div><small class="sub">Tài sản ròng: ${fmt(r.worth-r.pnl)} → ${fmt(r.worth)} (đã gồm tiền thuê, lãi vay, giá nhà)</small></div>
  <h3>${r.truth?'✅ Tin là THẬT':'❌ Tin là GIẢ'}</h3><p style="opacity:.85">${r.ev.text}<br><small>Nguồn: ${r.ev.source||''}</small></p>
- ${G.zones.map(z=>`<div class="row"><span>${z.name}</span><span class="${z.last>=0?'up':'down'}">${pc(z.last)}</span></div>`).join('')}
+ ${G.zones.map(z=>`<div class="row"><span>${z.name}</span><span class="${chc(z.last)}">${pc(z.last)}</span></div>`).join('')}
  ${r.rent?`<div class="row"><span>Tiền thuê nhận</span><span class="up">+${fmt(r.rent)}</span></div>`:''}
  ${r.interest?`<div class="row"><span>Lãi vay phải trả</span><span class="down">-${fmt(r.interest)}</span></div>`:''}
  ${r.forced?`<p class="down">Hết tiền mặt nên phải bán gấp ${r.forced} căn.</p>`:''}

@@ -55,7 +55,7 @@
     {
       "id": "sgp-apt",
       "project": "sgp",
-      "name": "Khu căn hộ công viên",
+      "name": "Căn hộ công viên",
       "type": "Căn hộ",
       "price": 800,
       "risk": 0.15,
@@ -69,7 +69,7 @@
     {
       "id": "sgp-town",
       "project": "sgp",
-      "name": "Dãy nhà phố",
+      "name": "Nhà phố",
       "type": "Liền kề",
       "price": 1800,
       "risk": 0.35,
@@ -97,7 +97,7 @@
     {
       "id": "sgp-villa",
       "project": "sgp",
-      "name": "Khu biệt thự ven hồ",
+      "name": "Biệt thự ven hồ",
       "type": "Biệt thự",
       "price": 3500,
       "risk": 0.6,
@@ -111,7 +111,7 @@
     {
       "id": "gp-apt",
       "project": "gp",
-      "name": "Khu căn hộ ven vịnh",
+      "name": "Căn hộ ven vịnh",
       "type": "Căn hộ",
       "price": 900,
       "risk": 0.15,
@@ -139,7 +139,7 @@
     {
       "id": "gp-shop",
       "project": "gp",
-      "name": "Phố thương mại du lịch",
+      "name": "Phố thương mại",
       "type": "Shophouse",
       "price": 2200,
       "risk": 0.5,
@@ -526,7 +526,7 @@
     },
     {
       "id": "d-tenant",
-      "text": "Có khách muốn thuê dài hạn một căn của bạn với giá cao gấp rưỡi, nhưng không được bán trong 2 quý.",
+      "text": "Có khách muốn thuê dài hạn một căn của bạn, trả tiền thuê gấp 2,5 lần bình thường, nhưng không được bán trong 2 quý.",
       "options": [
         {
           "label": "Cho thuê dài hạn",
