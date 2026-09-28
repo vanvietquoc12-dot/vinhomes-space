@@ -63,32 +63,61 @@ h1,h2,h3{margin:.3em 0}
 .pnl .big{font-size:46px;font-weight:800;line-height:1.1;letter-spacing:-.5px}
 .pnl .sub{font-size:.75em;opacity:.7;margin-top:2px}
 .dnote{display:block;font-size:.78em;opacity:.8;margin:0 4px 6px}
+/* v3: độ dài ván, vay ngân hàng */
+.chips{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}.chips.col{flex-direction:column}
+.chipb{flex:1;min-width:56px;background:#0b2421;color:var(--tx);border:1.5px solid #2c6b62;padding:8px 4px;line-height:1.25;font-size:.9em}
+.chipb small{display:block;font-size:11px;opacity:.75;font-weight:500}.chipb.on{background:var(--gold);color:#1b1b1b;border-color:var(--gold)}.chipb.on small{opacity:.85}
+.chipb.pk{text-align:left;padding:8px 10px}
+.note{display:block;opacity:.78;font-size:.78em;margin-top:6px;line-height:1.35}
+.lab{font-size:.8em;opacity:.8;margin-top:10px}
+.sum{background:#0b242199;border-radius:10px;padding:8px 10px;margin:10px 0 6px}.sum .row{align-items:baseline;gap:8px}.r{text-align:right}
+.binfo{font-size:.78em;line-height:1.2;display:flex;flex-direction:column;justify-content:center;padding:0 6px;min-width:112px;opacity:.95}.binfo b{font-size:1.2em;color:var(--gold)}
+.pf .pfh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}.pf .pfh small{opacity:.75;font-size:.75em}
+.pfrow,.urow{background:#0b242199;border-radius:10px;padding:7px 9px;margin-top:6px;font-size:.85em;line-height:1.35}.pfrow{cursor:pointer}
+.pfrow .l1,.urow .l1{display:flex;justify-content:space-between;gap:8px;align-items:baseline}.pfrow .l1 small,.urow .l1 small{opacity:.8;font-size:.85em;text-align:right}
+.l2{font-weight:600}.l3{font-size:.85em;opacity:.85;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:2px 6px}.l3 b{color:var(--gold);font-weight:600}
+.urow{font-size:.82em}.units{margin-top:4px}
+button.mini{background:#2c6b62;color:#fff;font-size:11.5px;padding:5px 8px;border-radius:8px;flex:none}
+.acts.col{flex-direction:column;gap:2px}.sheet .acts button.buyb{flex:none;width:100%;font-size:14px;padding:10px 8px}.sheet .acts button.buyb small{white-space:normal}.acts button small.det{white-space:normal;font-size:10.5px;font-weight:500;opacity:.9}
+button.ghost.cfg{font-size:12.5px;padding:4px;opacity:.9}
+.note2{font-size:.85em;background:#0b242199;border-radius:8px;padding:6px 8px;margin:6px 0}.promo-end{border-left:3px solid var(--gold)}.firesale{border-left:3px solid var(--down)}
+.compact .one{margin:6px 0;font-size:.95em}
+.res{text-align:center}.res .big{font-size:40px;font-weight:800}
+#buyp .acts,#prep .acts{display:flex;gap:8px;margin-top:8px}#buyp .acts button{flex:1}#prep .acts.col button{width:100%;margin:3px 0}
 </style></head><body><div class="wrap" id="app"></div><div id="bar" class="bar"></div><div id="sheet"></div><div id="modal"></div>
 <script src="engine.js"></script>
 <script>
-let D,G,sel=null,sheetAnim=false;const E=Engine;
+let D,G,sel=null,sheetAnim=false,selQ=null,BP=null;const E=Engine;
 const $=(id,h)=>document.getElementById(id).innerHTML=h;
 const fmt=n=>(n<0?'-':'')+Math.round(Math.abs(n)).toLocaleString('vi-VN')+' tr';
 const sgn=n=>{const v=Math.round(n);return (v>0?'+':v<0?'\u2212':'')+Math.abs(v).toLocaleString('vi-VN')+' tr'};
 const flat=n=>Math.abs(+n.toFixed(1))===0; // làm tròn ra 0,0% => đứng giá
 const pc=n=>flat(n)?'đứng giá':(n>=0?'▲ +':'▼ ')+n.toFixed(1)+'%';
 const chc=n=>flat(n)?'flat':n>=0?'up':'down';
+const pr=n=>(Math.round(n*100)/100).toLocaleString('vi-VN')+'%'; // lãi suất, vd 9,5%
+const mTxt=n=>{const v=Math.abs(n);return (v>0&&v<10?(Math.round(v*10)/10):Math.round(v)).toLocaleString('vi-VN')+' tr'}; // số tiền hằng tháng
 const vol=r=>r<0.3?'Biến động thấp':r<0.5?'Biến động vừa':'Biến động cao';
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 async function load(){for(const f of['data/game-data.json','data/sample-data.json']){try{const r=await fetch(f,{cache:'no-cache'});if(r.ok){D=await r.json();return}}catch(e){}}}
-function start(){sel=null;$('bar','');$('modal','');$('sheet','');
- $('app',`<h1>Nhà Đầu Tư Tí Hon</h1><div class="card">Bạn có 8 quý để làm giàu. Mỗi quý có một tin tức, nhưng <b>tin chưa chắc đã đúng</b>: hãy xem nguồn tin rồi quyết định mua, bán, vay hay cho thuê. Chốt quý xong mới biết tin thật hay giả.</div>`+
- D.projects.map(p=>`<div class="card">${p.image?`<img class="hero" src="${p.image}" alt="${esc(p.name)}">`:''}<b>${p.name}</b><br><small>${p.tagline||''} · Vốn ${fmt(p.startCapital)}</small><br><button style="margin-top:8px" onclick="pick('${p.id}')">Chơi dự án này</button></div>`).join('')+
- (localStorage.bdsBest?`<p class="warn">Kỷ lục của bạn: ${localStorage.bdsBest}%</p>`:''))}
+function lenOpts(){return E.quarterOptions(D)}
+function getLen(){const o=lenOpts(),s=+localStorage.bdsLen,d=(D.rules||{}).quarters;return o.includes(s)?s:o.includes(d)?d:o[0]}
+function setLen(q){selQ=q;try{localStorage.bdsLen=q}catch(e){}document.querySelectorAll('#lenChips button').forEach(b=>b.classList.toggle('on',+b.dataset.q===q));const t=document.getElementById('introQ');if(t)t.textContent=q+' quý ('+q/4+' năm)'}
+function start(){sel=null;BP=null;selQ=getLen();$('bar','');$('modal','');$('sheet','');
+ const best=localStorage.bdsBestAnn;
+ $('app',`<h1>Nhà Đầu Tư Tí Hon</h1><div class="card">Bạn có <b id="introQ">${selQ} quý (${selQ/4} năm)</b> để làm giàu. Mỗi quý có một tin tức, nhưng <b>tin chưa chắc đã đúng</b>: hãy xem nguồn tin rồi quyết định mua (có thể vay ngân hàng), bán hay cho thuê. Chốt quý xong mới biết tin thật hay giả.</div>
+ <div class="card"><b>Độ dài ván</b><div class="chips" id="lenChips">${lenOpts().map(q=>`<button class="chipb${q===selQ?' on':''}" data-q="${q}" onclick="setLen(${q})">${q} quý<small>${q/4} năm</small></button>`).join('')}</div><small class="note">Ván dài có thêm tin tức, tình huống, và đủ thời gian để khoản vay hết ưu đãi rồi thả nổi lãi.</small></div>`+
+ D.projects.map(p=>`<div class="card">${p.image?`<img class="hero" src="${p.image}" alt="${esc(p.name)}">`:''}<b>${p.name}</b><br><small>${p.tagline||''} · Vốn ${fmt(p.startCapital)}</small><br><button style="margin-top:8px" data-pick="${p.id}" onclick="pick('${p.id}')">Chơi dự án này</button></div>`).join('')+
+ (best?`<p class="warn">Kỷ lục của bạn: ≈ ${best}%/năm</p>`:''))}
 /* bộ đếm sự kiện ẩn danh (start/finish/zalo/replay): chỉ gửi từ vinhomes.space, không cookie/ID; lỗi thì bỏ qua.
    Tắt khi test: ?test=1 hoặc ?notrack (notrack được nhớ trên máy này; ?notrack=0 để bật lại). */
 const TRACK=(()=>{try{const h=location.hostname,q=new URLSearchParams(location.search);
  if(q.has('notrack')){if(q.get('notrack')==='0')localStorage.removeItem('bdsNoTrack');else localStorage.bdsNoTrack='1'}
  return (h==='vinhomes.space'||h==='www.vinhomes.space')&&!q.has('test')&&!q.has('notrack')&&!localStorage.bdsNoTrack}catch(e){return false}})();
 window._evLog=[];
-function track(e){const p=G&&G.p?G.p.id:'';window._evLog.push(e+(p?':'+p:''));if(!TRACK)return;
- try{const u='/api/ev?e='+e+(p?'&p='+p:'');if(!(navigator.sendBeacon&&navigator.sendBeacon(u)))fetch(u,{method:'POST',keepalive:true}).catch(()=>{})}catch(err){}}
-function pick(id){G=E.newGame(D,id);sel=null;track('start');draw()}
+function track(e,x){const p=G&&G.p?G.p.id:'';let s='e='+e+(p?'&p='+p:'');if(x)for(const k in x)s+='&'+k+'='+encodeURIComponent(x[k]);
+ window._evLog.push(e+(p?':'+p:'')+(x&&x.q?':q'+x.q:''));if(!TRACK)return;
+ try{const u='/api/ev?'+s;if(!(navigator.sendBeacon&&navigator.sendBeacon(u)))fetch(u,{method:'POST',keepalive:true}).catch(()=>{})}catch(err){}}
+function pick(id){G=E.newGame(D,id,undefined,{quarters:selQ||getLen()});sel=null;BP=null;track('start',{q:G.totalQ});draw()}
 // tên ngắn cho ô trên bản đồ
 function short(z){if(z.short)return z.short;let n=z.name.replace(/^(Khu|Dãy|Phân khu)\s+/i,'');n=n[0].toUpperCase()+n.slice(1);
  if(n.length>17){let o='';for(const w of n.split(' ')){if((o+' '+w).trim().length>17)break;o=(o+' '+w).trim()}n=o}
@@ -155,33 +184,56 @@ function tileHTML(z){const r=rectOf(z),o=own(z.id).length,l=leasing(z.id).length
  return `<div class="tile${hot(z)?' hot':''}${sel===z.id?' sel':''}" role="button" tabindex="0" data-zone="${z.id}" style="left:${r.x}%;top:${r.y}%;width:${r.w}%;height:${r.h}%" onclick="openZone('${z.id}')" title="${esc(z.name)}">
  <b>${esc(short(z))}</b><span class="pr">${fmt(z.cur)}${arr}</span>${o?`<em class="own">×${o}</em>`:''}${l?`<em class="lock" title="Đang cho thuê">🔒</em>`:''}</div>`}
 function cardHTML(x){ // dạng thẻ cũ (khi phân khu không có tọa độ bản đồ)
- const o=own(x.id),f=free(x.id),leased=o.filter(u=>u.leaseUntil).length,bp=E.buyPrice(G,x);
+ const o=own(x.id),bq=E.buyQuote(G,x.id),tu=E.sellTarget(G,x.id),sq=tu&&E.sellQuote(G,tu),canRent=free(x.id).some(u=>!u.leaseUntil);
  return `<div class="card zone"><div><div class="nm">${x.name}</div><small>${x.type} · ${vol(x.risk)}</small>
-  ${o.length?`<br><small>Đang giữ ${o.length}${leased?` · ${leased} đang cho thuê`:''}${o.length-f.length-leased>0?` · ${o.length-f.length-leased} đang khóa`:''}</small>`:''}</div>
+  ${o.length?`<br><small>Đang giữ ${o.length}</small>`:''}</div>
   <div class="price">${fmt(x.cur)}<br><small class="${chc(x.last)}">${G.round>1?pc(x.last):''}</small></div>
-  <div class="acts"><button ${G.cash<bp?'disabled':''} onclick="act('buy','${x.id}')">Mua<br>${fmt(bp)}</button>
-  <button class="alt" ${f.length?'':'disabled'} onclick="act('sell','${x.id}')">Bán, nhận<br>${fmt(E.sellValue(G,x))}</button>
-  <button class="alt" ${f.some(u=>!u.leaseUntil)?'':'disabled'} onclick="act('rent','${x.id}')">Cho thuê<br>${rentTxt(E.rentQuote(G,x),E.LEASE_Q)}</button></div></div>`}
+  <div class="acts"><button ${bq.ok?'':'disabled'} onclick="act('buy','${x.id}')">Mua${bq.loan?' · vay '+bq.ltvPct+'%':''}<br>trả trước ${fmt(bq.down)}</button>
+  <button class="alt" ${sq&&sq.ok?'':'disabled'} onclick="act('sell','${x.id}')">Bán, nhận<br>${sq?fmt(sq.net):'—'}</button>
+  <button class="alt" ${canRent?'':'disabled'} onclick="act('rent','${x.id}')">Cho thuê<br>${rentTxt(E.rentQuote(G,x),E.LEASE_Q)}</button></div></div>`}
+/* dòng tiền hằng tháng của một căn: tiền thuê (khi đang cho thuê) và trả góp (3 tháng tới / 3) */
+function flow(u){return {rentM:E.leased(G,u)?E.unitRentQ(G,u)/3:0,gop:E.quarterPreview(G,u).total/3}}
+function flowHTML(u){const {rentM,gop}=flow(u);
+ if(gop>0&&rentM>0){const n=rentM-gop;return `<span class="${n<0?'down':'up'}">Thuê ${mTxt(rentM)} · góp ${mTxt(gop)} · ${n<0?'âm':'dương'} ${mTxt(Math.abs(n))}/tháng</span>`}
+ if(gop>0)return `<span>Góp ${mTxt(gop)}/tháng</span>`;if(rentM>0)return `<span class="up">Thuê ${mTxt(rentM)}/tháng</span>`;return '<span class="flat">Không vay, chưa cho thuê</span>'}
+function promoTxt(u){if(!u.loan)return '';const L=u.loan,left=E.promoLeftMonths(u);
+ return left>0?`<span>Lãi ${L.m<L.promoMonths?'ưu đãi':'cố định'} ${pr(E.loanRateNow(G,u))}/năm</span> <b>còn ${Math.ceil(left/3)} quý hết ưu đãi</b>`:`<span>Lãi thả nổi ${pr(G.baseRate+L.margin)}/năm</span>${L.grace>L.m?` · ân hạn gốc còn ${Math.ceil((L.grace-L.m)/3)} quý`:''}`}
+const instM=()=>G.units.reduce((a,u)=>a+E.quarterPreview(G,u).total,0)/3;
+function portfolioHTML(){if(!G.units.length)return '';
+ return `<div class="card pf" id="pf"><div class="pfh"><b>Danh mục của bạn</b><small>Lãi cơ sở NH ${pr(G.baseRate)}/năm</small></div>`+
+ G.units.map(u=>{const z=E.zone(G,u.zone);return `<div class="pfrow" data-uid="${u.uid}" onclick="openZone('${u.zone}')"><div class="l1"><b>${esc(short(z))}</b><small>${u.loan?'vay còn '+fmt(u.loan.bal):'đã trả đủ'}${E.leased(G,u)?' · 🔒 cho thuê':E.locked(G,u)?' · ⛓ khóa':''}</small></div><div class="l2">${flowHTML(u)}</div>${u.loan?`<div class="l3">${promoTxt(u)}</div>`:''}</div>`}).join('')+`</div>`}
 function draw(){
- const ev=G.ev,mz=G.zones.filter(z=>z.map&&z.map.xPct!=null&&z.map.yPct!=null),cz=G.zones.filter(z=>!mz.includes(z));
- $('app',`<div class="top"><div>Quý<b>${G.round}/${G.Q}</b></div><div>Tài sản ròng<b>${fmt(E.worth(G))}</b></div><div>Tiền mặt<b>${fmt(G.cash)}</b></div><div>Nợ<b>${fmt(G.loan)}</b></div></div>
+ const ev=G.ev,mz=G.zones.filter(z=>z.map&&z.map.xPct!=null&&z.map.yPct!=null),cz=G.zones.filter(z=>!mz.includes(z)),M=G.M;
+ $('app',`<div class="top"><div>Quý<b>${G.round}/${G.totalQ}</b></div><div>Tài sản ròng<b>${fmt(E.worth(G))}</b></div><div>Tiền mặt<b class="${G.cash<0?'down':''}">${fmt(G.cash)}</b></div><div>Nợ<b>${fmt(E.debt(G))}</b></div></div>
  <div class="card news"><div>📰 ${ev.text}</div><div class="src">Nguồn: ${ev.source||'Không rõ'}${ev.kind==='rumor'?' <span class="tag">tin đồn</span>':''}</div>
  ${G.revealed?`<div class="src">🔎 Tin nội bộ: <b>${E.revealText(G)}</b>.</div>`:''}</div>`+
  (G.perks.discount?`<div class="card">🎟️ Suất ưu đãi: lần mua kế tiếp rẻ hơn ${G.perks.discount.pct}% nhưng khóa ${G.perks.discount.lock} quý.</div>`:'')+
+ (G.perks.devSupport?`<div class="card">🏗️ Hỗ trợ lãi suất của chủ đầu tư cho lần mua có vay kế tiếp trong quý: lãi ${pr(G.perks.devSupport.customerRatePctYear||0)} trong ${G.perks.devSupport.months} tháng, giá +${pr(G.perks.devSupport.priceMarkupPct||0)}.</div>`:'')+
  (G.perks.premium?`<div class="card">💰 Có người trả thêm ${G.perks.premium}% nếu bạn bán một căn trong quý này.</div>`:'')+
  (mz.length?`<div class="map" id="map" data-project="${G.p.id}">${mapSVG(mz)}${mz.map(tileHTML).join('')}</div>
  <p class="hint">Chạm vào một phân khu để mua, bán hoặc cho thuê<br><span class="g">Viền vàng</span>: tin quý này nhắc tới · <b style="color:var(--gold)">×1</b> căn đang giữ · 🔒 cho thuê</p>`:'')+
- cz.map(cardHTML).join('')+
- `<p class="warn">Bán mất phí ${Math.round(G.fee*100)}% (đã trừ sẵn trong giá "nhận"). Cho thuê: nhận tiền ${E.LEASE_Q} quý (ước tính theo giá hiện tại), không bán được trong ${E.LEASE_Q} quý đó. Vay tối đa ${Math.round(G.maxLtv*100)}% giá trị nhà đang giữ, lãi ${G.rate}%/quý.<br>${D.disclaimer||''}</p>`);
- const mb=E.maxBorrow(G);
- $('bar',`<button class="alt" ${mb>=100?'':'disabled'} onclick="act('borrow')">Vay ${fmt(Math.min(1000,mb))}</button><button class="alt" ${G.loan>0&&G.cash>0?'':'disabled'} onclick="act('repay')">Trả nợ</button><button class="main" onclick="next()">Chốt quý ▶</button>`);
+ portfolioHTML()+cz.map(cardHTML).join('')+
+ `<p class="warn">Mua có thể vay ngân hàng tới ${M.maxLtvPct}% giá căn: lãi ưu đãi, hết ưu đãi thì thả nổi (lãi cơ sở + biên độ). Mỗi quý trừ 3 tháng trả góp gốc + lãi; mua xong phải còn đủ tiền góp 1 quý (tính theo lãi thả nổi); không đủ tiền góp, ngân hàng phát mại căn thấp hơn giá thị trường ${M.fireSaleDiscountPct}%. Bán mất phí ${Math.round(G.fee*100)}%, trả nợ trước hạn bị phạt theo năm vay. Cho thuê: nhận tiền ${E.LEASE_Q} quý, không bán được trong ${E.LEASE_Q} quý đó. Lãi suất là số tạm để mô phỏng.<br>${D.disclaimer||''}</p>`);
+ const im=instM();
+ $('bar',`<div class="binfo" id="binfo">${im>0?`Trả góp ngân hàng<b>~${mTxt(im)}/tháng</b>`:`Chưa vay<b>ngân hàng</b>`}</div><button class="main" onclick="next()">Chốt quý ▶</button>`);
  document.documentElement.style.setProperty('--barh',document.getElementById('bar').offsetHeight+'px');
  drawSheet();
- if(G.dilemma){const d=G.dilemma;$('modal',`<div class="modal"><div class="card"><h3>⚖️ Tình huống</h3><p>${d.text}</p>${d.options.map((o,i)=>`<button ${i?'class="alt"':''} style="margin:4px" onclick="choose(${i})">${o.label}</button>${dNote(o)}`).join('')}</div></div>`)} else $('modal','');
+ if(G.dilemma){const d=G.dilemma;$('modal',`<div class="modal"><div class="card" id="dilemma"><h3>⚖️ Tình huống</h3><p>${d.text}</p>${d.options.map((o,i)=>`<button ${i?'class="alt"':''} style="margin:4px" onclick="choose(${i})">${o.label}</button>${dNote(o)}`).join('')}</div></div>`)} else if(!BP)$('modal','');
 }
-function dNote(o){const e=o.effect||{};if(!e.rentBonusPct)return '';
- const u=G.units.filter(x=>!E.locked(G,x)).sort((a,b)=>E.zone(G,b.zone).cur-E.zone(G,a.zone).cur)[0];if(!u)return '';
- const z=E.zone(G,u.zone),q=e.lockQuarters||0;return `<small class="dnote">${esc(short(z))}: tiền thuê ${rentTxt(E.rentQuote(G,z,q,e.rentBonusPct),q)} (đã gồm thưởng thuê)</small>`}
+function dNote(o){const e=o.effect||{},out=[];
+ if(e.rentBonusPct){const u=G.units.filter(x=>!E.locked(G,x)).sort((a,b)=>E.zone(G,b.zone).cur-E.zone(G,a.zone).cur)[0];
+  if(u){const z=E.zone(G,u.zone),q=e.lockQuarters||0;out.push(`${esc(short(z))}: tiền thuê ${rentTxt(E.rentQuote(G,z,q,e.rentBonusPct),q)} (đã gồm thưởng thuê)`)}}
+ const top=e.topUpLoan||e.loanAdd||0;
+ if(top){const u=G.units.slice().sort((a,b)=>E.headroom(G,b)-E.headroom(G,a))[0],amt=u?Math.min(top,E.headroom(G,u)):0;
+  if(amt>0)out.push(`Trong game: vay thêm ${fmt(amt)} thế chấp căn ${esc(short(E.zone(G,u.zone)))} (lãi thả nổi, cộng vào khoản vay căn đó)`)}
+ const cut=e.marginCutPct!=null?e.marginCutPct:(e.interestPctPerQuarter!=null?(G.M.legacyRefiMarginCutPct!=null?G.M.legacyRefiMarginCutPct:1):0);
+ if(cut)out.push(cut>0?`biên độ thả nổi các khoản vay hiện có giảm ${pr(cut)}/năm`:`biên độ thả nổi các khoản vay hiện có tăng ${pr(-cut)}/năm`);
+ const bal=E.debt(G);
+ if(e.extendPromo){const x=e.extendPromo;out.push(`khóa lãi ${x.promoRatePctYear!=null?pr(x.promoRatePctYear):'hiện tại'}/năm thêm ${x.months} tháng sau kỳ ưu đãi cho mọi khoản vay${x.feePctOfBalance?`, phí ${pr(x.feePctOfBalance)} dư nợ ≈ ${fmt(bal*x.feePctOfBalance/100)}`:''}`)}
+ if(e.developerSupport){const d=e.developerSupport;out.push(`lần mua có vay kế tiếp trong quý này: lãi ${pr(d.customerRatePctYear||0)} trong ${d.months} tháng${d.grace?', chưa trả gốc':''}, nhưng giá căn cao hơn ${pr(d.priceMarkupPct||0)}; hết hỗ trợ thì thả nổi`)}
+ if(e.graceMonths)out.push(`${e.graceMonths} tháng tới chỉ trả lãi, chưa trả gốc`);
+ if(e.setTermYears)out.push(`thời hạn các khoản vay thành ${e.setTermYears} năm, góp mỗi tháng ít hơn nhưng tổng lãi nhiều hơn`);
+ return out.length?`<small class="dnote">${out.join('; ')}.</small>`:''}
 /* ---------- bottom sheet ---------- */
 function openZone(id){sel=id;sheetAnim=true;draw()}
 function closeSheet(){sel=null;$('sheet','');document.querySelectorAll('.tile.sel').forEach(t=>t.classList.remove('sel'))}
@@ -198,65 +250,98 @@ function chart(z){const h=z.hist||[z.cur];if(h.length<2)return `<div class="chip
  s+=`<text x="${W-pr}" y="10" font-size="9" fill="#ffffffaa" text-anchor="end">cao nhất ${fmt(hi)} · thấp nhất ${fmt(lo)}</text></svg>`;return s}
 function drawSheet(){if(!sel||!G||G.done){$('sheet','');return}
  const z=E.zone(G,sel);if(!z){$('sheet','');return}
- const o=own(z.id),f=free(z.id),ls=leasing(z.id),lk=o.filter(u=>E.locked(G,u)&&!ls.includes(u)),bp=E.buyPrice(G,z),canRent=f.some(u=>!u.leaseUntil);
+ const o=own(z.id),f=free(z.id),ls=leasing(z.id),lk=o.filter(u=>E.locked(G,u)&&!ls.includes(u)),canRent=f.some(u=>!u.leaseUntil);
  const left=ls.reduce((a,u)=>a+E.rentQuote(G,z,u.leaseUntil-G.round,u.rentBonus||0),0),lq=ls.length?Math.max(...ls.map(u=>u.leaseUntil-G.round)):0;
+ const bq=E.buyQuote(G,z.id),tu=E.sellTarget(G,z.id),sq=tu?E.sellQuote(G,tu):null,disc=G.perks.discount?' (−'+G.perks.discount.pct+'%)':'';
  const a=sheetAnim?' anim':'';sheetAnim=false;
+ const units=o.map((u,i)=>`<div class="urow" data-uid="${u.uid}"><div class="l1"><b>Căn ${i+1}</b><small>mua ${fmt(u.cost)}${u.loan?' · vay còn '+fmt(u.loan.bal):' · không vay'}${E.leased(G,u)?' · 🔒 đang cho thuê':E.locked(G,u)?' · ⛓ đang khóa':''}</small></div>
+  <div class="l2">${flowHTML(u)}</div>${u.loan?`<div class="l3"><span>${promoTxt(u)}</span><button class="mini" data-prepay="${u.uid}" onclick="askPrepay(${u.uid})">Trả bớt nợ</button></div>`:''}</div>`).join('');
+ const buyB=`<button data-act="buy" class="buyb" data-ltv="${bq.ltvPct}" ${bq.ok?'':'disabled'} onclick="act('buy','${z.id}')">${bq.loan?`Mua${disc} · vay ${bq.ltvPct}% · góp ~${mTxt(bq.firstMonth.total)}/tháng`:`Mua${disc} bằng tiền mặt ${fmt(bq.price)}`}<small>${bq.ok?(bq.loan?`Trả trước ${fmt(bq.down)} · vay ${fmt(bq.loan)}, ${bq.termYears} năm, ${esc(bq.pkg.name)}`:`Giá ${fmt(bq.price)}`):buyWhy(bq)}</small></button>`;
+ const sellDet=sq?(sq.debt?`giá ${fmt(sq.gross+sq.fee)} − phí ${fmt(sq.fee)} − trả nợ ${fmt(sq.debt)}${sq.penalty?` − phạt ${fmt(sq.penalty)}`:''}`:`đã trừ phí ${Math.round(G.fee*100)}%`):'';
  $('sheet',`<div class="dim${a}" onclick="closeSheet()"></div><div class="sheet${a}" id="zsheet" role="dialog" aria-label="${esc(z.name)}"><div class="grab"></div><button class="x" onclick="closeSheet()" aria-label="Đóng">✕</button>
  <div class="hd"><div><b>${esc(z.name)}</b><br><small>${z.type} · ${vol(z.risk)}</small></div><div style="text-align:right"><b>${fmt(z.cur)}</b><br><small class="${chc(z.last)}">${G.round>1?pc(z.last)+' quý trước':'Giá mở bán'}</small></div></div>
  ${chart(z)}
- <div>${hot(z)?'<span class="chip hotc">📰 Tin quý này nhắc tới phân khu này</span>':''}<span class="chip">Bạn đang giữ ${o.length} căn</span>${ls.length?`<span class="chip">🔒 ${ls.length} căn đang cho thuê · còn nhận ${rentTxt(left,lq)}</span>`:''}${lk.length?`<span class="chip">⛓ ${lk.length} căn khóa chuyển nhượng · còn ${Math.max(...lk.map(u=>u.lockUntil-G.round))} quý</span>`:''}${G.perks.discount?`<span class="chip">🎟️ Mua rẻ hơn ${G.perks.discount.pct}%, khóa ${G.perks.discount.lock} quý</span>`:''}</div>
- <div class="acts">${buyBtn(z,bp)}
- <button data-act="sell" class="alt" ${f.length?'':'disabled'} onclick="act('sell','${z.id}')">Bán, nhận<small>${fmt(E.sellValue(G,z))}</small>${f.length?'':why(z,'sell')}</button>
+ <div>${hot(z)?'<span class="chip hotc">📰 Tin quý này nhắc tới phân khu này</span>':''}<span class="chip">Bạn đang giữ ${o.length} căn</span>${ls.length?`<span class="chip">🔒 còn nhận ${rentTxt(left,lq)}</span>`:''}${lk.length?`<span class="chip">⛓ ${lk.length} căn khóa chuyển nhượng · còn ${Math.max(...lk.map(u=>u.lockUntil-G.round))} quý</span>`:''}${G.perks.discount?`<span class="chip">🎟️ Mua rẻ hơn ${G.perks.discount.pct}%, khóa ${G.perks.discount.lock} quý</span>`:''}</div>
+ ${units?`<div class="units">${units}</div>`:''}
+ <div class="acts col">${buyB}<button class="ghost cfg" id="buycfg" onclick="openBuy('${z.id}')">Tùy chỉnh khoản vay (tỷ lệ vay, thời hạn, gói) ›</button></div>
+ <div class="acts"><button data-act="sell" class="alt" ${sq&&sq.ok?'':'disabled'} onclick="act('sell','${z.id}')">Bán, nhận ${sq?fmt(sq.net):''}<small class="det">${sellDet}</small>${!tu?why(z,'sell'):(!sq.ok?'<small class="why">Tiền bán không đủ trả nợ ngân hàng</small>':'')}</button>
  <button data-act="rent" class="alt" ${canRent?'':'disabled'} onclick="act('rent','${z.id}')">Cho thuê<small>${rentTxt(E.rentQuote(G,z),E.LEASE_Q)}</small>${canRent?'':why(z,'rent')}</button></div></div>`)}
-/* mua thiếu tiền: vay đúng phần thiếu (làm tròn lên bước 100 tr như engine) nếu hạn mức vay hiện tại đủ */
-const LOAN_STEP=100;
-function loanPlan(z){const bp=E.buyPrice(G,z),short=bp-G.cash;if(short<=0)return null;
- const loan=Math.ceil(short/LOAN_STEP)*LOAN_STEP,head=E.maxBorrow(G); // hạn mức = đúng số nút Vay có thể vay lúc này (căn sắp mua chưa tính làm tài sản đảm bảo)
- return {bp,short,loan,head,ok:loan<=head,interest:loan*G.rate/100}}
-const rateTxt=()=>G.rate.toLocaleString('vi-VN')+'%/quý';
-function buyBtn(z,bp){const L=loanPlan(z),disc=G.perks.discount?' (−'+G.perks.discount.pct+'%)':'';
- if(!L)return `<button data-act="buy" onclick="act('buy','${z.id}')">Mua${disc}<small>${fmt(bp)}</small></button>`;
- if(L.ok)return `<button data-act="buy" data-loan="${L.loan}" data-interest="${Math.round(L.interest)}" class="loanbuy" onclick="askLoanBuy('${z.id}')"><small class="why">Thiếu ${fmt(L.short)}</small>Vay ${fmt(L.loan)} và mua<small>lãi ${fmt(L.interest)}/quý</small></button>`;
- return `<button data-act="buy" disabled>Mua${disc}<small>${fmt(bp)}</small><small class="why">Thiếu ${fmt(L.short)} · vay tối đa được ${fmt(L.head)}</small></button>`}
-function askLoanBuy(id){const z=E.zone(G,id),L=loanPlan(z);if(!L||!L.ok)return;
- $('modal',`<div class="modal" id="loanask"><div class="card"><h3>💳 Vay để mua?</h3><p>Vay ${fmt(L.loan)} và mua · lãi ${fmt(L.interest)}/quý (lãi ${rateTxt()})<br><small style="opacity:.8">${esc(z.name)} giá ${fmt(L.bp)}, bạn đang thiếu ${fmt(L.short)}. Nợ sau khi vay: ${fmt(G.loan+L.loan)}.</small></p>
- <button id="loanok" style="margin:4px" onclick="loanBuy('${id}')">Vay ${fmt(L.loan)} và mua</button><button class="alt" style="margin:4px" onclick="$('modal','')">Thôi</button></div></div>`)}
-function loanBuy(id){const z=E.zone(G,id),L=loanPlan(z);$('modal','');if(L&&L.ok&&E.borrow(G,L.loan))E.buy(G,id);draw()}
+function buyWhy(q){return q.why==='down'?`Thiếu ${fmt(q.down-G.cash)} tiền trả trước (cần ${fmt(q.down)})`:`Cần giữ lại ~${fmt(q.reserve)} để trả góp ${q.reserveQuarters>1?q.reserveQuarters+' quý':'1 quý'} (tính theo lãi thả nổi)`}
 function why(z,k){const o=own(z.id);if(!o.length)return '<small class="why">Chưa có căn</small>';
  const ls=o.filter(u=>u.leaseUntil&&u.leaseUntil>G.round),lk=o.filter(u=>E.locked(G,u));
  if(k==='rent'&&ls.length===o.length)return `<small class="why">Đang cho thuê, còn ${Math.min(...ls.map(u=>u.leaseUntil-G.round))} quý</small>`;
- const n=Math.min(...lk.map(u=>u.lockUntil-G.round));
+ if(!lk.length)return '';const n=Math.min(...lk.map(u=>u.lockUntil-G.round));
  return `<small class="why">${lk.some(u=>u.leaseUntil)?'Đang cho thuê':'Đang khóa'}, mở lại sau ${n} quý</small>`}
-function act(k,id){if(k==='buy')E.buy(G,id);if(k==='sell')E.sell(G,id);if(k==='rent')E.rent(G,id);if(k==='borrow')E.borrow(G,Math.min(1000,E.maxBorrow(G)));if(k==='repay')E.repay(G,Math.min(G.loan,G.cash));draw()}
+/* ---------- bảng tùy chỉnh khoản vay ---------- */
+function ltvChoices(){const m=E.maxLtv(G);return [...new Set(G.M.ltvOptionsPct.filter(x=>x<=m).concat([m]))].sort((a,b)=>a-b)}
+function devPkg(){const d=G.perks.devSupport;return {id:E.DEV_ID,name:'Hỗ trợ lãi suất của chủ đầu tư',bank:`giá +${pr(d.priceMarkupPct||0)}${d.grace?', ân hạn gốc':''}`,promoRatePctYear:d.customerRatePctYear||0,promoMonths:d.months||0,floatMarginPct:G.M.packages[0].floatMarginPct}}
+function openBuy(id){const M=G.M;BP={id,ltv:Math.min(M.defaultLtvPct,E.maxLtv(G)),term:M.defaultTermYears,pkg:G.perks.devSupport?E.DEV_ID:M.packages[0].id};drawBuy()}
+function closeModal(){BP=null;$('modal','')}
+function drawBuy(){if(!BP)return;const M=G.M,z=E.zone(G,BP.id),q=E.buyQuote(G,BP.id,{ltvPct:BP.ltv,termYears:BP.term,pkgId:BP.pkg});
+ const style=M.repayment==='annuity'?'góp đều hằng tháng':'gốc chia đều, lãi tính trên dư nợ giảm dần';
+ $('modal',`<div class="modal" id="buyp"><div class="card"><h3>🏦 Mua ${esc(z.name)}</h3><div class="row"><span>Giá mua</span><b>${fmt(q.price)}</b></div>
+ <div class="lab">Tỷ lệ vay</div>${q.capped?`<small class="note">Ngân hàng đang siết tín dụng: vay tối đa ${q.maxLtvPct}% (bình thường ${M.maxLtvPct}%).</small>`:''}<div class="chips">${ltvChoices().map(v=>`<button class="chipb${v===q.ltvPct?' on':''}" data-ltv="${v}" onclick="BP.ltv=${v};drawBuy()">${v?v+'%':'Không vay'}</button>`).join('')}</div>
+ ${q.loan?`<div class="lab">Thời hạn vay</div><div class="chips">${M.termYearsOptions.map(t=>`<button class="chipb${t===q.termYears?' on':''}" data-term="${t}" onclick="BP.term=${t};drawBuy()">${t} năm</button>`).join('')}</div>
+ <div class="lab">Gói vay</div><div class="chips col">${(G.perks.devSupport?[devPkg()]:[]).concat(M.packages).map(k=>`<button class="chipb pk${k.id===q.pkg.id?' on':''}" data-pkg="${k.id}" onclick="BP.pkg='${k.id}';drawBuy()">${esc(k.name)}<small>${k.bank?esc(k.bank)+' · ':''}${pr(k.promoRatePctYear)} × ${k.promoMonths} tháng, rồi cơ sở + ${pr(k.floatMarginPct)}</small></button>`).join('')}</div>`:''}
+ <div class="sum"><div class="row"><span>Tiền mặt trả trước</span><b>${fmt(q.down)}</b></div>
+ ${q.loan?`<div class="row"><span>Số vay</span><b>${fmt(q.loan)}</b></div>
+ <div class="row"><span>Lãi suất</span><b>${pr(q.promoRate)}/năm trong ${q.promoMonths} tháng</b></div><small class="note" style="display:block;text-align:right">rồi thả nổi ≈ ${pr(q.floatRate)}/năm (lãi cơ sở ${pr(q.base)} + biên độ ${pr(q.margin)})</small>
+ ${q.reserve>0?`<div class="row"><span>Cần giữ lại để góp 1 quý</span><b>${fmt(q.reserve)}</b></div>`:''}
+<div class="row"><span>Trả góp tháng đầu</span><b id="bpm">≈ ${mTxt(q.firstMonth.total)}/tháng</b></div>
+ <small class="note">Gốc ${mTxt(q.firstMonth.p)} + lãi ${mTxt(q.firstMonth.i)} (${style}${M.graceMonths?`, ân hạn gốc ${M.graceMonths} tháng`:''}). Mỗi quý trừ 3 tháng trả góp, quý đầu ≈ ${fmt(q.firstQuarter.total)}. Bán căn hoặc trả nợ trước hạn: phạt ${M.prepayPenaltyPctByYear.map(pr).join(' / ')} dư nợ theo năm vay thứ 1 / 2 / …</small>`:''}</div>
+ ${q.ok?'':`<p class="down" id="bpshort">${buyWhy(q)}. ${q.why==='down'?'Hãy tăng tỷ lệ vay hoặc bán bớt căn khác.':'Hãy giảm tỷ lệ vay, chọn căn rẻ hơn hoặc bán bớt căn khác.'}</p>`}
+ <div class="acts"><button id="buyok" ${q.ok?'':'disabled'} onclick="confirmBuy()">Mua${q.loan?' · vay '+fmt(q.loan):''}</button><button class="alt" onclick="closeModal()">Thôi</button></div></div></div>`)}
+function confirmBuy(){if(!BP)return;const o={ltvPct:BP.ltv,termYears:BP.term,pkgId:BP.pkg},id=BP.id;BP=null;$('modal','');E.buy(G,id,o);draw()}
+/* ---------- trả bớt nợ ---------- */
+function askPrepay(uid){const u=E.unit(G,uid);if(!u||!u.loan)return;const bal=u.loan.bal,pct=E.penaltyPct(G,u),z=E.zone(G,u.zone);
+ const b=(amt,label,cls)=>{const q=E.prepayQuote(G,uid,amt);return `<button class="${cls||'alt'}" data-amt="${Math.round(q.amount)}" ${q.ok?'':'disabled'} onclick="doPrepay(${uid},${amt})">${label}<small>cần ${fmt(q.total)} tiền mặt${q.penalty?` (gồm phạt ${fmt(q.penalty)})`:''}</small></button>`};
+ $('modal',`<div class="modal" id="prep"><div class="card"><h3>💸 Trả bớt nợ</h3><p>${esc(z.name)}: dư nợ ${fmt(bal)}, đang góp ~${mTxt(E.quarterPreview(G,u).total/3)}/tháng. Phạt trả trước hạn ${pr(pct)} (năm vay thứ ${Math.floor(u.loan.m/12)+1}). Trả bớt thì tiền góp hằng tháng giảm.</p>
+ <div class="acts col">${[200,500,1000].filter(x=>x<bal-0.5).map(x=>b(x,'Trả '+fmt(x))).join('')}${b(bal,'Tất toán '+fmt(bal),'')}<button class="ghost" onclick="closeModal()">Thôi</button></div></div></div>`)}
+function doPrepay(uid,amt){$('modal','');E.prepay(G,uid,amt);draw()}
+function act(k,id){if(k==='buy')E.buy(G,id);if(k==='sell')E.sell(G,id);if(k==='rent')E.rent(G,id);draw()}
 function choose(i){E.choose(G,i);draw()}
-function next(){sel=null;$('sheet','');showQuarter(E.endQuarter(G))}
-function showQuarter(r){const p=Math.round(r.pnl);
- $('bar','');$('modal',`<div class="modal"><div class="card" id="qpop"><div class="pnl" id="pnl"><small>Quý này bạn ${p>0?'lời':p<0?'lỗ':'hòa vốn'}</small><div class="big ${p>=0?'up':'down'}">${sgn(r.pnl)}</div><small class="sub">Tài sản ròng: ${fmt(r.worth-r.pnl)} → ${fmt(r.worth)} (đã gồm tiền thuê, lãi vay, giá nhà)</small></div>
+function next(){sel=null;BP=null;$('sheet','');showQuarter(E.endQuarter(G))}
+function showQuarter(r){const p=Math.round(r.pnl),zn=id=>esc(short(E.zone(G,id)));
+ const pnl=`<div class="pnl" id="pnl"><small>Quý này bạn ${p>0?'lời':p<0?'lỗ':'hòa vốn'}</small><div class="big ${p>=0?'up':'down'}">${sgn(r.pnl)}</div><small class="sub">Tài sản ròng: ${fmt(r.worth-r.pnl)} → ${fmt(r.worth)} (gồm giá nhà, tiền thuê, lãi vay; tiền trả gốc không tính là lỗ)</small></div>`;
+ const rentRow=r.rent?`<div class="row"><span>Tiền thuê nhận</span><span class="up">+${fmt(r.rent)}</span></div>`:'';
+ const pay=r.pay.total>0?`<div class="row" id="payrow" data-total="${Math.round(r.pay.total)}" data-p="${Math.round(r.pay.p)}" data-i="${Math.round(r.pay.i)}"><span>Trả góp ngân hàng</span><span class="down r">−${fmt(r.pay.total)}<br><small>gốc ${fmt(r.pay.p)}, lãi ${fmt(r.pay.i)}</small></span></div>`:'';
+ const debt=E.debt(G),notes=r.promoEnds.map(x=>`<p class="note2 promo-end">⏰ <b>Hết ưu đãi:</b> lãi căn ${zn(x.zone)} tăng từ ${pr(x.from)} lên ${pr(x.to)}/năm từ quý sau.</p>`)
+  .concat(r.baseEvent||(debt>0&&Math.abs(r.baseTo-r.baseFrom)>=0.1)?[`<p class="note2 base">🏦 Lãi cơ sở ngân hàng: ${pr(r.baseFrom)} → ${pr(r.baseTo)}/năm${r.baseEvent?' (theo tin quý này)':''}${debt>0?', áp dụng cho khoản vay đã hết ưu đãi từ quý sau':''}.</p>`]:[])
+  .concat(r.fireSales.map(x=>`<p class="note2 firesale">🚨 <b>Không đủ tiền trả góp</b>, ngân hàng phát mại căn ${zn(x.zone)}: bán ${fmt(x.price)} (thấp hơn thị trường ${G.M.fireSaleDiscountPct}%), trừ phí, trả nợ ${fmt(x.debt)}${x.penalty?` và phạt trả trước ${fmt(x.penalty)}`:''}, bạn còn nhận ${fmt(x.net)}.</p>`))
+  .concat(G.cash<0?[`<p class="note2 firesale">⚠️ Tiền mặt đang âm ${fmt(-G.cash)}: bán các căn còn lại cũng không đủ trả nợ ngân hàng. Hãy bán bớt hoặc cho thuê để bù.</p>`]:[])
+  .concat(r.ltvCap?[`<p class="note2 base">🏦 Ngân hàng hạ tỷ lệ cho vay tối đa còn ${r.ltvCap.pct}% giá căn cho khoản vay mới, trong ${r.ltvCap.until-r.round} quý tới.</p>`]:[]).join('');
+ const btn=`<button id="qnext" style="margin-top:10px;width:100%" onclick="${G.done?'end()':'draw()'}">${G.done?'Xem kết quả':r.quiet?'Tiếp ▶':'Sang quý '+G.round+' ▶'}</button>`;
+ $('bar','');
+ if(r.quiet){$('modal',`<div class="modal"><div class="card compact" id="qpop">${pnl}<p class="one">${r.truth?'✅':'❌'} ${esc(r.ev.text)} <small>(tin ${r.truth?'thật':'giả'}, giá gần như đi ngang)</small></p>${rentRow}${pay}${notes}${btn}</div></div>`);return}
+ $('modal',`<div class="modal"><div class="card" id="qpop">${pnl}
  <h3>${r.truth?'✅ Tin là THẬT':'❌ Tin là GIẢ'}</h3><p style="opacity:.85">${r.ev.text}<br><small>Nguồn: ${r.ev.source||''}</small></p>
  ${G.zones.map(z=>`<div class="row"><span>${z.name}</span><span class="${chc(z.last)}">${pc(z.last)}</span></div>`).join('')}
- ${r.rent?`<div class="row"><span>Tiền thuê nhận</span><span class="up">+${fmt(r.rent)}</span></div>`:''}
- ${r.interest?`<div class="row"><span>Lãi vay phải trả</span><span class="down">-${fmt(r.interest)}</span></div>`:''}
- ${r.forced?`<p class="down">Hết tiền mặt nên phải bán gấp ${r.forced} căn.</p>`:''}
- <button style="margin-top:10px;width:100%" onclick="${G.done?'end()':'draw()'}">${G.done?'Xem kết quả':'Sang quý '+G.round+' ▶'}</button></div></div>`)}
-function end(){sel=null;$('sheet','');$('modal','');$('bar','');if(!G._fin){G._fin=1;track('finish')}const R=E.result(G),t=R.title,pct=R.profitPct;
- const best=parseFloat(localStorage.bdsBest||'-1e9');if(pct>best)localStorage.bdsBest=pct.toFixed(1);
+ ${rentRow}${pay}${notes}${btn}</div></div>`)}
+const sp=n=>(n>=0?'+':'\u2212')+Math.abs(n).toFixed(1)+'%';
+function end(){sel=null;BP=null;$('sheet','');$('modal','');$('bar','');if(!G._fin){G._fin=1;track('finish',{q:G.totalQ})}const R=E.result(G),t=R.title,pct=R.profitPct,ann=R.annualPct;
+ const best=parseFloat(localStorage.bdsBestAnn||'-1e9');if(ann>best)localStorage.bdsBestAnn=ann.toFixed(1);
  const c=D.cta||{};
  $('app',`<canvas id="cv" width="1080" height="1080" style="width:100%;border-radius:14px;margin-top:8px"></canvas>
- <div class="card"><div class="row"><span>Số giao dịch</span><b>${R.trades}</b></div><div class="row"><span>Tiền thuê đã nhận</span><b>${fmt(G.stats.rent)}</b></div><div class="row"><span>Đoán đúng hướng tin</span><b>${Math.round(R.rumorCallPct)}%</b></div></div>
+ <div class="card res" id="res"><div class="big ${pct>=0?'up':'down'}">${sp(pct)}</div><div>sau ${G.totalQ} quý (${G.totalQ/4} năm) · <b>≈ ${sp(ann)}/năm</b></div></div>
+ <div class="card"><div class="row"><span>Tài sản ròng cuối ván</span><b>${fmt(R.worth)}</b></div><div class="row"><span>Số giao dịch</span><b>${R.trades}</b></div><div class="row"><span>Tiền thuê đã nhận</span><b>${fmt(G.stats.rent)}</b></div>
+ <div class="row"><span>Lãi ngân hàng đã trả</span><b id="rint">${fmt(R.interestPaid)}</b></div>${R.penalties>0?`<div class="row"><span>Phạt trả nợ trước hạn</span><b>${fmt(R.penalties)}</b></div>`:''}
+ <div class="row"><span>Dư nợ còn lại</span><b id="rdebt">${fmt(R.debt)}</b></div>${R.fireSales?`<div class="row"><span>Căn bị ngân hàng phát mại</span><b class="down">${R.fireSales}</b></div>`:''}
+ <div class="row"><span>Đoán đúng hướng tin</span><b>${Math.round(R.rumorCallPct)}%</b></div></div>
  <a id="zalo" href="${c.zaloUrl||'#'}" target="_blank" rel="noopener" onclick="track('zalo')"><button style="width:100%;font-size:1.15em;padding:14px">${c.label||'Nhắn Zalo tư vấn'}</button></a>
  <div style="text-align:center;margin-top:6px"><button class="ghost" onclick="share()">Chia sẻ</button><button class="ghost" onclick="saveImg()">Tải ảnh</button>${c.formUrl?`<a href="${c.formUrl}" target="_blank" rel="noopener"><button class="ghost">Để lại thông tin</button></a>`:''}<button class="ghost" id="replay" onclick="track('replay');start()">Chơi lại</button></div>
- <p class="warn">${D.disclaimer||''}</p>`);drawCard(t,pct);window._res={t,pct}}
-function drawCard(t,pct){const c=document.getElementById('cv'),x=c.getContext('2d');
+ <p class="warn">${D.disclaimer||''}</p>`);drawCard(t,pct,ann);window._res={t,pct,ann}}
+function drawCard(t,pct,ann){const c=document.getElementById('cv'),x=c.getContext('2d');
  const g=x.createLinearGradient(0,0,1080,1080);g.addColorStop(0,'#0f2e2a');g.addColorStop(1,'#2c6b62');x.fillStyle=g;x.fillRect(0,0,1080,1080);
  x.fillStyle='#e7b84b';x.fillRect(80,80,920,8);x.textAlign='center';x.fillStyle='#f3f7f5';
  x.font='600 44px system-ui';x.fillText('NHÀ ĐẦU TƯ TÍ HON',540,200);x.font='36px system-ui';x.fillText(G.p.name,540,260);
- x.fillStyle='#e7b84b';x.font='bold 84px system-ui';wrap(x,t.name,540,450,900,96);
- x.fillStyle='#f3f7f5';x.font='40px system-ui';wrap(x,t.desc,540,640,880,52);
- x.font='bold 120px system-ui';x.fillStyle=pct>=0?'#8fe3a1':'#ff9b8a';x.fillText((pct>=0?'+':'')+pct.toFixed(1)+'%',540,870);
- x.fillStyle='#f3f7f5';x.font='30px system-ui';x.fillText('Bạn là nhà đầu tư kiểu gì? Chơi thử ngay!',540,960);x.font='22px system-ui';x.globalAlpha=.7;x.fillText('Game mô phỏng, giá không phải giá thật',540,1010);x.globalAlpha=1}
+ x.fillStyle='#e7b84b';x.font='bold 84px system-ui';wrap(x,t.name,540,440,900,96);
+ x.fillStyle='#f3f7f5';x.font='40px system-ui';wrap(x,t.desc,540,620,880,52);
+ x.font='bold 120px system-ui';x.fillStyle=pct>=0?'#8fe3a1':'#ff9b8a';x.fillText(sp(pct),540,840);
+ x.fillStyle='#f3f7f5';x.font='38px system-ui';x.fillText(`sau ${G.totalQ} quý · ≈ ${sp(ann)}/năm`,540,905);
+ x.font='30px system-ui';x.fillText('Bạn là nhà đầu tư kiểu gì? Chơi thử ngay!',540,975);x.font='22px system-ui';x.globalAlpha=.7;x.fillText('Game mô phỏng, giá và lãi suất không phải số thật',540,1025);x.globalAlpha=1}
 function wrap(x,t,cx,y,w,lh){const ws=t.split(' ');let l='',ls=[];ws.forEach(v=>{const tt=l?l+' '+v:v;if(x.measureText(tt).width>w){ls.push(l);l=v}else l=tt});ls.push(l);ls.forEach((v,i)=>x.fillText(v,cx,y+i*lh))}
 function saveImg(){const a=document.createElement('a');a.download='nha-dau-tu-ti-hon.png';a.href=document.getElementById('cv').toDataURL('image/png');a.click()}
-async function share(){const {t,pct}=window._res,txt=`Mình là "${t.name}" (${pct>=0?'+':''}${pct.toFixed(1)}%) trong game Nhà Đầu Tư Tí Hon! Bạn là nhà đầu tư kiểu gì?`;
+async function share(){const {t,pct,ann}=window._res,txt=`Mình là "${t.name}" (${sp(pct)} sau ${G.totalQ} quý, ≈ ${sp(ann)}/năm) trong game Nhà Đầu Tư Tí Hon! Bạn là nhà đầu tư kiểu gì?`;
  try{const b=await new Promise(r=>document.getElementById('cv').toBlob(r));const f=new File([b],'ket-qua.png',{type:'image/png'});
   if(navigator.canShare&&navigator.canShare({files:[f]}))return navigator.share({files:[f],text:txt+' '+location.href});
   if(navigator.share)return navigator.share({title:'Nhà Đầu Tư Tí Hon',text:txt,url:location.href})}catch(e){}

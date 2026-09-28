@@ -1,15 +1,654 @@
 {
-  "_note": "GIA MO PHONG (don vi: trieu dong), khong phai gia chao ban that. v2: tin don co do tin cay, danh hieu theo phong cach choi, tinh huong A/B.",
-  "version": 2,
+  "_note": "GIA MO PHONG (don vi: trieu dong), khong phai gia chao ban that. v2: tin don co do tin cay, danh hieu, tinh huong A/B. v3 (data): rules.mortgage (vay ngan hang theo tung can, nguon cong khai 28/09/2026), 65 su kien (co baseRateChangePct, phase mid), dilemmas + mortgageDilemmas, minAnnualProfitPct. Engine v2 van chay duoc (dung rules.loan).",
+  "version": 3,
   "disclaimer": "Giá và tin tức trong game chỉ là mô phỏng để giải trí, không phải giá chào bán hay thông tin chính thức của dự án.",
   "rules": {
     "quarters": 8,
     "sellFeePct": 2,
     "loan": {
       "maxLtvPct": 50,
-      "interestPctPerQuarter": 2.5
+      "interestPctPerQuarter": 2.5,
+      "_note": "LEGACY (engine v2 dang chay live): vay tong theo LTV tren tai san, lai %/quy. Giu nguyen cho den khi engine v3 dung rules.mortgage. Khong xoa."
     },
-    "_flow": "Dau quy: hien tin (co do tin cay). Nguoi choi mua/ban/vay/cho thue. Bam Sang quy: tung xac suat reliability, dung thi ap change, sai thi ap falseChange, roi moi hien gia moi kem mui ten."
+    "mortgage": {
+      "_note": "Lãi suất, tỷ lệ cho vay và phí trong game chỉ mang tính minh họa, được tổng hợp từ thông tin công khai (báo chí, trang ngân hàng, chính sách bán hàng) tại ngày truy cập 28/09/2026. Không phải biểu lãi suất chính thức hay lời chào vay của bất kỳ ngân hàng nào; điều kiện thực tế do ngân hàng quyết định theo từng hồ sơ.",
+      "_status": "Chua dung trong engine v2. Engine v3 (Grok Bot) doc cac truong nay khi rules.loanModel = \"mortgage\".",
+      "maxLtvPct": 70,
+      "defaultLtvPct": 70,
+      "ltvOptionsPct": [
+        0,
+        30,
+        50,
+        60,
+        70
+      ],
+      "termYearsOptions": [
+        10,
+        15,
+        20,
+        25
+      ],
+      "defaultTermYears": 20,
+      "packages": [
+        {
+          "id": "mkt-12",
+          "name": "Cố định 12 tháng · mặt bằng thị trường",
+          "bank": "Tham khảo nhiều ngân hàng",
+          "promoRatePctYear": 9.5,
+          "promoMonths": 12,
+          "floatMarginPct": 3.5,
+          "_basis": "Trung vi ky co dinh 12 thang thang 9/2026: Agribank 8,5; Vietcombank 9,9; BIDV 10,0-10,1 (goi thuong) / 9,5 (goi Ngoi nha dau tien); Techcombank 8,5-9,5; MB 9-9,5. Bien do 3,5 = can tren khao sat VARS 3,3-3,5."
+        },
+        {
+          "id": "agri-6",
+          "name": "Lãi thấp 6 tháng",
+          "bank": "Agribank",
+          "promoRatePctYear": 8,
+          "promoMonths": 6,
+          "floatMarginPct": 3.5
+        },
+        {
+          "id": "agri-18",
+          "name": "Cố định 18 tháng",
+          "bank": "Agribank",
+          "promoRatePctYear": 9.8,
+          "promoMonths": 18,
+          "floatMarginPct": 3.5
+        },
+        {
+          "id": "vcb-12",
+          "name": "Cố định 12 tháng",
+          "bank": "Vietcombank",
+          "promoRatePctYear": 9.9,
+          "promoMonths": 12,
+          "floatMarginPct": 3.5
+        },
+        {
+          "id": "bidv-24",
+          "name": "Cố định 24 tháng",
+          "bank": "BIDV",
+          "promoRatePctYear": 10.5,
+          "promoMonths": 24,
+          "floatMarginPct": 3.5,
+          "_basis": "Goi \"Ngoi nha dau tien\" (30.000 ty): 9,5%/12t, 10%/18t, 10,5%/24t; thuc te chi ap dung nhu cau o thuc, khong cho dau tu - game chi dung de minh hoa ky co dinh dai."
+        },
+        {
+          "id": "sacom-12",
+          "name": "Cố định từ 12 tháng · đối tác dự án",
+          "bank": "Sacombank",
+          "promoRatePctYear": 10.5,
+          "promoMonths": 12,
+          "floatMarginPct": 3.5,
+          "_basis": "Sacombank: goi co dinh 12-36 thang tu 10,5%/nam cho BDS Vinhomes (26/6-31/12/2026), vay toi da 80%, an han goc toi da 36 thang, mien phi tra truoc han tu nam thu 5."
+        }
+      ],
+      "_packageNote": "floatMarginPct cua tung ngan hang khong duoc cong bo cong khai; game dung 3,5 (khao sat VARS 9/2026: bien do pho bien 3,3-3,5%/nam). Lai tha noi = baseRatePctYear + floatMarginPct.",
+      "baseRatePctYear": 9.5,
+      "baseRateMinPct": 6.5,
+      "baseRateMaxPct": 13,
+      "baseRateDriftPctPerQuarter": 0.1,
+      "_baseRateNote": "baseRatePctYear = \"lai suat co so\" minh hoa. Suy ra: lai tha noi sau uu dai pho bien 13-15%/nam (VARS 9/2026) tru bien do 3,3-3,5 => ~9,5-11,7; chon 9,5 (can duoi, vi VPBank/ACB ghi tha noi 11-14%). Luu y: lai tiet kiem 12 thang Big4 = 6,8%/nam (9/2026) - mot so NH lay tiet kiem 12 thang lam tham chieu, khi do bien do thuc cao hon. Moi quy: base += random deu trong [-baseRateDriftPctPerQuarter, +baseRateDriftPctPerQuarter] + tong baseRateChangePct cua su kien (neu tin thanh that; neu tin sai dung falseBaseRateChangePct, mac dinh 0), roi kep trong [baseRateMinPct, baseRateMaxPct]. Boi canh: NHNN giu lai suat tai cap von 4,5% tu 6/2023; lai cho vay mua nha tang ~1 diem % tu dau 2026.",
+      "prepayPenaltyPctByYear": [
+        2,
+        2,
+        1.5,
+        1,
+        0.5,
+        0
+      ],
+      "_prepayNote": "Phi tinh tren so tien tra truoc (tat toan khi ban nha). Chi so = nam thu (index 0 = nam 1); qua cuoi mang dung phan tu cuoi (0). Gia tri = trung vi: Vietcombank (bieu phi 2024, vay dai han, tien tu co: 1/1/1/0,5/0,5/0; neu vay NH khac de tra: 2/2/2/1/1/0), BIDV 2/2/1/1/0, VietinBank 2/2/2/1/0, Techcombank 3/3/2... (bieu phi) hoac tu 1% va mien tu nam 6 (goi hoi vien), VPBank 2/2/1,5/1/0,5.",
+      "graceMonths": 0,
+      "_graceNote": "Mac dinh goi ngan hang: khong an han goc. An han goc chi ap dung khi nguoi choi chon developerSupport (theo chinh sach CDT/NH, Sacombank toi da 36 thang) hoac tinh huong d-m-grace.",
+      "repayment": "declining",
+      "_repaymentNote": "declining = goc chia deu theo so ky (goc moi quy = khoan vay goc / (termYears*4)), lai = du no con lai x lai suat nam / 4; hien thi \"tra hang thang\" = tien quy / 3. Vietcombank: lai tra hang thang theo du no giam dan, chu ky tra goc khong qua 3 thang.",
+      "fireSaleDiscountPct": 12,
+      "_fireSaleNote": "Khi tien mat khong du tra ky quy, engine tu ban can (uu tien can re nhat dang tu do) voi gia = gia thi truong x (1 - fireSaleDiscountPct/100) x (1 - sellFeePct/100), tat toan khoan vay cua can (co phi tra truoc han). 12% la gia dinh game (ban thanh ly gap), khong co nguon so lieu.",
+      "developerSupport": {
+        "_note": "Mo phong chinh sach Ho tro lai suat (HTLS) kieu Vinhomes 8-9/2026: CDT tra lai thay khach trong N thang, doi lai gia ban cong them; an han goc trong thoi gian HTLS. Nen mo qua tinh huong d-m-htls (khong bat mac dinh) de tranh don bay khong rui ro.",
+        "defaultEnabled": false,
+        "maxLtvPct": 70,
+        "options": [
+          {
+            "months": 18,
+            "priceMarkupPct": 3.5,
+            "customerRatePctYear": 0
+          },
+          {
+            "months": 24,
+            "priceMarkupPct": 8,
+            "customerRatePctYear": 0
+          },
+          {
+            "months": 30,
+            "priceMarkupPct": 13.5,
+            "customerRatePctYear": 0
+          },
+          {
+            "months": 36,
+            "priceMarkupPct": 19.5,
+            "customerRatePctYear": 0
+          }
+        ],
+        "altNoMarkupOptions": [
+          {
+            "months": 18,
+            "priceMarkupPct": 0,
+            "customerRatePctYear": 3
+          },
+          {
+            "months": 24,
+            "priceMarkupPct": 0,
+            "customerRatePctYear": 4.5
+          },
+          {
+            "months": 30,
+            "priceMarkupPct": 0,
+            "customerRatePctYear": 6
+          },
+          {
+            "months": 36,
+            "priceMarkupPct": 0,
+            "customerRatePctYear": 7.5
+          }
+        ],
+        "graceDuringSupport": true,
+        "postSupportRateCapPctYear": 9,
+        "postSupportCapMonths": 24,
+        "_capNote": "Cam ket tran lai 9%/nam trong 24 thang sau HTLS chi ap dung cho khach ky trong dot 01/08-30/09/2026; tuy chon."
+      },
+      "sources": [
+        {
+          "name": "Smartland - bảng lãi ưu đãi 8 ngân hàng (khảo sát 16/09/2026) + biên độ VARS",
+          "url": "https://smartland.vn/lai-suat-vay-mua-nha-2026/",
+          "date": "2026-09-28"
+        },
+        {
+          "name": "Nhân Dân - BIDV gói \"Ngôi nhà đầu tiên\" (04/09/2026)",
+          "url": "https://nhandan.vn/bidv-trien-khai-goi-vay-uu-dai-tiep-suc-nhu-cau-an-cu-dich-thuc-post986326.html",
+          "date": "2026-09-28"
+        },
+        {
+          "name": "BNEWS - VARS: biên độ 3,3-3,5%, thả nổi 13-15%",
+          "url": "https://bnews.vn/danh-von-re-tiep-suc-nhu-cau-mua-nha-o-thuc/437276.html",
+          "date": "2026-09-28"
+        },
+        {
+          "name": "Thanh Niên - Vietcombank gói 20.000 tỷ giảm 1%/năm, vay 35 năm (26/08/2026)",
+          "url": "https://thanhnien.vn/vietcombank-danh-20000-ti-dong-cho-vay-mua-nha-giam-lai-suat-1-nam-185260826110716554.htm",
+          "date": "2026-09-28"
+        },
+        {
+          "name": "Vietcombank - Vay mua nhà ở, đất ở (vay tới 100% HĐMB khi đủ TSBĐ, 30 năm)",
+          "url": "https://www.vietcombank.com.vn/vi-VN/KHCN/SPDV/Vay/Vay-mua-nha-dat",
+          "date": "2026-09-28"
+        },
+        {
+          "name": "Vietcombank - Biểu phí cho vay (cập nhật 04/2024): phí trả nợ trước hạn",
+          "url": "https://www.vietcombank.com.vn/-/media/Project/VCB-Sites/VCB/KHCN/Bieu-mau-Bieu-phi-KHCN/Bieu-phi/Vay/San-pham-vay/BIEU-PHI-CHO-VAY-UPDATED-APRIL-2024.pdf?ts=20240419074850",
+          "date": "2026-09-28"
+        },
+        {
+          "name": "VPBank blog - bảng lãi suất/LTV/kỳ hạn 22 ngân hàng (6/2026)",
+          "url": "https://www.vpbank.com.vn/bi-kip-va-chia-se/retail-story-and-tips/loans-category/lai-suat-vay-mua-nha",
+          "date": "2026-09-28"
+        },
+        {
+          "name": "Techcombank - Biểu phí dịch vụ tín dụng KHCN (phí trả nợ trước hạn)",
+          "url": "https://techcombank.com/content/dam/techcombank/public-site/documents/techcombank-bieu-phi-dich-vu-tin-dung.pdf",
+          "date": "2026-09-28"
+        },
+        {
+          "name": "Techcombank - Vay mua bất động sản (từ 3,99% hội viên, 80%, phí TNTH từ 1%, miễn từ năm 6)",
+          "url": "https://techcombank.com/khach-hang-ca-nhan/vay/vay-mua-nha/vay-mua-nha-o",
+          "date": "2026-09-28"
+        },
+        {
+          "name": "BDS Tốt - bảng phí trả nợ trước hạn 10 ngân hàng (01/2026, nguồn thứ cấp)",
+          "url": "https://bdstot.net/wiki-tai-chinh/ap-ke-hoach-tra-no-truoc-han-vay-mua-nha",
+          "date": "2026-09-28"
+        },
+        {
+          "name": "Sacombank - vay mua BĐS Vinhomes (29/07/2026)",
+          "url": "https://www.sacombank.com.vn/trang-chu/tin-tuc/tin-sacombank/2026/so-huu-ngay-can-ho-vinhomes-trong-mo-cung-chinh-sach-vay-mua-cuc-uu-dai-tu-sacombank.html",
+          "date": "2026-09-28"
+        },
+        {
+          "name": "Vinhomes - chính sách HTLS (tăng giá 3,5/8/13,5/19,5% cho 18/24/30/36 tháng)",
+          "url": "https://market-files.vinhomes.vn/public-mngt/d/092d18cf-5b34-49ac-bb7a-ab7d842a9acd",
+          "date": "2026-09-28"
+        },
+        {
+          "name": "Chính sách bán hàng Vinhomes Green Paradise 9/2026 (PA1 lãi KH trả 3-7,5%)",
+          "url": "https://vinhomesgreenparadisecangio.com/chinh-sach-ban-hang-vinhomes-green-paradise-thang-9-2026/",
+          "date": "2026-09-28"
+        },
+        {
+          "name": "Vinhomes - CSBH Green Paradise 8/2026 (trần lãi 9%/năm 24 tháng sau HTLS)",
+          "url": "https://market-files.vinhomes.vn/public-mngt/d/2444ccc1-3923-4930-82cc-cfb3e40739b6",
+          "date": "2026-09-28"
+        },
+        {
+          "name": "Báo Hà Tĩnh - lãi tiết kiệm 12 tháng Big4 6,8%/năm (15/09/2026)",
+          "url": "https://baohatinh.vn/tv/lai-suat-ngan-hang-ngay-1592026-tien-gui-ky-han-12-thang-niem-yet-cao-nhat-o-78nam-53108.html",
+          "date": "2026-09-28"
+        }
+      ],
+      "_sourceDetail": [
+        {
+          "bank": "Vietcombank",
+          "field": "promoRatePctYear/promoMonths",
+          "value": "9,6%/6t; 9,9%/12t; 13,6%/18t; 13,9%/24t",
+          "url": "https://smartland.vn/lai-suat-vay-mua-nha-2026/",
+          "retrievedDate": "2026-09-28",
+          "note": "Tong hop khao sat 16/09/2026, khong phai bieu chinh thuc"
+        },
+        {
+          "bank": "Vietcombank",
+          "field": "promo (goi 20.000 ty)",
+          "value": "giam toi da 1%/nam so voi lai BDS thong thuong; den 31/03/2027; du an da co so",
+          "url": "https://thanhnien.vn/vietcombank-danh-20000-ti-dong-cho-vay-mua-nha-giam-lai-suat-1-nam-185260826110716554.htm",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "Vietcombank",
+          "field": "maxLtvPct",
+          "value": "100% gia tri HDMB (khi du TSBD); 70% neu the chap chinh can mua (nguon 1/2026)",
+          "url": "https://www.vietcombank.com.vn/vi-VN/KHCN/SPDV/Vay/Vay-mua-nha-dat",
+          "retrievedDate": "2026-09-28",
+          "note": "So 70% tu wiki.batdongsan.com.vn 1/2026 (nguon thu cap)"
+        },
+        {
+          "bank": "Vietcombank",
+          "field": "maxTermYears",
+          "value": "30 (trang san pham); 35 (goi 20.000 ty)",
+          "url": "https://www.vietcombank.com.vn/vi-VN/KHCN/SPDV/Vay/Vay-mua-nha-dat",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "Vietcombank",
+          "field": "prepayPenaltyPctByYear",
+          "value": "vay dai han, tien tu co: 1% nam 1-3; 0,5% nam 4-5; mien tu nam 6 (neu vay TCTD khac de tra: 2%/1%/0)",
+          "url": "https://www.vietcombank.com.vn/-/media/Project/VCB-Sites/VCB/KHCN/Bieu-mau-Bieu-phi-KHCN/Bieu-phi/Vay/San-pham-vay/BIEU-PHI-CHO-VAY-UPDATED-APRIL-2024.pdf?ts=20240419074850",
+          "retrievedDate": "2026-09-28",
+          "note": "Bieu phi cap nhat 04/2024 - chua tim thay ban 2026"
+        },
+        {
+          "bank": "Vietcombank",
+          "field": "floatMarginPct",
+          "value": null,
+          "url": "https://bnews.vn/danh-von-re-tiep-suc-nhu-cau-mua-nha-o-thuc/437276.html",
+          "retrievedDate": "2026-09-28",
+          "note": "Khong cong bo rieng; thi truong 3,3-3,5 (VARS)"
+        },
+        {
+          "bank": "BIDV",
+          "field": "promoRatePctYear/promoMonths",
+          "value": "Goi Ngoi nha dau tien: 9,5%/12t; 10%/18t; 10,5%/24t (thap hon ~2% goi thuong); goi thuong 9,7%/6t, 10,0-10,1%/12t, 13,5%/18t",
+          "url": "https://nhandan.vn/bidv-trien-khai-goi-vay-uu-dai-tiep-suc-nhu-cau-an-cu-dich-thuc-post986326.html",
+          "retrievedDate": "2026-09-28",
+          "note": "Goi Ngoi nha dau tien khong ap dung cho dau tu/mua di ban lai"
+        },
+        {
+          "bank": "BIDV",
+          "field": "maxTermYears",
+          "value": 30,
+          "url": "https://nhandan.vn/bidv-trien-khai-goi-vay-uu-dai-tiep-suc-nhu-cau-an-cu-dich-thuc-post986326.html",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "BIDV",
+          "field": "maxLtvPct",
+          "value": 100,
+          "url": "https://www.vpbank.com.vn/bi-kip-va-chia-se/retail-story-and-tips/loans-category/lai-suat-vay-mua-nha",
+          "retrievedDate": "2026-09-28",
+          "note": "Bang tham khao VPBank blog 6/2026"
+        },
+        {
+          "bank": "BIDV",
+          "field": "prepayPenaltyPctByYear",
+          "value": "2% nam 1-2; 1% nam 3-4; mien tu nam 5",
+          "url": "https://bdstot.net/wiki-tai-chinh/ap-ke-hoach-tra-no-truoc-han-vay-mua-nha",
+          "retrievedDate": "2026-09-28",
+          "note": "Nguon thu cap 01/2026"
+        },
+        {
+          "bank": "BIDV",
+          "field": "floatMarginPct",
+          "value": null,
+          "url": "https://bnews.vn/danh-von-re-tiep-suc-nhu-cau-mua-nha-o-thuc/437276.html",
+          "retrievedDate": "2026-09-28",
+          "note": "Tha noi = lai huy dong 12 thang + bien do (khong cong bo so)"
+        },
+        {
+          "bank": "Agribank",
+          "field": "promoRatePctYear/promoMonths",
+          "value": "8,0%/6t; 8,5%/12t; 9,8%/18t",
+          "url": "https://smartland.vn/lai-suat-vay-mua-nha-2026/",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "Agribank",
+          "field": "maxLtvPct",
+          "value": 100,
+          "url": "https://www.vpbank.com.vn/bi-kip-va-chia-se/retail-story-and-tips/loans-category/lai-suat-vay-mua-nha",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "Agribank",
+          "field": "maxTermYears",
+          "value": 40,
+          "url": "https://www.vpbank.com.vn/bi-kip-va-chia-se/retail-story-and-tips/loans-category/lai-suat-vay-mua-nha",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "Agribank",
+          "field": "prepayPenaltyPctByYear",
+          "value": "0,5% nam 1-4 (min 500k, max 20tr); mien tu nam 5",
+          "url": "https://bdstot.net/wiki-tai-chinh/ap-ke-hoach-tra-no-truoc-han-vay-mua-nha",
+          "retrievedDate": "2026-09-28",
+          "note": "Nguon thu cap 01/2026"
+        },
+        {
+          "bank": "Agribank",
+          "field": "floatMarginPct",
+          "value": null,
+          "url": "https://bnews.vn/danh-von-re-tiep-suc-nhu-cau-mua-nha-o-thuc/437276.html",
+          "retrievedDate": "2026-09-28",
+          "note": "Khong tim thay"
+        },
+        {
+          "bank": "VietinBank",
+          "field": "promoRatePctYear/promoMonths",
+          "value": "tren 12%/24t (VPBank blog, legiang) hoac ~10%/36t (smartland ghi nguon venh)",
+          "url": "https://batdongsanlegiang.com/lai-suat-vay-mua-nha-thang-9-2026/",
+          "retrievedDate": "2026-09-28",
+          "note": "Nguon mau thuan - khong dung lam goi trong game"
+        },
+        {
+          "bank": "VietinBank",
+          "field": "floatingRatePctYear",
+          "value": "~14",
+          "url": "https://batdongsanlegiang.com/lai-suat-vay-mua-nha-thang-9-2026/",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "VietinBank",
+          "field": "maxLtvPct",
+          "value": 80,
+          "url": "https://www.vpbank.com.vn/bi-kip-va-chia-se/retail-story-and-tips/loans-category/lai-suat-vay-mua-nha",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "VietinBank",
+          "field": "maxTermYears",
+          "value": 20,
+          "url": "https://www.vpbank.com.vn/bi-kip-va-chia-se/retail-story-and-tips/loans-category/lai-suat-vay-mua-nha",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "VietinBank",
+          "field": "prepayPenaltyPctByYear",
+          "value": "2% nam 1-3; 1% nam 4; mien tu nam 5",
+          "url": "https://bdstot.net/wiki-tai-chinh/ap-ke-hoach-tra-no-truoc-han-vay-mua-nha",
+          "retrievedDate": "2026-09-28",
+          "note": "Nguon thu cap 01/2026"
+        },
+        {
+          "bank": "Techcombank",
+          "field": "promoRatePctYear/promoMonths",
+          "value": "8,5-9,5%/6-12t (khao sat); tu 3,99% co dinh toi 24t cho hoi vien (trang NH)",
+          "url": "https://smartland.vn/lai-suat-vay-mua-nha-2026/",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "Techcombank",
+          "field": "floatingRatePctYear",
+          "value": "toi 15",
+          "url": "https://batdongsanlegiang.com/lai-suat-vay-mua-nha-thang-9-2026/",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "Techcombank",
+          "field": "maxLtvPct",
+          "value": 80,
+          "url": "https://techcombank.com/khach-hang-ca-nhan/vay/vay-mua-nha/vay-mua-nha-o",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "Techcombank",
+          "field": "maxTermYears",
+          "value": "35 (luong) / 45 (mot so goi)",
+          "url": "https://techcombank.com/khach-hang-ca-nhan/vay/vay-mua-nha/vay-mua-nha-o",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "Techcombank",
+          "field": "prepayPenaltyPctByYear",
+          "value": "bieu phi: 3% nam 1; 3% nam 2; 2% tu nam 3. Goi BDS co so: tu 1%, mien tu nam 6",
+          "url": "https://techcombank.com/content/dam/techcombank/public-site/documents/techcombank-bieu-phi-dich-vu-tin-dung.pdf",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "Techcombank",
+          "field": "graceMonths",
+          "value": "an han goc toi 60 thang (BDS tho cu) / 10 nam (mot so goi)",
+          "url": "https://techcombank.com/khach-hang-ca-nhan/vay/vay-mua-nha/vay-mua-nha-o",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "MB",
+          "field": "promoRatePctYear/promoMonths",
+          "value": "9,0-9,5%/12-24t",
+          "url": "https://smartland.vn/lai-suat-vay-mua-nha-2026/",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "MB",
+          "field": "maxLtvPct",
+          "value": 80,
+          "url": "https://www.vpbank.com.vn/bi-kip-va-chia-se/retail-story-and-tips/loans-category/lai-suat-vay-mua-nha",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "MB",
+          "field": "maxTermYears",
+          "value": 20,
+          "url": "https://www.vpbank.com.vn/bi-kip-va-chia-se/retail-story-and-tips/loans-category/lai-suat-vay-mua-nha",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "MB",
+          "field": "prepayPenaltyPctByYear",
+          "value": null,
+          "url": null,
+          "retrievedDate": "2026-09-28",
+          "note": "Khong tim thay"
+        },
+        {
+          "bank": "VPBank",
+          "field": "promoRatePctYear",
+          "value": "7,2 (bang 6/2026); 4,6-13,2 tuy ho so (legiang 9/2026)",
+          "url": "https://www.vpbank.com.vn/bi-kip-va-chia-se/retail-story-and-tips/loans-category/lai-suat-vay-mua-nha",
+          "retrievedDate": "2026-09-28",
+          "note": "Khong co ky co dinh ro rang - khong dung lam goi"
+        },
+        {
+          "bank": "VPBank",
+          "field": "maxLtvPct",
+          "value": 75,
+          "url": "https://www.vpbank.com.vn/bi-kip-va-chia-se/retail-story-and-tips/loans-category/lai-suat-vay-mua-nha",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "VPBank",
+          "field": "maxTermYears",
+          "value": 25,
+          "url": "https://www.vpbank.com.vn/bi-kip-va-chia-se/retail-story-and-tips/loans-category/lai-suat-vay-mua-nha",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "VPBank",
+          "field": "prepayPenaltyPctByYear",
+          "value": "2% nam 1-2; 1,5% nam 3; 1% nam 4; 0,5% nam 5+",
+          "url": "https://bdstot.net/wiki-tai-chinh/ap-ke-hoach-tra-no-truoc-han-vay-mua-nha",
+          "retrievedDate": "2026-09-28",
+          "note": "Nguon thu cap 01/2026"
+        },
+        {
+          "bank": "Sacombank",
+          "field": "promoRatePctYear/promoMonths",
+          "value": "tu 10,5%/nam, co dinh 12-36 thang (BDS Vinhomes, 26/6-31/12/2026)",
+          "url": "https://www.sacombank.com.vn/trang-chu/tin-tuc/tin-sacombank/2026/so-huu-ngay-can-ho-vinhomes-trong-mo-cung-chinh-sach-vay-mua-cuc-uu-dai-tu-sacombank.html",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "Sacombank",
+          "field": "maxLtvPct",
+          "value": 80,
+          "url": "https://www.sacombank.com.vn/trang-chu/tin-tuc/tin-sacombank/2026/so-huu-ngay-can-ho-vinhomes-trong-mo-cung-chinh-sach-vay-mua-cuc-uu-dai-tu-sacombank.html",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "Sacombank",
+          "field": "maxTermYears",
+          "value": 35,
+          "url": "https://www.sacombank.com.vn/trang-chu/tin-tuc/tin-sacombank/2026/so-huu-ngay-can-ho-vinhomes-trong-mo-cung-chinh-sach-vay-mua-cuc-uu-dai-tu-sacombank.html",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "Sacombank",
+          "field": "graceMonths",
+          "value": "toi da 36",
+          "url": "https://www.sacombank.com.vn/trang-chu/tin-tuc/tin-sacombank/2026/so-huu-ngay-can-ho-vinhomes-trong-mo-cung-chinh-sach-vay-mua-cuc-uu-dai-tu-sacombank.html",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "Sacombank",
+          "field": "prepayPenaltyPctByYear",
+          "value": "mien phi tu nam thu 5 (nam 1-4 khong cong bo)",
+          "url": "https://www.sacombank.com.vn/trang-chu/tin-tuc/tin-sacombank/2026/so-huu-ngay-can-ho-vinhomes-trong-mo-cung-chinh-sach-vay-mua-cuc-uu-dai-tu-sacombank.html",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "Sacombank",
+          "field": "floatingRatePctYear",
+          "value": "12-14",
+          "url": "https://batdongsanlegiang.com/lai-suat-vay-mua-nha-thang-9-2026/",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "Thi truong (VARS)",
+          "field": "floatMarginPct",
+          "value": "3,3-3,5",
+          "url": "https://bnews.vn/danh-von-re-tiep-suc-nhu-cau-mua-nha-o-thuc/437276.html",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "Thi truong (VARS)",
+          "field": "floatingRatePctYear",
+          "value": "13-15 (ca biet 16)",
+          "url": "https://bnews.vn/danh-von-re-tiep-suc-nhu-cau-mua-nha-o-thuc/437276.html",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "Big4",
+          "field": "deposit12mPctYear (tham chieu)",
+          "value": 6.8,
+          "url": "https://baohatinh.vn/tv/lai-suat-ngan-hang-ngay-1592026-tien-gui-ky-han-12-thang-niem-yet-cao-nhat-o-78nam-53108.html",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "Vinhomes (CDT)",
+          "field": "developerSupport.priceMarkupPct",
+          "value": "18t +3,5%; 24t +8%; 30t +13,5%; 36t +19,5% (HTLS tieu chuan, sau 10/09/2026); dot sieu HTLS: 0/4,5/9/14%",
+          "url": "https://market-files.vinhomes.vn/public-mngt/d/092d18cf-5b34-49ac-bb7a-ab7d842a9acd",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "Vinhomes (CDT)",
+          "field": "developerSupport.altNoMarkupOptions",
+          "value": "KH tra co dinh 3,0/4,5/6,0/7,5/8,5/9,0% cho 18/24/30/36/48/60 thang, khong tang gia",
+          "url": "https://vinhomesgreenparadisecangio.com/chinh-sach-ban-hang-vinhomes-green-paradise-thang-9-2026/",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "Vinhomes (CDT)",
+          "field": "developerSupport.postSupportRateCapPctYear",
+          "value": "9%/nam trong 24 thang sau HTLS (dot 01/08-30/09/2026)",
+          "url": "https://market-files.vinhomes.vn/public-mngt/d/2444ccc1-3923-4930-82cc-cfb3e40739b6",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        },
+        {
+          "bank": "Vinhomes (CDT)",
+          "field": "maxLtvPct",
+          "value": 70,
+          "url": "https://market-files.vinhomes.vn/public-mngt/d/092d18cf-5b34-49ac-bb7a-ab7d842a9acd",
+          "retrievedDate": "2026-09-28",
+          "note": null
+        }
+      ],
+      "_fieldDocs": {
+        "maxLtvPct": "% gia mua toi da duoc vay moi can",
+        "defaultLtvPct": "LTV mac dinh o man hinh mua",
+        "ltvOptionsPct": "(them) cac muc LTV cho chon",
+        "termYearsOptions": "thoi han vay cho chon (nam)",
+        "defaultTermYears": "mac dinh",
+        "packages": "goi lai; phan tu dau = mac dinh. promoRatePctYear co dinh trong promoMonths, sau do tha noi = baseRatePctYear (hien tai) + floatMarginPct",
+        "baseRatePctYear": "lai co so dau van",
+        "baseRateMinPct": "san",
+        "baseRateMaxPct": "tran",
+        "baseRateDriftPctPerQuarter": "bien do random deu +/- moi quy",
+        "prepayPenaltyPctByYear": "% phi tren du no tat toan theo nam thu cua khoan vay",
+        "graceMonths": "an han goc mac dinh (thang)",
+        "repayment": "declining | annuity",
+        "fireSaleDiscountPct": "chiet khau khi bi ban thanh ly do thieu tien tra no",
+        "developerSupport": "(them) HTLS cua CDT, chi bat qua tinh huong d-m-htls hoac khi coder cho phep",
+        "sources": "[{name,url,date}]",
+        "_sourceDetail": "[{bank,field,value,url,retrievedDate,note}] - null = khong tim thay"
+      }
+    },
+    "_flow": "Dau quy: hien tin (co do tin cay). Nguoi choi mua/ban/vay/cho thue. Bam Sang quy: tung xac suat reliability, dung thi ap change, sai thi ap falseChange, roi moi hien gia moi kem mui ten.",
+    "quarterOptions": [
+      8,
+      12,
+      16,
+      20
+    ],
+    "minQuarters": 8,
+    "loanModel": "mortgage",
+    "_loanModelNote": "legacy = dung rules.loan (engine v2). Khi engine v3 san sang, coder doi thanh \"mortgage\" de dung rules.mortgage + mortgageDilemmas."
   },
   "projects": [
     {
@@ -58,8 +697,8 @@
       "name": "Căn hộ công viên",
       "type": "Căn hộ",
       "price": 800,
-      "risk": 0.15,
-      "growth": 0.02,
+      "risk": 0.2,
+      "growth": 0.035,
       "rentPctPerQuarter": 0.91,
       "map": {
         "xPct": 6,
@@ -72,8 +711,8 @@
       "name": "Nhà phố",
       "type": "Liền kề",
       "price": 1800,
-      "risk": 0.35,
-      "growth": 0.03,
+      "risk": 0.45,
+      "growth": 0.045,
       "rentPctPerQuarter": 0.63,
       "map": {
         "xPct": 56,
@@ -86,8 +725,8 @@
       "name": "Trục thương mại",
       "type": "Shophouse",
       "price": 2400,
-      "risk": 0.5,
-      "growth": 0.035,
+      "risk": 0.65,
+      "growth": 0.05,
       "rentPctPerQuarter": 0.77,
       "map": {
         "xPct": 30,
@@ -100,8 +739,8 @@
       "name": "Biệt thự ven hồ",
       "type": "Biệt thự",
       "price": 3500,
-      "risk": 0.6,
-      "growth": 0.04,
+      "risk": 0.8,
+      "growth": 0.055,
       "rentPctPerQuarter": 0.35,
       "map": {
         "xPct": 58,
@@ -114,8 +753,8 @@
       "name": "Căn hộ ven vịnh",
       "type": "Căn hộ",
       "price": 900,
-      "risk": 0.15,
-      "growth": 0.02,
+      "risk": 0.2,
+      "growth": 0.035,
       "rentPctPerQuarter": 0.91,
       "map": {
         "xPct": 9,
@@ -128,8 +767,8 @@
       "name": "Nhà phố gần biển",
       "type": "Liền kề",
       "price": 1900,
-      "risk": 0.35,
-      "growth": 0.03,
+      "risk": 0.45,
+      "growth": 0.045,
       "rentPctPerQuarter": 0.63,
       "map": {
         "xPct": 54,
@@ -142,8 +781,8 @@
       "name": "Phố thương mại",
       "type": "Shophouse",
       "price": 2200,
-      "risk": 0.5,
-      "growth": 0.035,
+      "risk": 0.65,
+      "growth": 0.05,
       "rentPctPerQuarter": 0.77,
       "map": {
         "xPct": 9,
@@ -156,8 +795,8 @@
       "name": "Biệt thự mặt biển",
       "type": "Biệt thự biển",
       "price": 3200,
-      "risk": 0.6,
-      "growth": 0.04,
+      "risk": 0.8,
+      "growth": 0.055,
       "rentPctPerQuarter": 0.35,
       "map": {
         "xPct": 54,
@@ -190,7 +829,8 @@
         "*"
       ],
       "change": -6,
-      "falseChange": 1
+      "falseChange": 1,
+      "baseRateChangePct": 0.5
     },
     {
       "id": "g-rate-dn",
@@ -203,7 +843,8 @@
         "*"
       ],
       "change": 5,
-      "falseChange": -1
+      "falseChange": -1,
+      "baseRateChangePct": -0.3
     },
     {
       "id": "g-slow",
@@ -229,7 +870,8 @@
         "*"
       ],
       "change": -7,
-      "falseChange": 5
+      "falseChange": 5,
+      "baseRateChangePct": 0.3
     },
     {
       "id": "g-flip",
@@ -504,6 +1146,586 @@
       ],
       "change": -8,
       "falseChange": 4
+    },
+    {
+      "id": "r-sbv-cut",
+      "project": "*",
+      "kind": "news",
+      "text": "Giới phân tích cho rằng Ngân hàng Nhà nước sắp hạ lãi suất điều hành để hỗ trợ tăng trưởng.",
+      "source": "Báo kinh tế",
+      "reliability": 0.65,
+      "zones": [
+        "*"
+      ],
+      "change": 5,
+      "falseChange": -1,
+      "baseRateChangePct": -0.5
+    },
+    {
+      "id": "r-sbv-hike",
+      "project": "*",
+      "kind": "news",
+      "text": "Áp lực tỷ giá tăng, thị trường lo lãi suất điều hành sẽ được nâng.",
+      "source": "Báo kinh tế",
+      "reliability": 0.6,
+      "zones": [
+        "*"
+      ],
+      "change": -5,
+      "falseChange": 1,
+      "baseRateChangePct": 0.5
+    },
+    {
+      "id": "r-deposit-up",
+      "project": "*",
+      "kind": "news",
+      "text": "Nhiều ngân hàng đồng loạt tăng lãi suất tiết kiệm kỳ hạn 12 tháng.",
+      "source": "Báo kinh tế",
+      "reliability": 0.85,
+      "zones": [
+        "*"
+      ],
+      "change": -3,
+      "falseChange": 1,
+      "baseRateChangePct": 0.3
+    },
+    {
+      "id": "r-deposit-dn",
+      "project": "*",
+      "kind": "news",
+      "text": "Lãi suất tiết kiệm hạ nhiệt, ngân hàng có dư địa giảm lãi cho vay.",
+      "source": "Báo kinh tế",
+      "reliability": 0.8,
+      "zones": [
+        "*"
+      ],
+      "change": 3,
+      "falseChange": -1,
+      "baseRateChangePct": -0.3
+    },
+    {
+      "id": "r-promo-war",
+      "project": "*",
+      "kind": "news",
+      "text": "Các ngân hàng đua nhau tung gói vay mua nhà ưu đãi để giành khách.",
+      "source": "Báo kinh tế",
+      "reliability": 0.85,
+      "zones": [
+        "*"
+      ],
+      "change": 4,
+      "falseChange": -1,
+      "baseRateChangePct": -0.2
+    },
+    {
+      "id": "r-room",
+      "project": "*",
+      "kind": "rumor",
+      "text": "Tin đồn: vài ngân hàng sắp hết hạn mức tín dụng, tạm dừng giải ngân bất động sản.",
+      "source": "Hội nhóm đầu tư",
+      "reliability": 0.5,
+      "zones": [
+        "*"
+      ],
+      "change": -5,
+      "falseChange": 2,
+      "baseRateChangePct": 0.4
+    },
+    {
+      "id": "r-cheap-pkg",
+      "project": "*",
+      "kind": "rumor",
+      "text": "Hội nhóm chia sẻ: sắp có gói vay 5%/năm cố định 5 năm cho mọi người mua nhà.",
+      "source": "Hội nhóm đầu tư",
+      "reliability": 0.25,
+      "zones": [
+        "*"
+      ],
+      "change": 7,
+      "falseChange": -5,
+      "baseRateChangePct": -0.5
+    },
+    {
+      "id": "r-float-shock",
+      "project": "*",
+      "kind": "news",
+      "text": "Nhiều khoản vay hết ưu đãi cùng lúc, người vay than tiền trả hàng tháng tăng vọt, hàng bán ra có thể nhiều hơn.",
+      "source": "Báo kinh tế",
+      "reliability": 0.75,
+      "zones": [
+        "sgp-apt",
+        "gp-apt",
+        "sgp-town",
+        "gp-town"
+      ],
+      "change": -5,
+      "falseChange": 1
+    },
+    {
+      "id": "r-cpi",
+      "project": "*",
+      "kind": "news",
+      "text": "Lạm phát tăng nhanh hơn dự báo, chuyên gia lo lãi suất cho vay đi lên.",
+      "source": "Báo kinh tế",
+      "reliability": 0.7,
+      "zones": [
+        "*"
+      ],
+      "change": -3,
+      "falseChange": 2,
+      "baseRateChangePct": 0.4
+    },
+    {
+      "id": "r-fx-calm",
+      "project": "*",
+      "kind": "news",
+      "text": "Tỷ giá ổn định trở lại, áp lực lên lãi suất giảm bớt.",
+      "source": "Báo kinh tế",
+      "reliability": 0.75,
+      "zones": [
+        "*"
+      ],
+      "change": 3,
+      "falseChange": -1,
+      "baseRateChangePct": -0.3
+    },
+    {
+      "id": "r-omo",
+      "project": "*",
+      "kind": "news",
+      "text": "Ngân hàng Nhà nước bơm thêm thanh khoản, lãi suất liên ngân hàng hạ.",
+      "source": "Báo kinh tế",
+      "reliability": 0.8,
+      "zones": [
+        "*"
+      ],
+      "change": 3,
+      "falseChange": -1,
+      "baseRateChangePct": -0.2
+    },
+    {
+      "id": "r-bond",
+      "project": "*",
+      "kind": "rumor",
+      "text": "Nghe nói thị trường trái phiếu doanh nghiệp sắp ấm lại, các dự án dễ huy động vốn hơn.",
+      "source": "Môi giới",
+      "reliability": 0.45,
+      "zones": [
+        "*"
+      ],
+      "change": 4,
+      "falseChange": -4
+    },
+    {
+      "id": "m-credit-crunch",
+      "project": "*",
+      "kind": "news",
+      "text": "SỰ KIỆN LỚN: tín dụng bất động sản bị siết diện rộng, nhiều ngân hàng nâng lãi vay và hạ tỷ lệ cho vay.",
+      "source": "Báo kinh tế",
+      "reliability": 0.85,
+      "zones": [
+        "*"
+      ],
+      "change": -12,
+      "falseChange": 2,
+      "phase": "mid",
+      "minQuarter": 5,
+      "baseRateChangePct": 1.5,
+      "ltvCapPct": 50,
+      "effectQuarters": 4
+    },
+    {
+      "id": "m-land-fever",
+      "project": "*",
+      "kind": "rumor",
+      "text": "SỰ KIỆN LỚN: cơn sốt đất lan rộng, giao dịch tăng vọt, giá chào bán lập đỉnh mỗi tuần.",
+      "source": "Hội nhóm đầu tư",
+      "reliability": 0.6,
+      "zones": [
+        "*"
+      ],
+      "change": 12,
+      "falseChange": -10,
+      "phase": "mid",
+      "minQuarter": 5,
+      "baseRateChangePct": 0.5,
+      "falseBaseRateChangePct": 0.5
+    },
+    {
+      "id": "g-tax",
+      "project": "*",
+      "kind": "news",
+      "text": "Đề xuất đánh thuế cao hơn với nhà đất thứ hai và nhà bỏ trống đang được lấy ý kiến.",
+      "source": "Báo kinh tế",
+      "reliability": 0.7,
+      "zones": [
+        "*"
+      ],
+      "change": -5,
+      "falseChange": 1
+    },
+    {
+      "id": "g-legal",
+      "project": "*",
+      "kind": "news",
+      "text": "Quy định mới rút ngắn thủ tục cấp sổ hồng cho căn hộ dự án.",
+      "source": "Báo kinh tế",
+      "reliability": 0.85,
+      "zones": [
+        "sgp-apt",
+        "gp-apt",
+        "sgp-town",
+        "gp-town"
+      ],
+      "change": 4,
+      "falseChange": -1
+    },
+    {
+      "id": "g-fdi",
+      "project": "*",
+      "kind": "news",
+      "text": "Vốn đầu tư nước ngoài vào TP.HCM tăng mạnh, chuyên gia đổ về cần thuê nhà.",
+      "source": "Báo kinh tế",
+      "reliability": 0.8,
+      "zones": [
+        "sgp-apt",
+        "gp-apt",
+        "sgp-shop",
+        "gp-shop"
+      ],
+      "change": 5,
+      "falseChange": -1
+    },
+    {
+      "id": "g-oversupply",
+      "project": "*",
+      "kind": "news",
+      "text": "Nhiều dự án lân cận cùng mở bán, nguồn cung mới đổ bộ.",
+      "source": "Báo kinh tế",
+      "reliability": 0.75,
+      "zones": [
+        "sgp-apt",
+        "gp-apt",
+        "sgp-town",
+        "gp-town"
+      ],
+      "change": -5,
+      "falseChange": 1
+    },
+    {
+      "id": "g-foreign",
+      "project": "*",
+      "kind": "rumor",
+      "text": "Tin đồn: sắp nới quy định cho người nước ngoài mua nhà.",
+      "source": "Môi giới",
+      "reliability": 0.4,
+      "zones": [
+        "sgp-apt",
+        "gp-apt",
+        "sgp-villa",
+        "gp-villa"
+      ],
+      "change": 6,
+      "falseChange": -4
+    },
+    {
+      "id": "g-fomo",
+      "project": "*",
+      "kind": "rumor",
+      "text": "Nhóm Zalo rần rần: \"sau Tết giá tăng 30%, ai không mua sẽ hối hận\".",
+      "source": "Hội nhóm đầu tư",
+      "reliability": 0.25,
+      "zones": [
+        "*"
+      ],
+      "change": 8,
+      "falseChange": -5
+    },
+    {
+      "id": "g-f1-dump",
+      "project": "*",
+      "kind": "rumor",
+      "text": "Môi giới rỉ tai: nhiều nhà đầu tư F1 đang bán lỗ để thoát hàng.",
+      "source": "Môi giới",
+      "reliability": 0.45,
+      "zones": [
+        "sgp-apt",
+        "gp-apt",
+        "sgp-town",
+        "gp-town"
+      ],
+      "change": -6,
+      "falseChange": 3
+    },
+    {
+      "id": "g-yearend",
+      "project": "*",
+      "kind": "news",
+      "text": "Cao điểm cuối năm, nhu cầu mua nhà để ở tăng rõ.",
+      "source": "Báo kinh tế",
+      "reliability": 0.85,
+      "zones": [
+        "*"
+      ],
+      "change": 3,
+      "falseChange": -1
+    },
+    {
+      "id": "g-heat",
+      "project": "*",
+      "kind": "news",
+      "text": "Nắng nóng kéo dài, người mua ưu tiên nhà gần cây xanh, mặt nước.",
+      "source": "Báo địa phương",
+      "reliability": 0.7,
+      "zones": [
+        "sgp-villa",
+        "gp-villa"
+      ],
+      "change": 4,
+      "falseChange": -1
+    },
+    {
+      "id": "g-stock-crash",
+      "project": "*",
+      "kind": "news",
+      "text": "Chứng khoán giảm sâu, một phần dòng tiền tìm về bất động sản.",
+      "source": "Báo kinh tế",
+      "reliability": 0.65,
+      "zones": [
+        "*"
+      ],
+      "change": 3,
+      "falseChange": -2
+    },
+    {
+      "id": "g-stock-boom",
+      "project": "*",
+      "kind": "news",
+      "text": "Chứng khoán bùng nổ, dòng tiền đầu cơ rời bất động sản.",
+      "source": "Báo kinh tế",
+      "reliability": 0.7,
+      "zones": [
+        "*"
+      ],
+      "change": -3,
+      "falseChange": 1
+    },
+    {
+      "id": "g-shop-empty",
+      "project": "*",
+      "kind": "news",
+      "text": "Nhiều shophouse treo biển cho thuê, kinh doanh mặt phố gặp khó.",
+      "source": "Báo kinh tế",
+      "reliability": 0.75,
+      "zones": [
+        "sgp-shop",
+        "gp-shop"
+      ],
+      "change": -6,
+      "falseChange": 1
+    },
+    {
+      "id": "g-rent-up",
+      "project": "*",
+      "kind": "news",
+      "text": "Giá thuê căn hộ tăng vì người lao động trẻ đổ về khu đô thị mới.",
+      "source": "Báo địa phương",
+      "reliability": 0.8,
+      "zones": [
+        "sgp-apt",
+        "gp-apt"
+      ],
+      "change": 4,
+      "falseChange": -1
+    },
+    {
+      "id": "g-fake-panic",
+      "project": "*",
+      "kind": "rumor",
+      "text": "Tin nhắn không rõ nguồn lan truyền: \"khu này sắp bị quy hoạch treo, bán gấp kẻo kẹt vốn\".",
+      "source": "Tin nhắn lạ",
+      "reliability": 0.2,
+      "zones": [
+        "*"
+      ],
+      "change": -9,
+      "falseChange": 5
+    },
+    {
+      "id": "g-guru-crash",
+      "project": "*",
+      "kind": "rumor",
+      "text": "Một \"chuyên gia\" mạng xã hội dự báo giá nhà sẽ giảm một nửa ngay trong năm nay.",
+      "source": "Mạng xã hội",
+      "reliability": 0.2,
+      "zones": [
+        "*"
+      ],
+      "change": -8,
+      "falseChange": 4
+    },
+    {
+      "id": "s-hospital",
+      "project": "sgp",
+      "kind": "news",
+      "text": "Bệnh viện quốc tế khởi công ngay cạnh Sài Gòn Park.",
+      "source": "Báo địa phương",
+      "reliability": 0.8,
+      "zones": [
+        "sgp-apt",
+        "sgp-town"
+      ],
+      "change": 5,
+      "falseChange": -2
+    },
+    {
+      "id": "s-ring3",
+      "project": "sgp",
+      "kind": "news",
+      "text": "Đoạn Vành đai 3 gần khu được đẩy nhanh tiến độ.",
+      "source": "Báo địa phương",
+      "reliability": 0.75,
+      "zones": [
+        "*sgp"
+      ],
+      "change": 6,
+      "falseChange": -2
+    },
+    {
+      "id": "s-office",
+      "project": "sgp",
+      "kind": "rumor",
+      "text": "Nghe nói một tập đoàn công nghệ sắp thuê văn phòng lớn gần khu.",
+      "source": "Môi giới",
+      "reliability": 0.4,
+      "zones": [
+        "sgp-shop",
+        "sgp-apt"
+      ],
+      "change": 8,
+      "falseChange": -4
+    },
+    {
+      "id": "s-traffic",
+      "project": "sgp",
+      "kind": "news",
+      "text": "Kẹt xe giờ cao điểm trên trục chính vào khu ngày càng nặng.",
+      "source": "Cư dân",
+      "reliability": 0.7,
+      "zones": [
+        "sgp-town",
+        "sgp-shop"
+      ],
+      "change": -4,
+      "falseChange": 1
+    },
+    {
+      "id": "s-lastvilla",
+      "project": "sgp",
+      "kind": "rumor",
+      "text": "Môi giới nhắn: \"biệt thự ven hồ chỉ còn 3 căn, tuần sau tăng giá 20%\".",
+      "source": "Môi giới",
+      "reliability": 0.25,
+      "zones": [
+        "sgp-villa"
+      ],
+      "change": 10,
+      "falseChange": -7
+    },
+    {
+      "id": "s-residents",
+      "project": "sgp",
+      "kind": "news",
+      "text": "Cư dân về ở đông, dịch vụ quanh công viên hoạt động sôi động.",
+      "source": "Báo địa phương",
+      "reliability": 0.8,
+      "zones": [
+        "sgp-shop"
+      ],
+      "change": 5,
+      "falseChange": -1
+    },
+    {
+      "id": "p-bridge",
+      "project": "gp",
+      "kind": "news",
+      "text": "Dự án cầu vào Cần Giờ được đẩy nhanh thủ tục chuẩn bị đầu tư.",
+      "source": "Báo địa phương",
+      "reliability": 0.7,
+      "zones": [
+        "*gp"
+      ],
+      "change": 8,
+      "falseChange": -3
+    },
+    {
+      "id": "p-erosion",
+      "project": "gp",
+      "kind": "news",
+      "text": "Triều cường và sạt lở bờ biển khiến người mua lo ngại.",
+      "source": "Báo địa phương",
+      "reliability": 0.7,
+      "zones": [
+        "gp-villa",
+        "gp-town"
+      ],
+      "change": -6,
+      "falseChange": 1
+    },
+    {
+      "id": "p-resort",
+      "project": "gp",
+      "kind": "rumor",
+      "text": "Nghe nói một tập đoàn khách sạn quốc tế sắp nhận vận hành khu nghỉ dưỡng trong dự án.",
+      "source": "Môi giới",
+      "reliability": 0.45,
+      "zones": [
+        "gp-villa",
+        "gp-shop"
+      ],
+      "change": 9,
+      "falseChange": -5
+    },
+    {
+      "id": "p-festival",
+      "project": "gp",
+      "kind": "news",
+      "text": "Lễ hội biển lớn tổ chức tại Cần Giờ, lượng khách tăng vọt.",
+      "source": "Báo du lịch",
+      "reliability": 0.85,
+      "zones": [
+        "gp-shop"
+      ],
+      "change": 6,
+      "falseChange": -2
+    },
+    {
+      "id": "p-zone",
+      "project": "gp",
+      "kind": "rumor",
+      "text": "Hội nhóm: \"Cần Giờ sắp thành đặc khu kinh tế, biệt thự sẽ gấp ba\".",
+      "source": "Hội nhóm đầu tư",
+      "reliability": 0.2,
+      "zones": [
+        "gp-villa",
+        "gp-shop"
+      ],
+      "change": 12,
+      "falseChange": -7
+    },
+    {
+      "id": "p-water",
+      "project": "gp",
+      "kind": "news",
+      "text": "Hệ thống cấp nước sạch cho khu đô thị biển được hoàn thiện.",
+      "source": "Báo địa phương",
+      "reliability": 0.75,
+      "zones": [
+        "gp-apt",
+        "gp-town"
+      ],
+      "change": 4,
+      "falseChange": -1
     }
   ],
   "dilemmas": [
@@ -539,6 +1761,9 @@
           "label": "Giữ tự do",
           "effect": {}
         }
+      ],
+      "requires": [
+        "freeUnit"
       ]
     },
     {
@@ -555,17 +1780,21 @@
           "label": "Giữ lại",
           "effect": {}
         }
+      ],
+      "requires": [
+        "freeUnit"
       ]
     },
     {
       "id": "d-refi",
-      "text": "Ngân hàng đề nghị giảm lãi vay còn 1,5%/quý nếu bạn vay thêm ít nhất 1.000 triệu.",
+      "text": "Ngân hàng đề nghị giảm lãi vay cho bạn (biên độ thấp hơn 1%/năm) nếu bạn vay thêm 1.000 triệu thế chấp căn đang có.",
       "options": [
         {
           "label": "Vay thêm",
           "effect": {
             "loanAdd": 1000,
-            "interestPctPerQuarter": 1.5
+            "interestPctPerQuarter": 1.5,
+            "marginCutPct": 1
           }
         },
         {
@@ -591,6 +1820,155 @@
           "effect": {}
         }
       ]
+    },
+    {
+      "id": "d-analyst",
+      "text": "Một chuyên gia phân tích độc lập bán báo cáo xác minh tin quý này là thật hay giả, phí 150 triệu.",
+      "options": [
+        {
+          "label": "Mua báo cáo",
+          "effect": {
+            "cost": 150,
+            "revealNextEvent": true,
+            "revealMode": "truth"
+          }
+        },
+        {
+          "label": "Tự phán đoán",
+          "effect": {}
+        }
+      ]
+    },
+    {
+      "id": "d-course",
+      "text": "Một khóa học \"đầu tư bất động sản thần tốc\" giá 100 triệu hứa \"biết trước sóng tăng giá\".",
+      "options": [
+        {
+          "label": "Đăng ký học",
+          "effect": {
+            "cost": 100
+          }
+        },
+        {
+          "label": "Bỏ qua",
+          "effect": {}
+        }
+      ],
+      "_design": "Bay: khong co loi ich; day nguoi choi can than voi cam ket lai chac chan."
+    },
+    {
+      "id": "d-renovate",
+      "requires": [
+        "freeUnit"
+      ],
+      "text": "Sửa sang nội thất một căn bạn đang giữ (100 triệu) để cho thuê giá cao hơn 60%, không bán được trong 2 quý.",
+      "options": [
+        {
+          "label": "Sửa và cho thuê",
+          "effect": {
+            "cost": 100,
+            "rentBonusPct": 60,
+            "lockQuarters": 2
+          }
+        },
+        {
+          "label": "Giữ nguyên",
+          "effect": {}
+        }
+      ]
+    },
+    {
+      "id": "d-bulk",
+      "text": "Chủ đầu tư chiết khấu 8% cho căn mua trong quý này, đổi lại khóa chuyển nhượng 4 quý.",
+      "options": [
+        {
+          "label": "Mua suất chiết khấu",
+          "effect": {
+            "buyDiscountPct": 8,
+            "lockQuarters": 4
+          }
+        },
+        {
+          "label": "Bỏ qua",
+          "effect": {}
+        }
+      ]
+    },
+    {
+      "id": "d-lease-early",
+      "requires": [
+        "freeUnit"
+      ],
+      "text": "Một chuỗi cà phê muốn thuê một căn của bạn 3 quý, trả gấp đôi giá thuê thường nhưng không được bán trong thời gian đó.",
+      "options": [
+        {
+          "label": "Cho thuê 3 quý",
+          "effect": {
+            "rentBonusPct": 100,
+            "lockQuarters": 3
+          }
+        },
+        {
+          "label": "Giữ tự do",
+          "effect": {}
+        }
+      ]
+    },
+    {
+      "id": "d-refi2",
+      "requires": [
+        "activeMortgage"
+      ],
+      "text": "Nếu bạn đang vay: một ngân hàng khác mời chuyển khoản vay sang, biên độ thả nổi thấp hơn 1%/năm, nhưng bạn phải trả 60 triệu phí trả nợ trước hạn và thủ tục.",
+      "options": [
+        {
+          "label": "Chuyển ngân hàng",
+          "effect": {
+            "cost": 60,
+            "marginCutPct": 1
+          }
+        },
+        {
+          "label": "Ở lại",
+          "effect": {}
+        }
+      ]
+    },
+    {
+      "id": "d-insure",
+      "requires": [
+        "activeMortgage"
+      ],
+      "text": "Nếu bạn đang vay: nhân viên tín dụng gợi ý mua bảo hiểm khoản vay 40 triệu để được giảm 0,3%/năm biên độ lãi.",
+      "options": [
+        {
+          "label": "Mua bảo hiểm",
+          "effect": {
+            "cost": 40,
+            "marginCutPct": 0.3
+          }
+        },
+        {
+          "label": "Từ chối",
+          "effect": {}
+        }
+      ]
+    },
+    {
+      "id": "d-topup",
+      "text": "Ngân hàng mời vay thêm 800 triệu thế chấp căn bạn đang có (lãi thả nổi ngay, không ưu đãi). Tiền mặt nhiều hơn để săn cơ hội, nhưng tiền góp mỗi quý tăng.",
+      "options": [
+        {
+          "label": "Vay thêm",
+          "effect": {
+            "topUpLoan": 800
+          }
+        },
+        {
+          "label": "Không vay",
+          "effect": {}
+        }
+      ]
     }
   ],
   "titles": [
@@ -607,7 +1985,8 @@
       "name": "Huyền thoại địa ốc",
       "desc": "Đọc tin chuẩn, vào lệnh chuẩn, lãi vượt trội.",
       "when": {
-        "minProfitPct": 45
+        "minProfitPct": 45,
+        "minAnnualProfitPct": 20.4
       }
     },
     {
@@ -616,7 +1995,8 @@
       "desc": "Mua nhanh bán nhanh, sóng nào cũng bắt được.",
       "when": {
         "minTrades": 8,
-        "minProfitPct": 10
+        "minProfitPct": 10,
+        "minAnnualProfitPct": 4.9
       }
     },
     {
@@ -625,7 +2005,8 @@
       "desc": "Dám vay, dám thắng, biết lúc dừng.",
       "when": {
         "usedLoan": true,
-        "minProfitPct": 15
+        "minProfitPct": 15,
+        "minAnnualProfitPct": 7.2
       }
     },
     {
@@ -634,7 +2015,8 @@
       "desc": "Tiền thuê đều đặn, ngủ ngon mỗi đêm.",
       "when": {
         "minRentPct": 8,
-        "minProfitPct": 0
+        "minProfitPct": 0,
+        "minAnnualProfitPct": 0
       }
     },
     {
@@ -643,7 +2025,8 @@
       "desc": "Bạn phân biệt tin thật tin giả rất giỏi.",
       "when": {
         "minRumorCallPct": 70,
-        "minProfitPct": 5
+        "minProfitPct": 5,
+        "minAnnualProfitPct": 2.5
       }
     },
     {
@@ -652,7 +2035,8 @@
       "desc": "Chọn đúng lúc, giữ đúng chỗ bên bờ biển.",
       "when": {
         "project": "gp",
-        "minProfitPct": 10
+        "minProfitPct": 10,
+        "minAnnualProfitPct": 4.9
       }
     },
     {
@@ -661,7 +2045,8 @@
       "desc": "Giữ tài sản xanh giữa lòng thành phố.",
       "when": {
         "project": "sgp",
-        "minProfitPct": 10
+        "minProfitPct": 10,
+        "minAnnualProfitPct": 4.9
       }
     },
     {
@@ -669,7 +2054,8 @@
       "name": "Nhà đầu tư an toàn",
       "desc": "Không lỗ là đã thắng.",
       "when": {
-        "minProfitPct": 0
+        "minProfitPct": 0,
+        "minAnnualProfitPct": 0
       }
     },
     {
@@ -679,11 +2065,104 @@
       "when": {}
     }
   ],
-  "_titleRules": "Duyet tu tren xuong, lay danh hieu dau tien khop. trades = so lan mua+ban. minRentPct = tong tien thue / von ban dau (%). minRumorCallPct = % so quy nguoi choi mua khi tin tot thanh that hoac ban/dung ngoai khi tin xau thanh that. Zones '*' = tat ca, '*sgp' / '*gp' = moi phan khu cua du an do.",
+  "_titleRules": "Duyet tu tren xuong, lay danh hieu dau tien khop. trades = so lan mua+ban. minRentPct = tong tien thue / von ban dau (%). minRumorCallPct = % so quy nguoi choi mua khi tin tot thanh that hoac ban/dung ngoai khi tin xau thanh that. Zones '*' = tat ca, '*sgp' / '*gp' = moi phan khu cua du an do. minAnnualProfitPct = lai quy doi theo nam: ((1+profit)^(4/Q)-1)*100. Gia tri = quy doi cua minProfitPct o van 8 quy (2 nam), nen voi Q=8 hai dieu kien tuong duong; voi Q>8 dieu kien nam chat hon => engine v3 co the kiem ca hai (AND) hoac chi minAnnualProfitPct. Engine v2 bo qua truong nay.",
   "cta": {
     "label": "Nhắn Zalo tư vấn",
     "zaloUrl": "https://zalo.me/0868581888",
     "formUrl": "https://vinhome.site/"
   },
-  "_mapNote": "zone.map.xPct/yPct: vi tri goc tren-trai cua o tren ban do (% chieu rong/cao vung ban do). GP lay theo ban phac /workspace/review/mock/map.html; SGP theo mo ta: cong vien giua, can ho va nha pho quanh cong vien, truc thuong mai la duong chinh, biet thu canh ho."
+  "_mapNote": "zone.map.xPct/yPct: vi tri goc tren-trai cua o tren ban do (% chieu rong/cao vung ban do). GP lay theo ban phac /workspace/review/mock/map.html; SGP theo mo ta: cong vien giua, can ho va nha pho quanh cong vien, truc thuong mai la duong chinh, biet thu canh ho.",
+  "_mortgageNote": "CAP NHAT 28/09 (Redd): rules.mortgage da thay bang so tu nguon cong khai (xem rules.mortgage.sources, _sourceDetail, cac khoa _xxxNote). Luu y baseRatePctYear = lai co so minh hoa 9,5 (khong phai lai tiet kiem 12 thang 6,8) de lai tha noi = 9,5 + 3,5 = 13%/nam khop khao sat VARS 13-15%. maxLtvPct: tỷ lệ vay tối đa trên giá mua (%). defaultLtvPct: tỷ lệ vay mặc định khi bấm Mua một chạm. termYearsOptions: các thời hạn vay (năm) cho người chơi chọn; defaultTermYears: thời hạn mặc định. packages: các gói vay, gói đầu tiên là mặc định; mỗi gói {id, name, bank, promoRatePctYear: lãi ưu đãi %/năm, promoMonths: số tháng ưu đãi, floatMarginPct: biên độ cộng thêm vào lãi cơ sở sau ưu đãi (%/năm)}. baseRatePctYear: lãi cơ sở ban đầu (%/năm, vd lãi tiết kiệm 12 tháng tham chiếu); lãi thả nổi = lãi cơ sở + biên độ. baseRateMinPct/baseRateMaxPct: biên dưới/trên của lãi cơ sở. baseRateDriftPctPerQuarter: mỗi quý lãi cơ sở dao động ngẫu nhiên tối đa ±giá trị này (0 = cố định). Tin tức có thể có baseRateChangePct (áp dụng từ quý sau nếu tin THẬT; tùy chọn falseBaseRateChangePct nếu tin GIẢ). prepayPenaltyPctByYear: phí phạt trả nợ trước hạn theo năm vay [năm 1, năm 2, ...], giá trị cuối áp dụng cho các năm sau (áp dụng khi bán căn hoặc trả bớt nợ). graceMonths: số tháng ân hạn gốc (chỉ trả lãi). repayment: 'declining' (gốc chia đều, lãi tính trên dư nợ giảm dần — phổ biến ở VN) hoặc 'annuity' (góp đều). fireSaleDiscountPct: khi không đủ tiền trả góp, ngân hàng phát mại căn với giá thấp hơn thị trường bao nhiêu %. sources: [{name, url, date}] nguồn số liệu. Game trả góp theo quý = 3 tháng gốc + lãi. rules.loan (vay gộp cũ) không còn dùng từ v3.",
+  "_eventRules": "change/falseChange = % gia quy do cho zone bi anh huong (tin that/tin sai). baseRateChangePct (tuy chon) = diem % cong vao lai co so neu tin thanh THAT; falseBaseRateChangePct (tuy chon, mac dinh 0) neu tin SAI. phase:\"mid\" = su kien lon, engine v3 xep dung 1 cai vao giua van (tu minQuarter, vd quy 5-12) khi van >= 12 quy; van 8 quy co the bo qua hoac de binh thuong. ltvCapPct + effectQuarters (tuy chon) = tran LTV cho khoan vay moi trong N quy. Engine v2 bo qua cac truong moi.",
+  "mortgageDilemmas": [
+    {
+      "id": "d-m-lock",
+      "requires": [
+        "activeMortgage"
+      ],
+      "text": "Sắp hết ưu đãi. Ngân hàng cho khóa lãi cố định thêm 12 tháng ở 10,5%/năm, phí 1% dư nợ. Hay chấp nhận thả nổi?",
+      "options": [
+        {
+          "label": "Khóa thêm 12 tháng",
+          "effect": {
+            "extendPromo": {
+              "months": 12,
+              "promoRatePctYear": 10.5,
+              "feePctOfBalance": 1
+            }
+          }
+        },
+        {
+          "label": "Thả nổi",
+          "effect": {}
+        }
+      ]
+    },
+    {
+      "id": "d-m-htls",
+      "requires": [
+        "mortgageEnabled"
+      ],
+      "text": "Chủ đầu tư mở chính sách hỗ trợ lãi suất 0% và ân hạn gốc 18 tháng cho căn mua trong quý này, đổi lại giá bán cao hơn 3,5%.",
+      "options": [
+        {
+          "label": "Nhận hỗ trợ lãi suất",
+          "effect": {
+            "developerSupport": {
+              "months": 18,
+              "priceMarkupPct": 3.5,
+              "customerRatePctYear": 0,
+              "grace": true
+            }
+          }
+        },
+        {
+          "label": "Mua giá gốc, tự vay",
+          "effect": {}
+        }
+      ]
+    },
+    {
+      "id": "d-m-grace",
+      "requires": [
+        "activeMortgage"
+      ],
+      "text": "Ngân hàng đề nghị ân hạn nợ gốc 12 tháng (chỉ trả lãi), đổi lại biên độ thả nổi cộng thêm 0,5%/năm.",
+      "options": [
+        {
+          "label": "Nhận ân hạn",
+          "effect": {
+            "graceMonths": 12,
+            "marginCutPct": -0.5
+          }
+        },
+        {
+          "label": "Trả gốc bình thường",
+          "effect": {}
+        }
+      ]
+    },
+    {
+      "id": "d-m-term",
+      "requires": [
+        "activeMortgage"
+      ],
+      "text": "Kéo dài thời hạn vay lên 25 năm để giảm tiền góp hàng tháng? Tổng tiền lãi về lâu dài sẽ nhiều hơn.",
+      "options": [
+        {
+          "label": "Kéo dài 25 năm",
+          "effect": {
+            "setTermYears": 25,
+            "cost": 10
+          }
+        },
+        {
+          "label": "Giữ thời hạn",
+          "effect": {}
+        }
+      ]
+    }
+  ],
+  "_dilemmaRules": "dilemmas: engine doc truc tiep. Effect v2: buyDiscountPct, lockQuarters, sellPremiumPct, rentBonusPct, loanAdd, interestPctPerQuarter, cost, revealNextEvent, revealMode. Effect v3 (da co trong engine.js): topUpLoan, marginCutPct. requires (DE XUAT, engine chua kiem): freeUnit = co can tu do; activeMortgage = dang co khoan vay (d-refi2, d-insure se thanh \"tra phi ma khong duoc gi\" neu nguoi choi chua vay); mortgageEnabled. mortgageDilemmas: CHO engine ho tro cac effect moi (de xuat ten): extendPromo{months,promoRatePctYear,feePctOfBalance} = keo dai ky co dinh cho moi khoan vay dang co; developerSupport{months,priceMarkupPct,customerRatePctYear,grace} = ap cho lan mua ke tiep trong quy (gia x (1+markup), lai KH tra = customerRate trong N thang, an han goc); graceMonths = an han goc them N thang tu thang hien tai; setTermYears = doi thoi han con lai. Khi engine ho tro, chuyen phan tu sang dilemmas.",
+  "_balanceNote": "v3: growth = tang gia nen THEO NAM (engine chia 4 moi quy), khong phai theo quy. Tang growth 2-4%/nam -> 3,5-5,5%/nam va risk x1,3 de don bay co bien do lon hon (p90 cao hon) nhung van lo trung binh khi lai vay 9,5-13%/nam > tang gia + tien thue - dung thuc te 2026. Day la tham so game, khong co nguon so lieu. Ban truoc: data/game-data.v2.json."
 }
