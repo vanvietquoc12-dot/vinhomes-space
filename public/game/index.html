@@ -1,55 +1,99 @@
 <!doctype html>
-<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Nhà Đầu Tư Tí Hon — game mô phỏng BĐS</title>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Nhà Đầu Tư Tí Hon — game mô phỏng bất động sản</title>
+<meta property="og:title" content="Nhà Đầu Tư Tí Hon — bạn là nhà đầu tư kiểu gì?">
+<meta property="og:description" content="Game mô phỏng 3 phút: đọc tin, mua bán, vay, cho thuê và nhận danh hiệu.">
 <style>
-body{font-family:system-ui,sans-serif;margin:0;background:#0f2e2a;color:#f3f7f5}
-.wrap{max-width:720px;margin:auto;padding:16px}
-.card{background:#16433d;border-radius:14px;padding:14px;margin:10px 0}
-button{background:#e7b84b;color:#1b1b1b;border:0;border-radius:10px;padding:10px 14px;font-weight:600;margin:4px;cursor:pointer}
-button.alt{background:#2c6b62;color:#fff}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
-small{opacity:.75}.news{font-size:1.1em;background:#244f49;padding:10px;border-radius:10px}
-.warn{font-size:.8em;opacity:.7;text-align:center}
-</style></head><body><div class="wrap" id="app"></div>
-<p class="warn" id="disc">Giá trong game chỉ là mô phỏng, không phải giá chào bán thật.</p>
+:root{--bg:#0f2e2a;--card:#16433d;--card2:#1d544c;--gold:#e7b84b;--up:#8fe3a1;--down:#ff9b8a;--tx:#f3f7f5}
+*{box-sizing:border-box}body{font-family:system-ui,-apple-system,sans-serif;margin:0;background:var(--bg);color:var(--tx)}
+.wrap{max-width:560px;margin:auto;padding:12px 12px 110px}
+.card{background:var(--card);border-radius:14px;padding:12px;margin:8px 0}
+.top{display:flex;justify-content:space-between;gap:6px;font-size:.85em;position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:5}
+.top b{display:block;font-size:1.15em}
+.news{background:linear-gradient(135deg,#2a5d55,#1d4a44);border-left:4px solid var(--gold)}
+.src{font-size:.8em;opacity:.8;margin-top:4px}
+.zone{display:grid;grid-template-columns:1fr auto;gap:4px 8px;align-items:center}
+.zone .nm{font-weight:600}.zone small{opacity:.75}
+.price{text-align:right;font-weight:700}.up{color:var(--up)}.down{color:var(--down)}
+.acts{grid-column:1/3;display:flex;gap:6px}.acts button{flex:1;padding:8px 4px;font-size:.8em}
+button{font:inherit;background:var(--gold);color:#1b1b1b;border:0;border-radius:10px;padding:9px 12px;font-weight:600;cursor:pointer}
+button.alt{background:#2c6b62;color:#fff}button.ghost{background:transparent;color:var(--tx);text-decoration:underline;padding:6px}
+button:disabled{opacity:.35;cursor:not-allowed}
+.bar{position:fixed;left:0;right:0;bottom:0;background:#0b2421;border-top:1px solid #2c6b62;padding:10px 12px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;justify-content:center;z-index:9}
+.bar:empty{display:none}.bar .main{flex:1;max-width:260px;font-size:1.05em}
+.modal{position:fixed;inset:0;background:#000a;display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+.modal .card{max-width:480px;width:100%;background:var(--card2)}
+.tag{display:inline-block;font-size:.72em;background:#0b2421;border-radius:6px;padding:2px 6px;margin-left:4px}
+.hero{width:100%;height:120px;object-fit:cover;border-radius:10px;margin-bottom:6px}
+.warn{font-size:.75em;opacity:.65;text-align:center;margin:12px 0}
+.row{display:flex;justify-content:space-between;padding:3px 0}
+h1,h2,h3{margin:.3em 0}
+</style></head><body><div class="wrap" id="app"></div><div id="bar" class="bar"></div><div id="modal"></div>
+<script src="engine.js"></script>
 <script>
-const ROUNDS=8;
-let D,S;const $=h=>document.getElementById('app').innerHTML=h;
-const fmt=n=>Math.round(n).toLocaleString('vi-VN')+' tr';
-async function load(){for(const f of['data/game-data.json','data/sample-data.json']){try{const r=await fetch(f);if(r.ok){D=await r.json();return}}catch(e){}}}
-function start(){$(`<h1>Nhà Đầu Tư Tí Hon</h1><div class="card">Chọn dự án để bắt đầu:</div>`+
- D.projects.map(p=>`<div class="card"><b>${p.name}</b><br><small>${p.tagline||''}</small><br><small>Vốn khởi đầu ${fmt(p.startCapital)}</small><br><button onclick="pick('${p.id}')">Chơi dự án này</button></div>`).join('')+
- (localStorage.bdsBest?`<p><small>Kỷ lục của bạn: ${localStorage.bdsBest}%</small></p>`:'')+`<p><small>Mua bán qua ${ROUNDS} quý, mỗi quý có một tin tức làm giá lên xuống. Cuối game bạn nhận danh hiệu theo mức lãi.</small></p>`)}
-function pick(id){const p=D.projects.find(x=>x.id==id);S={p,cash:p.startCapital,round:1,zones:D.zones.filter(z=>z.project==id).map(z=>({...z,cur:z.price})),own:{},news:'Thị trường mở cửa. Hãy chọn nơi xuống tiền!'};draw()}
-const worth=()=>S.cash+S.zones.reduce((a,z)=>a+(S.own[z.id]||0)*z.cur,0);
-function draw(){$(`<h2>${S.p.name}</h2><div class="card">Quý ${S.round}/${ROUNDS} · Tiền mặt <b>${fmt(S.cash)}</b> · Tài sản <b>${fmt(worth())}</b></div>
-<div class="news">📰 ${S.news}</div><div class="grid">`+S.zones.map(z=>`<div class="card"><b>${z.name}</b><br><small>${z.type} · rủi ro ${Math.round(z.risk*100)}%</small><br>Giá: ${fmt(z.cur)}<br>Đang giữ: ${S.own[z.id]||0}<br>
-<button onclick="buy('${z.id}')">Mua</button><button class="alt" onclick="sell('${z.id}')">Bán</button></div>`).join('')+
-`</div><button onclick="next()">Sang quý tiếp ▶</button>`)}
-function buy(id){const z=S.zones.find(x=>x.id==id);if(S.cash>=z.cur){S.cash-=z.cur;S.own[id]=(S.own[id]||0)+1}draw()}
-function sell(id){const z=S.zones.find(x=>x.id==id);if(S.own[id]){S.own[id]--;S.cash+=z.cur*0.98}draw()}
-function next(){const e=D.events[Math.floor(Math.random()*D.events.length)];
- S.zones.forEach(z=>{let c=z.growth/4*100+(Math.random()-.5)*z.risk*10;if(e.zones.includes('*')||e.zones.includes(z.id))c+=e.change;z.cur=Math.max(z.price*.3,z.cur*(1+c/100))});
- S.news=e.text;if(++S.round>ROUNDS)return end();draw()}
-function end(){const pct=(worth()/S.p.startCapital-1)*100,t=D.titles.find(x=>pct>=x.minProfitPct);
- $(`<div class="card" style="text-align:center"><h1>${t.name}</h1><p>${t.desc}</p><h2>${pct>=0?'+':''}${pct.toFixed(1)}%</h2><p>Tài sản cuối: ${fmt(worth())}</p></div>
-<canvas id="cv" width="1080" height="1080" style="width:100%;border-radius:14px"></canvas>
-<button onclick="share('${t.name}',${pct.toFixed(1)})">Chia sẻ kết quả</button><button class="alt" onclick="saveImg()">Tải ảnh kết quả</button>
-<a href="${D.cta?.zaloUrl||'#'}" target="_blank" rel="noopener"><button>${D.cta?.label||'Nhắn Zalo tư vấn'}</button></a>
-${D.cta?.formUrl?`<a href="${D.cta.formUrl}" target="_blank" rel="noopener"><button class="alt">Để lại thông tin</button></a>`:''}
-<button class="alt" onclick="start()">Chơi lại</button>`);
- const best=parseFloat(localStorage.bdsBest||'-1e9');if(pct>best)localStorage.bdsBest=pct.toFixed(1);drawCard(t,pct)}
+let D,G;const E=Engine;
+const $=(id,h)=>document.getElementById(id).innerHTML=h;
+const fmt=n=>(n<0?'-':'')+Math.round(Math.abs(n)).toLocaleString('vi-VN')+' tr';
+const pc=n=>(n>=0?'▲ +':'▼ ')+n.toFixed(1)+'%';
+const vol=r=>r<0.3?'Biến động thấp':r<0.5?'Biến động vừa':'Biến động cao';
+async function load(){for(const f of['data/game-data.json','data/sample-data.json']){try{const r=await fetch(f,{cache:'no-cache'});if(r.ok){D=await r.json();return}}catch(e){}}}
+function start(){$('bar','');$('modal','');
+ $('app',`<h1>Nhà Đầu Tư Tí Hon</h1><div class="card">Bạn có 8 quý để làm giàu. Mỗi quý có một tin tức, nhưng <b>tin chưa chắc đã đúng</b>: hãy xem nguồn tin rồi quyết định mua, bán, vay hay cho thuê. Chốt quý xong mới biết tin thật hay giả.</div>`+
+ D.projects.map(p=>`<div class="card">${p.image?`<img class="hero" src="${p.image}" alt="">`:''}<b>${p.name}</b><br><small>${p.tagline||''} · Vốn ${fmt(p.startCapital)}</small><br><button style="margin-top:8px" onclick="pick('${p.id}')">Chơi dự án này</button></div>`).join('')+
+ (localStorage.bdsBest?`<p class="warn">Kỷ lục của bạn: ${localStorage.bdsBest}%</p>`:''))}
+function pick(id){G=E.newGame(D,id);draw()}
+function draw(){
+ const z=G.zones,own=id=>G.units.filter(u=>u.zone===id),free=id=>own(id).filter(u=>!E.locked(G,u));
+ const ev=G.ev;
+ $('app',`<div class="top"><div>Quý<b>${G.round}/${G.Q}</b></div><div>Tài sản ròng<b>${fmt(E.worth(G))}</b></div><div>Tiền mặt<b>${fmt(G.cash)}</b></div><div>Nợ<b>${fmt(G.loan)}</b></div></div>
+ <div class="card news"><div>📰 ${ev.text}</div><div class="src">Nguồn: ${ev.source||'Không rõ'}${ev.kind==='rumor'?' <span class="tag">tin đồn</span>':''}</div>
+ ${G.revealed?`<div class="src">🔎 Môi giới rỉ tai: tin này <b>${G.evTruth?'là THẬT':'là GIẢ'}</b>.</div>`:''}</div>`+
+ (G.perks.discount?`<div class="card">🎟️ Suất ưu đãi: lần mua kế tiếp rẻ hơn ${G.perks.discount.pct}% nhưng khóa ${G.perks.discount.lock} quý.</div>`:'')+
+ (G.perks.premium?`<div class="card">💰 Có người trả thêm ${G.perks.premium}% nếu bạn bán một căn trong quý này.</div>`:'')+
+ z.map(x=>{const o=own(x.id),f=free(x.id),leased=o.filter(u=>u.leaseUntil).length,bp=E.buyPrice(G,x);
+  const rentQ=x.cur*(x.rentPctPerQuarter||0)/100;
+  return `<div class="card zone"><div><div class="nm">${x.name}</div><small>${x.type} · ${vol(x.risk)}</small>
+  ${o.length?`<br><small>Đang giữ ${o.length}${leased?` · ${leased} đang cho thuê`:''}${o.length-f.length-leased>0?` · ${o.length-f.length-leased} đang khóa`:''}</small>`:''}</div>
+  <div class="price">${fmt(x.cur)}<br><small class="${x.last>=0?'up':'down'}">${G.round>1?pc(x.last):''}</small></div>
+  <div class="acts"><button ${G.cash<bp?'disabled':''} onclick="act('buy','${x.id}')">Mua<br>${fmt(bp)}</button>
+  <button class="alt" ${f.length?'':'disabled'} onclick="act('sell','${x.id}')">Bán, nhận<br>${fmt(E.sellValue(G,x))}</button>
+  <button class="alt" ${f.some(u=>!u.leaseUntil)?'':'disabled'} onclick="act('rent','${x.id}')">Cho thuê<br>+${fmt(rentQ)}/quý</button></div></div>`}).join('')+
+ `<p class="warn">Bán mất phí ${Math.round(G.fee*100)}% (đã trừ sẵn trong giá "nhận"). Cho thuê: nhận tiền 2 quý, không bán được trong 2 quý đó. Vay tối đa ${Math.round(G.maxLtv*100)}% giá trị nhà đang giữ, lãi ${G.rate}%/quý.<br>${D.disclaimer||''}</p>`);
+ const mb=E.maxBorrow(G);
+ $('bar',`<button class="alt" ${mb>=100?'':'disabled'} onclick="act('borrow')">Vay ${fmt(Math.min(1000,mb))}</button><button class="alt" ${G.loan>0&&G.cash>0?'':'disabled'} onclick="act('repay')">Trả nợ</button><button class="main" onclick="next()">Chốt quý ▶</button>`);
+ if(G.dilemma){const d=G.dilemma;$('modal',`<div class="modal"><div class="card"><h3>⚖️ Tình huống</h3><p>${d.text}</p>${d.options.map((o,i)=>`<button ${i?'class="alt"':''} style="margin:4px" onclick="choose(${i})">${o.label}</button>`).join('')}</div></div>`)} else $('modal','');
+}
+function act(k,id){if(k==='buy')E.buy(G,id);if(k==='sell')E.sell(G,id);if(k==='rent')E.rent(G,id);if(k==='borrow')E.borrow(G,Math.min(1000,E.maxBorrow(G)));if(k==='repay')E.repay(G,Math.min(G.loan,G.cash));draw()}
+function choose(i){E.choose(G,i);draw()}
+function next(){const r=E.endQuarter(G);
+ $('bar','');$('modal',`<div class="modal"><div class="card"><h3>${r.truth?'✅ Tin là THẬT':'❌ Tin là GIẢ'}</h3><p style="opacity:.85">${r.ev.text}<br><small>Nguồn: ${r.ev.source||''}</small></p>
+ ${G.zones.map(z=>`<div class="row"><span>${z.name}</span><span class="${z.last>=0?'up':'down'}">${pc(z.last)}</span></div>`).join('')}
+ ${r.rent?`<div class="row"><span>Tiền thuê nhận</span><span class="up">+${fmt(r.rent)}</span></div>`:''}
+ ${r.interest?`<div class="row"><span>Lãi vay phải trả</span><span class="down">-${fmt(r.interest)}</span></div>`:''}
+ ${r.forced?`<p class="down">Hết tiền mặt nên phải bán gấp ${r.forced} căn.</p>`:''}
+ <button style="margin-top:10px;width:100%" onclick="${G.done?'end()':'draw()'}">${G.done?'Xem kết quả':'Sang quý '+G.round+' ▶'}</button></div></div>`)}
+function end(){$('modal','');$('bar','');const R=E.result(G),t=R.title,pct=R.profitPct;
+ const best=parseFloat(localStorage.bdsBest||'-1e9');if(pct>best)localStorage.bdsBest=pct.toFixed(1);
+ const c=D.cta||{};
+ $('app',`<canvas id="cv" width="1080" height="1080" style="width:100%;border-radius:14px;margin-top:8px"></canvas>
+ <div class="card"><div class="row"><span>Số giao dịch</span><b>${R.trades}</b></div><div class="row"><span>Tiền thuê đã nhận</span><b>${fmt(G.stats.rent)}</b></div><div class="row"><span>Đoán đúng hướng tin</span><b>${Math.round(R.rumorCallPct)}%</b></div></div>
+ <a href="${c.zaloUrl||'#'}" target="_blank" rel="noopener"><button style="width:100%;font-size:1.15em;padding:14px">${c.label||'Nhắn Zalo tư vấn'}</button></a>
+ <div style="text-align:center;margin-top:6px"><button class="ghost" onclick="share()">Chia sẻ</button><button class="ghost" onclick="saveImg()">Tải ảnh</button>${c.formUrl?`<a href="${c.formUrl}" target="_blank" rel="noopener"><button class="ghost">Để lại thông tin</button></a>`:''}<button class="ghost" onclick="start()">Chơi lại</button></div>
+ <p class="warn">${D.disclaimer||''}</p>`);drawCard(t,pct);window._res={t,pct}}
 function drawCard(t,pct){const c=document.getElementById('cv'),x=c.getContext('2d');
  const g=x.createLinearGradient(0,0,1080,1080);g.addColorStop(0,'#0f2e2a');g.addColorStop(1,'#2c6b62');x.fillStyle=g;x.fillRect(0,0,1080,1080);
  x.fillStyle='#e7b84b';x.fillRect(80,80,920,8);x.textAlign='center';x.fillStyle='#f3f7f5';
- x.font='600 44px system-ui';x.fillText('NHÀ ĐẦU TƯ TÍ HON',540,200);x.font='36px system-ui';x.fillText(S.p.name,540,260);
- x.fillStyle='#e7b84b';x.font='bold 84px system-ui';wrap(x,t.name,540,470,900,96);
+ x.font='600 44px system-ui';x.fillText('NHÀ ĐẦU TƯ TÍ HON',540,200);x.font='36px system-ui';x.fillText(G.p.name,540,260);
+ x.fillStyle='#e7b84b';x.font='bold 84px system-ui';wrap(x,t.name,540,450,900,96);
  x.fillStyle='#f3f7f5';x.font='40px system-ui';wrap(x,t.desc,540,640,880,52);
- x.font='bold 120px system-ui';x.fillStyle=pct>=0?'#8fe3a1':'#ff9b8a';x.fillText((pct>=0?'+':'')+pct.toFixed(1)+'%',540,860);
- x.fillStyle='#f3f7f5';x.font='30px system-ui';x.fillText('Bạn được danh hiệu gì? Chơi thử ngay!',540,960);x.font='22px system-ui';x.globalAlpha=.7;x.fillText('Game mô phỏng, giá không phải giá thật',540,1010);x.globalAlpha=1}
+ x.font='bold 120px system-ui';x.fillStyle=pct>=0?'#8fe3a1':'#ff9b8a';x.fillText((pct>=0?'+':'')+pct.toFixed(1)+'%',540,870);
+ x.fillStyle='#f3f7f5';x.font='30px system-ui';x.fillText('Bạn là nhà đầu tư kiểu gì? Chơi thử ngay!',540,960);x.font='22px system-ui';x.globalAlpha=.7;x.fillText('Game mô phỏng, giá không phải giá thật',540,1010);x.globalAlpha=1}
 function wrap(x,t,cx,y,w,lh){const ws=t.split(' ');let l='',ls=[];ws.forEach(v=>{const tt=l?l+' '+v:v;if(x.measureText(tt).width>w){ls.push(l);l=v}else l=tt});ls.push(l);ls.forEach((v,i)=>x.fillText(v,cx,y+i*lh))}
-function saveImg(){const a=document.createElement('a');a.download='ket-qua-nha-dau-tu.png';a.href=document.getElementById('cv').toDataURL('image/png');a.click()}
-function share(n,p){const txt=`Mình vừa đạt danh hiệu "${n}" (${p}%) trong game Nhà Đầu Tư Tí Hon! Thử xem bạn được gì:`;
- if(navigator.share)navigator.share({title:'Nhà Đầu Tư Tí Hon',text:txt,url:location.href});else{navigator.clipboard.writeText(txt+' '+location.href);alert('Đã sao chép nội dung chia sẻ!')}}
-load().then(()=>{if(D.disclaimer)document.getElementById('disc').textContent=D.disclaimer;start()});
+function saveImg(){const a=document.createElement('a');a.download='nha-dau-tu-ti-hon.png';a.href=document.getElementById('cv').toDataURL('image/png');a.click()}
+async function share(){const {t,pct}=window._res,txt=`Mình là "${t.name}" (${pct>=0?'+':''}${pct.toFixed(1)}%) trong game Nhà Đầu Tư Tí Hon! Bạn là nhà đầu tư kiểu gì?`;
+ try{const b=await new Promise(r=>document.getElementById('cv').toBlob(r));const f=new File([b],'ket-qua.png',{type:'image/png'});
+  if(navigator.canShare&&navigator.canShare({files:[f]}))return navigator.share({files:[f],text:txt+' '+location.href});
+  if(navigator.share)return navigator.share({title:'Nhà Đầu Tư Tí Hon',text:txt,url:location.href})}catch(e){}
+ navigator.clipboard.writeText(txt+' '+location.href);alert('Đã sao chép nội dung chia sẻ!')}
+load().then(start);
 </script></body></html>

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Build + deploy vinhomes.space (Worker assets) and vinhomes-space.pages.dev. Needs wrangler login (done 2026-09-28).
+set -euo pipefail
+cd /workspace/vinhomes-space
+cp /workspace/game-bds/index.html /workspace/game-bds/engine.js public/game/ && cp /workspace/game-bds/data/game-data.json public/game/data/
+npm run build
+npx -y wrangler@3 pages deploy out --project-name vinhomes-space --branch main --commit-dirty=true
+npx -y wrangler@3 deploy --config /workspace/vs-worker/wrangler.toml
