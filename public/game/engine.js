@@ -284,7 +284,8 @@
     }
     // tin có thể đổi lãi cơ sở / hạ LTV (kể cả khi tin giả nên không đổi) luôn hiện popup đầy đủ
     const rateEv = !!(ev.baseRateChangePct || ev.falseBaseRateChangePct) || ev.ltvCapPct != null;
-    const quietEv = !rateEv && (ev.quiet === true || (ev.quiet !== false && ev.phase !== 'mid' && G.Q >= G.compactMinQ && Math.max(Math.abs(ev.change || 0), Math.abs(ev.falseChange || 0)) <= G.quietMax));
+    // popup gọn chỉ ở ván dài (>= compactMinQuarters, mặc định 12), kể cả tin gắn quiet:true; quiet:false thì luôn đầy đủ
+    const quietEv = !rateEv && G.Q >= G.compactMinQ && (ev.quiet === true || (ev.quiet !== false && ev.phase !== 'mid' && Math.max(Math.abs(ev.change || 0), Math.abs(ev.falseChange || 0)) <= G.quietMax));
     const res = { ev, truth, delta, rent: rentQ, pay: { p: P, i: I, total: P + I }, promoEnds, baseFrom, baseTo: G.baseRate, baseEvent, ltvCap, fireSales, forced: fireSales.length,
       worth: worth(G), pnl: worth(G) - G.w0, debt: debt(G), round: G.round };
     res.quiet = quietEv && !promoEnds.length && !fireSales.length && !ltvCap && Math.abs(res.baseTo - res.baseFrom) < 0.25 && !baseEvent;

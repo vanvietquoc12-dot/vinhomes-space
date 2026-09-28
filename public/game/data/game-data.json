@@ -651,8 +651,8 @@
     "_loanModelNote": "legacy = dung rules.loan (engine v2). Khi engine v3 san sang, coder doi thanh \"mortgage\" de dung rules.mortgage + mortgageDilemmas.",
     "deposit12mPctYear": 6.8,
     "_deposit12mNote": "Lãi tiết kiệm 12 tháng tại nhóm 4 ngân hàng lớn (Big4), tra ngày 28/9/2026. Chỉ dùng để so sánh trên màn kết quả, không cộng lãi cho tiền mặt.",
-    "quietMaxChangePct": 8,
-    "_quietNote": "Tin làm giá đổi tối đa 8% được coi là quý yên ắng (khoảng 15/66 tin, tức 1 trong 4 đến 5 quý). Tin phase mid hoặc có baseRateChangePct thì luôn hiện đầy đủ."
+    "quietMaxChangePct": 5,
+    "_quietNote": "15 tin nhỏ được gắn quiet: true, giá đổi tối đa 5% (giảm một nửa so với bản trước). Thực tế khoảng 1 trong 4 quý trôi nhanh. Tin có baseRateChangePct hoặc ltvCapPct, quý hết ưu đãi và quý phát mãi luôn hiện đầy đủ. Tăng giá các phân khu được nâng thêm 1,2%/năm để bù lại."
   },
   "projects": [
     {
@@ -702,7 +702,7 @@
       "type": "Căn hộ",
       "price": 800,
       "risk": 0.2,
-      "growth": 0.05,
+      "growth": 0.062,
       "rentPctPerQuarter": 1.1,
       "map": {
         "xPct": 6,
@@ -716,7 +716,7 @@
       "type": "Liền kề",
       "price": 1800,
       "risk": 0.45,
-      "growth": 0.065,
+      "growth": 0.077,
       "rentPctPerQuarter": 0.8,
       "map": {
         "xPct": 56,
@@ -730,7 +730,7 @@
       "type": "Shophouse",
       "price": 2400,
       "risk": 0.65,
-      "growth": 0.075,
+      "growth": 0.087,
       "rentPctPerQuarter": 1,
       "map": {
         "xPct": 30,
@@ -744,7 +744,7 @@
       "type": "Biệt thự",
       "price": 3500,
       "risk": 0.8,
-      "growth": 0.09,
+      "growth": 0.102,
       "rentPctPerQuarter": 0.75,
       "map": {
         "xPct": 58,
@@ -758,7 +758,7 @@
       "type": "Căn hộ",
       "price": 900,
       "risk": 0.2,
-      "growth": 0.05,
+      "growth": 0.062,
       "rentPctPerQuarter": 1.1,
       "map": {
         "xPct": 9,
@@ -772,7 +772,7 @@
       "type": "Liền kề",
       "price": 1900,
       "risk": 0.45,
-      "growth": 0.065,
+      "growth": 0.077,
       "rentPctPerQuarter": 0.8,
       "map": {
         "xPct": 54,
@@ -786,7 +786,7 @@
       "type": "Shophouse",
       "price": 2200,
       "risk": 0.65,
-      "growth": 0.075,
+      "growth": 0.087,
       "rentPctPerQuarter": 1,
       "map": {
         "xPct": 9,
@@ -800,7 +800,7 @@
       "type": "Biệt thự biển",
       "price": 3200,
       "risk": 0.8,
-      "growth": 0.09,
+      "growth": 0.102,
       "rentPctPerQuarter": 0.75,
       "map": {
         "xPct": 54,
@@ -860,8 +860,9 @@
       "zones": [
         "*"
       ],
-      "change": -10,
-      "falseChange": 4
+      "change": -5,
+      "falseChange": 2,
+      "quiet": true
     },
     {
       "id": "g-credit",
@@ -918,8 +919,9 @@
         "sgp-apt",
         "gp-apt"
       ],
-      "change": -10,
-      "falseChange": 2
+      "change": -5,
+      "falseChange": 1,
+      "quiet": true
     },
     {
       "id": "s-park",
@@ -1053,8 +1055,9 @@
         "gp-apt",
         "gp-town"
       ],
-      "change": 10,
-      "falseChange": -4
+      "change": 5,
+      "falseChange": -2,
+      "quiet": true
     },
     {
       "id": "p-far",
@@ -1317,8 +1320,9 @@
       "zones": [
         "*"
       ],
-      "change": 8,
-      "falseChange": -8
+      "change": 4,
+      "falseChange": -4,
+      "quiet": true
     },
     {
       "id": "m-credit-crunch",
@@ -1381,8 +1385,9 @@
         "sgp-town",
         "gp-town"
       ],
-      "change": 8,
-      "falseChange": -2
+      "change": 4,
+      "falseChange": -1,
+      "quiet": true
     },
     {
       "id": "g-fdi",
@@ -1397,8 +1402,9 @@
         "sgp-shop",
         "gp-shop"
       ],
-      "change": 10,
-      "falseChange": -2
+      "change": 5,
+      "falseChange": -1,
+      "quiet": true
     },
     {
       "id": "g-oversupply",
@@ -1413,8 +1419,9 @@
         "sgp-town",
         "gp-town"
       ],
-      "change": -10,
-      "falseChange": 2
+      "change": -5,
+      "falseChange": 1,
+      "quiet": true
     },
     {
       "id": "g-foreign",
@@ -1471,8 +1478,9 @@
       "zones": [
         "*"
       ],
-      "change": 6,
-      "falseChange": -2
+      "change": 3,
+      "falseChange": -1,
+      "quiet": true
     },
     {
       "id": "g-heat",
@@ -1485,8 +1493,9 @@
         "sgp-villa",
         "gp-villa"
       ],
-      "change": 8,
-      "falseChange": -2
+      "change": 4,
+      "falseChange": -1,
+      "quiet": true
     },
     {
       "id": "g-stock-crash",
@@ -1498,8 +1507,9 @@
       "zones": [
         "*"
       ],
-      "change": 6,
-      "falseChange": -4
+      "change": 3,
+      "falseChange": -2,
+      "quiet": true
     },
     {
       "id": "g-stock-boom",
@@ -1511,8 +1521,9 @@
       "zones": [
         "*"
       ],
-      "change": -6,
-      "falseChange": 2
+      "change": -3,
+      "falseChange": 1,
+      "quiet": true
     },
     {
       "id": "g-shop-empty",
@@ -1539,8 +1550,9 @@
         "sgp-apt",
         "gp-apt"
       ],
-      "change": 8,
-      "falseChange": -2
+      "change": 4,
+      "falseChange": -1,
+      "quiet": true
     },
     {
       "id": "g-fake-panic",
@@ -1620,8 +1632,9 @@
         "sgp-town",
         "sgp-shop"
       ],
-      "change": -8,
-      "falseChange": 2
+      "change": -4,
+      "falseChange": 1,
+      "quiet": true
     },
     {
       "id": "s-lastvilla",
@@ -1646,8 +1659,9 @@
       "zones": [
         "sgp-shop"
       ],
-      "change": 10,
-      "falseChange": -2
+      "change": 5,
+      "falseChange": -1,
+      "quiet": true
     },
     {
       "id": "p-bridge",
@@ -1728,8 +1742,9 @@
         "gp-apt",
         "gp-town"
       ],
-      "change": 8,
-      "falseChange": -2
+      "change": 4,
+      "falseChange": -1,
+      "quiet": true
     }
   ],
   "dilemmas": [
