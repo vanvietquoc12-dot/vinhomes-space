@@ -106,7 +106,7 @@
   // v3.7 sổ tài chính: dòng tiền mặt của quý (từ đầu quý tới sau khi chốt), có dấu: + tiền vào, − tiền ra.
   // Σ CF_KEYS = tiền mặt cuối − tiền mặt đầu (kiểm trong t3). gocBan/gocTruoc/phatmai chỉ là chú thích (đã nằm trong goc/ban).
   const CF_KEYS = ['thue', 'tiengui', 'ban', 'vay', 'lai', 'goc', 'phi', 'phat', 'mua', 'tinhhuong'];
-  function newCF(cash) { const c = { start: cash, gocBan: 0, gocTruoc: 0, phatmai: 0 }; CF_KEYS.forEach(k => { c[k] = 0; }); return c; }
+  function newCF(cash) { const c = { start: cash, gocBan: 0, gocTruoc: 0, phatmai: 0, buyLoan: 0, buyProp: 0, sellProp: 0 }; CF_KEYS.forEach(k => { c[k] = 0; }); return c; }
   const cfAdd = (G, k, v) => { if (G.cf) G.cf[k] += v; };
   function startQuarter(G) {
     G.ev = G.sched[G.round - 1];
@@ -215,7 +215,8 @@
     const q = buyQuote(G, id, o); if (!q.ok) return false;
     const z = zone(G, id), adj = z.cur - q.price; // mua: tài sản ròng tính căn theo giá trừ phí bán => mất ngay phí; giảm giá (+) / giá cộng thêm của CĐT (−)
     G.qb.fee -= z.cur * G.fee; if (adj >= 0) G.qb.perk += adj; else G.qb.fee += adj;
-    G.cash -= q.down; cfAdd(G, 'mua', -q.down); const u = { uid: ++G.uid, zone: id, cost: q.price, boughtRound: G.round, loan: q.loan > 0 ? makeLoan(G, q.loan, q.termYears, q.pkg.id) : null };
+    G.cash -= q.down; cfAdd(G, 'mua', -q.down); if (G.cf) { G.cf.buyLoan += q.loan; G.cf.buyProp += z.cur * (1 - G.fee); }
+    const u = { uid: ++G.uid, zone: id, cost: q.price, boughtRound: G.round, loan: q.loan > 0 ? makeLoan(G, q.loan, q.termYears, q.pkg.id) : null };
     if (q.dev) G.perks.devSupport = null; // hỗ trợ CĐT dùng cho 1 lần mua
     if (G.perks.discount) { if (G.perks.discount.lock) u.lockUntil = G.round + G.perks.discount.lock; G.perks.discount = null; }
     if (u.loan) G.stats.usedLoan = true;
@@ -230,7 +231,7 @@
   function sell(G, id) {
     const u = sellTarget(G, id); if (!u) return false; const q = sellQuote(G, u); if (!q.ok) return false;
     G.qb.perk += q.gross - zone(G, id).cur * (1 - G.fee); G.qb.penalty -= q.penalty; // người mua trả thêm (+), phạt tất toán (−)
-    const mk = zone(G, id).cur * (1 + (G.perks.premium || 0) / 100); cfAdd(G, 'ban', mk); cfAdd(G, 'phi', -mk * G.fee); cfAdd(G, 'goc', -q.debt); cfAdd(G, 'phat', -q.penalty); if (G.cf) G.cf.gocBan += q.debt;
+    const z0 = zone(G, id), mk = z0.cur * (1 + (G.perks.premium || 0) / 100); cfAdd(G, 'ban', mk); cfAdd(G, 'phi', -mk * G.fee); cfAdd(G, 'goc', -q.debt); cfAdd(G, 'phat', -q.penalty); if (G.cf) { G.cf.gocBan += q.debt; G.cf.sellProp += z0.cur * (1 - G.fee); }
     G.cash += q.net; G.stats.penalties += q.penalty; G.perks.premium = 0; G.units.splice(G.units.indexOf(u), 1); G.stats.trades++; if (G.qa) G.qa.sell.push(id); return q;
   }
   function prepayQuote(G, uid, amt) {
@@ -333,7 +334,7 @@
         return { u, z, price, bal, pen, net: price * (1 - G.fee) - bal - pen, busy: locked(G, u) ? 1 : 0 }; }).sort((a, b) => a.busy - b.busy || a.price - b.price);
       const need = -G.cash, pick = opts.find(o => o.net >= need) || opts.slice().sort((a, b) => b.net - a.net)[0];
       if (!pick || pick.net <= 0) break;
-      G.cash += pick.net; cfAdd(G, 'ban', pick.price); cfAdd(G, 'phi', -pick.price * G.fee); cfAdd(G, 'goc', -pick.bal); cfAdd(G, 'phat', -pick.pen); if (G.cf) { G.cf.gocBan += pick.bal; G.cf.phatmai++; }
+      G.cash += pick.net; cfAdd(G, 'ban', pick.price); cfAdd(G, 'phi', -pick.price * G.fee); cfAdd(G, 'goc', -pick.bal); cfAdd(G, 'phat', -pick.pen); if (G.cf) { G.cf.gocBan += pick.bal; G.cf.phatmai++; G.cf.sellProp += pick.z.cur * (1 - G.fee); }
       G.stats.penalties += pick.pen; G.units.splice(G.units.indexOf(pick.u), 1); G.stats.fireSales++;
       fireSales.push({ zone: pick.z.id, name: pick.z.name, market: pick.z.cur, price: pick.price, debt: pick.bal, penalty: pick.pen, net: pick.net });
     }
@@ -352,7 +353,20 @@
       phatmai: -fireSales.reduce((a, x) => a + (x.market - x.price) * (1 - f), 0), // chiết khấu phát mãi
       phat: qb.penalty - fireSales.reduce((a, x) => a + x.penalty, 0), // phạt trả nợ trước hạn (bán, trả bớt, phát mãi)
       phi: qb.fee, uudai: qb.perk, tinhhuong: qb.dilemma });
-    if (G.cf) res.cf = Object.assign({}, G.cf, { end: G.cash, net: G.cash - G.cf.start });
+    if (G.cf) {
+      const c = G.cf, net = G.cash - c.start, dDebt = c.goc + c.vay + c.buyLoan, dProp = res.pnl - net + dDebt; // ΔpropNet = ΔNW − Δcash + Δdebt
+      const priceMove = dProp - c.buyProp + c.sellProp;
+      // các hạng mục giải thích ΔNW (thô): dòng tiền + gốc đã trả + (−vay thêm) + (−vay mua) + mua thành TS + (−bán thôi TS) + giá căn
+      const reconRaw = [
+        { key: 'cf', label: 'Dòng tiền', v: net },
+        { key: 'goc', label: 'gốc đã trả', note: 'nợ giảm tương ứng, không phải lỗ', v: -c.goc },
+        { key: 'vay', label: 'vay thêm', note: 'nợ tăng', v: -c.vay },
+        { key: 'mua', label: 'mua căn (thành tài sản)', v: c.buyProp - c.buyLoan }, // căn mới theo giá sau phí bán ước tính, trừ khoản vay mua
+        { key: 'ban', label: 'bán căn (tài sản thành tiền)', v: -c.sellProp }, // thôi ghi căn (giá sau phí bán ước tính); tiền về đã nằm trong dòng tiền
+        { key: 'gia', label: 'giá căn', v: priceMove }
+      ];
+      res.cf = Object.assign({}, c, { end: G.cash, net, dDebt, dProp, priceMove, recon: reconRaw });
+    }
     G.history.push(res); G.round++;
     if (G.round <= G.Q) startQuarter(G); else G.done = true;
     return res;
@@ -429,21 +443,31 @@
     const loans = G.units.filter(u => u.loan).map(u => { const L = u.loan, m = L.m, kind = m < L.promoMonths ? 'promo' : (L.lock && m >= L.lock.from && m < L.lock.to ? 'lock' : 'float'), left = promoLeftMonths(u);
       return { uid: u.uid, zone: u.zone, name: zone(G, u.zone).name, n: (props.find(p => p.uid === u.uid) || {}).n, multi: (props.find(p => p.uid === u.uid) || {}).multi, bal: L.bal, rate: rateAt(G, L, m), kind, leftMonths: left, leftQ: Math.ceil(left / 3), bank: L.bank, pkgName: L.pkgName }; });
     const pv = propValue(G), assets = G.cash + pv, dbt = debt(G), equity = assets - dbt, start = G.p.startCapital, saleFee = pv * G.fee;
-    const tot = Math.round(assets), aR = roundParts([G.cash].concat(props.map(p => p.value)), tot), sR = roundParts(loans.map(l => l.bal).concat([equity]), tot);
-    const aRows = [{ key: 'cash', value: G.cash, r: aR[0] }].concat(props.map((p, i) => Object.assign({ key: 'prop', r: aR[i + 1] }, p)));
-    const sRows = loans.map((l, i) => Object.assign({ key: 'loan', value: l.bal, r: sR[i] }, l)).concat([{ key: 'equity', value: equity, r: sR[loans.length] }]);
-    // dòng tiền quý vừa chốt (làm tròn: mỗi dòng tròn, tổng các dòng = dòng tiền ròng tròn)
+    // làm tròn từng dòng = Math.round (khớp bản đồ / từng khoản vay); tổng = tổng các dòng đã hiện; vốn chủ = tài sản − nợ để hai bên bằng nhau
+    const r1 = v => Math.round(v), cashR = r1(G.cash), propRows = props.map(p => Object.assign({}, p, { r: r1(p.value) })), loanRows = loans.map(l => Object.assign({}, l, { r: r1(l.bal), value: l.bal }));
+    const propSum = propRows.reduce((a, p) => a + p.r, 0), debtR = loanRows.reduce((a, l) => a + l.r, 0), tot = cashR + propSum, equityR = tot - debtR;
+    const aRows = [{ key: 'cash', value: G.cash, r: cashR }].concat(propRows.map(p => Object.assign({ key: 'prop' }, p)));
+    const sRows = loanRows.map(l => Object.assign({ key: 'loan' }, l)).concat([{ key: 'equity', value: equity, r: equityR }]);
     const h = G.history[G.history.length - 1];
     let cf = null;
     if (h && h.cf) { const c = h.cf, vals = CF_KEYS.map(k => c[k]), rr = roundParts(vals, Math.round(c.net)), R = {}; CF_KEYS.forEach((k, i) => { R[k] = rr[i]; });
       const inc = ['thue', 'tiengui', 'ban', 'vay'], exp = ['lai', 'goc', 'phi', 'phat', 'mua', 'tinhhuong'];
-      cf = { round: h.round, raw: c, r: R, inc: inc.reduce((a, k) => a + R[k], 0), exp: exp.reduce((a, k) => a + R[k], 0), net: Math.round(c.net), netRaw: c.net, worthChange: h.pnl, fireSales: c.phatmai, gocBan: c.gocBan, gocTruoc: c.gocTruoc }; }
+      // giải thích ΔNW = dòng tiền + gốc đã trả + giá căn (+ vay thêm / mua căn / bán căn khi có). Dòng tiền, gốc, vay thêm dùng ĐÚNG số đã hiện ở các dòng trên;
+      // phần còn lại (mua, bán, giá) làm tròn theo phần dư lớn nhất để tổng các số hiện = tài sản ròng đổi đã hiện
+      const nw = Math.round(h.pnl), T = {}; (c.recon || []).forEach(t => { T[t.key] = t; });
+      const pin = { cf: Math.round(c.net), goc: -R.goc, vay: -R.vay }, free = ['mua', 'ban', 'gia'].filter(k => T[k] && (k === 'gia' ? (G.units.length > 0 || Math.abs(T[k].v) >= 0.5) : Math.abs(T[k].v) >= 0.5));
+      const rest = nw - pin.cf - pin.goc - pin.vay; if (!free.length && rest !== 0) free.push('gia');
+      const fr = roundParts(free.map(k => (T[k] ? T[k].v : 0)), rest), recon = [];
+      ['cf', 'goc', 'vay', 'mua', 'ban', 'gia'].forEach(k => { const i = free.indexOf(k), r = k in pin ? pin[k] : i >= 0 ? fr[i] : 0, base = T[k] || { key: k, label: k === 'gia' ? 'giá căn' : k, v: 0 };
+        if (k === 'cf' || r !== 0 || (k === 'gia' && i >= 0)) recon.push(Object.assign({}, base, { r })); });
+      cf = { round: h.round, raw: c, r: R, inc: inc.reduce((a, k) => a + R[k], 0), exp: exp.reduce((a, k) => a + R[k], 0), net: Math.round(c.net), netRaw: c.net, worthChange: h.pnl, worthR: nw, fireSales: c.phatmai, gocBan: c.gocBan, gocTruoc: c.gocTruoc, recon }; }
     // chỉ số
     const rentNow = G.units.reduce((a, u) => a + (leased(G, u) ? unitRentQ(G, u) : 0), 0), intNow = G.units.reduce((a, u) => a + (u.loan ? quarterPreview(G, u).i : 0), 0);
     const cov = coverQuarters(G, null, Math.max(0, G.cash));
     const kpi = { debtToAssets: assets > 0 ? dbt / assets * 100 : 0, rentQ: rentNow, interestQ: intNow, rentCovers: intNow <= 1e-9 ? null : rentNow / intNow,
       cover: cov, leverage: equity > 0 ? assets / equity : null };
-    return { cash: G.cash, depositRatePctYear: dRate, props, loans, propValue: pv, assets, debt: dbt, equity, start, delta: equity - start, saleFee, worth: worth(G), gap: equity - worth(G),
+    const wR = r1(worth(G)), saleFeeR = Math.max(0, equityR - wR);
+    return { cash: G.cash, cashR, depositRatePctYear: dRate, props, loans, propValue: pv, assets, debt: dbt, debtR, equity, equityR, start, delta: equityR - r1(start), saleFee, saleFeeR, worth: worth(G), worthR: wR, gap: equityR - wR,
       assetRows: aRows, sourceRows: sRows, total: tot, cf, kpi, round: G.round };
   }
   const API = { LEASE_Q, rentQuote, revealText, newGame, zone, unit, worth, debt, propValue, headroom, buy, buyQuote, buyFix, ltvOptions, buyPrice, sell, sellTarget, sellQuote, sellValue,
