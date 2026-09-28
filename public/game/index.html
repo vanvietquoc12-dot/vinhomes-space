@@ -62,6 +62,8 @@ h1,h2,h3{margin:.3em 0}
 .pnl small{display:block;font-size:.9em;opacity:.85}
 .pnl .big{font-size:46px;font-weight:800;line-height:1.1;letter-spacing:-.5px}
 .pnl .sub{font-size:.75em;opacity:.7;margin-top:2px}
+.pnl .bd{font-size:.78em;opacity:.8;margin:3px 6px 0;line-height:1.45}.pnl .bd span{white-space:nowrap}
+.zl{font-size:.8em;margin:-2px 0 6px;line-height:1.45}.zl span{white-space:nowrap}
 .dnote{display:block;font-size:.78em;opacity:.8;margin:0 4px 6px}
 /* v3: độ dài ván, vay ngân hàng */
 .chips{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}.chips.col{flex-direction:column}
@@ -92,7 +94,7 @@ const $=(id,h)=>document.getElementById(id).innerHTML=h;
 const fmt=n=>(n<0?'-':'')+Math.round(Math.abs(n)).toLocaleString('vi-VN')+' tr';
 const sgn=n=>{const v=Math.round(n);return (v>0?'+':v<0?'\u2212':'')+Math.abs(v).toLocaleString('vi-VN')+' tr'};
 const flat=n=>Math.abs(+n.toFixed(1))===0; // làm tròn ra 0,0% => đứng giá
-const pc=n=>flat(n)?'đứng giá':(n>=0?'▲ +':'▼ ')+n.toFixed(1)+'%';
+const pc=n=>flat(n)?'đứng giá':(n>=0?'▲ +':'▼ \u2212')+Math.abs(n).toFixed(1).replace('.',',')+'%'; // vd ▲ +2,9% / ▼ −0,5%
 const chc=n=>flat(n)?'flat':n>=0?'up':'down';
 const pr=n=>(Math.round(n*100)/100).toLocaleString('vi-VN')+'%'; // lãi suất, vd 9,5%
 const mTxt=n=>{const v=Math.abs(n);return (v>0&&v<10?(Math.round(v*10)/10):Math.round(v)).toLocaleString('vi-VN')+' tr'}; // số tiền hằng tháng
@@ -107,7 +109,7 @@ function start(){sel=null;BP=null;selQ=getLen();$('bar','');$('modal','');$('she
  $('app',`<h1>Nhà Đầu Tư Tí Hon</h1><div class="card">Bạn có <b id="introQ">${selQ} quý (${selQ/4} năm)</b> để làm giàu. Mỗi quý có một tin tức, nhưng <b>tin chưa chắc đã đúng</b>: hãy xem nguồn tin rồi quyết định mua (có thể vay ngân hàng), bán hay cho thuê. Chốt quý xong mới biết tin thật hay giả.</div>
  <div class="card"><b>Độ dài ván</b><div class="chips" id="lenChips">${lenOpts().map(q=>`<button class="chipb${q===selQ?' on':''}" data-q="${q}" onclick="setLen(${q})">${q} quý<small>${q/4} năm</small></button>`).join('')}</div><small class="note">Ván dài có thêm tin tức, tình huống, và đủ thời gian để khoản vay hết ưu đãi rồi thả nổi lãi.</small></div>`+
  D.projects.map(p=>`<div class="card">${p.image?`<img class="hero" src="${p.image}" alt="${esc(p.name)}">`:''}<b>${p.name}</b><br><small>${p.tagline||''} · Vốn ${fmt(p.startCapital)}</small><br><button style="margin-top:8px" data-pick="${p.id}" onclick="pick('${p.id}')">Chơi dự án này</button></div>`).join('')+
- (best?`<p class="warn">Kỷ lục của bạn: ≈ ${best}%/năm</p>`:''))}
+ (best?`<p class="warn">Kỷ lục của bạn: ≈ ${String(best).replace('.',',')}%/năm</p>`:''))}
 /* bộ đếm sự kiện ẩn danh (start/finish/zalo/replay): chỉ gửi từ vinhomes.space, không cookie/ID; lỗi thì bỏ qua.
    Tắt khi test: ?test=1 hoặc ?notrack (notrack được nhớ trên máy này; ?notrack=0 để bật lại). */
 const TRACK=(()=>{try{const h=location.hostname,q=new URLSearchParams(location.search);
@@ -301,8 +303,12 @@ function doPrepay(uid,amt){$('modal','');E.prepay(G,uid,amt);draw()}
 function act(k,id){if(k==='buy')E.buy(G,id);if(k==='sell')E.sell(G,id);if(k==='rent')E.rent(G,id);draw()}
 function choose(i){E.choose(G,i);draw()}
 function next(){sel=null;BP=null;$('sheet','');showQuarter(E.endQuarter(G))}
+/* dòng tách lời/lỗ quý (engine tính sẵn trong r.breakdown, các phần đã làm tròn cộng lại đúng bằng số lớn), vd "−785 = giá −123 · lãi −242 · phát mãi −372 · phạt −48" */
+const bn=n=>(n>0?'+':n<0?'\u2212':'')+Math.abs(n).toLocaleString('vi-VN');
+function bdHTML(b){if(!b||!b.show)return '';const ps=b.parts;
+ return `<div class="bd" id="pnlbd" data-total="${b.total}" data-parts="${esc(ps.map(x=>x.key+':'+x.rounded).join(','))}"><span>${bn(b.total)} =</span> ${ps.map((x,i)=>`<span>${x.label} ${bn(x.rounded)}${i<ps.length-1?' ·':''}</span>`).join(' ')}</div>`}
 function showQuarter(r){const p=Math.round(r.pnl),zn=id=>esc(short(E.zone(G,id)));
- const pnl=`<div class="pnl" id="pnl"><small>Quý này bạn ${p>0?'lời':p<0?'lỗ':'hòa vốn'}</small><div class="big ${p>=0?'up':'down'}">${sgn(r.pnl)}</div><small class="sub">Tài sản ròng: ${fmt(r.worth-r.pnl)} → ${fmt(r.worth)} (gồm giá nhà, tiền thuê, lãi vay; tiền trả gốc không tính là lỗ)</small></div>`;
+ const pnl=`<div class="pnl" id="pnl"><small>Quý này bạn ${p>0?'lời':p<0?'lỗ':'hòa vốn'}</small><div class="big ${p>=0?'up':'down'}">${sgn(r.pnl)}</div>${r.quiet?'':bdHTML(r.breakdown)}<small class="sub">Tài sản ròng: ${fmt(r.worth-r.pnl)} → ${fmt(r.worth)} (gồm giá nhà, tiền thuê, lãi vay; tiền trả gốc không tính là lỗ)</small></div>`;
  const rentRow=r.rent?`<div class="row"><span>Tiền thuê nhận</span><span class="up">+${fmt(r.rent)}</span></div>`:'';
  const pay=r.pay.total>0?`<div class="row" id="payrow" data-total="${Math.round(r.pay.total)}" data-p="${Math.round(r.pay.p)}" data-i="${Math.round(r.pay.i)}"><span>Trả góp ngân hàng</span><span class="down r">−${fmt(r.pay.total)}<br><small>gốc ${fmt(r.pay.p)}, lãi ${fmt(r.pay.i)}</small></span></div>`:'';
  const debt=E.debt(G),notes=r.promoEnds.map(x=>`<p class="note2 promo-end">⏰ <b>Hết ưu đãi:</b> lãi căn ${zn(x.zone)} tăng từ ${pr(x.from)} lên ${pr(x.to)}/năm từ quý sau.</p>`)
@@ -312,7 +318,7 @@ function showQuarter(r){const p=Math.round(r.pnl),zn=id=>esc(short(E.zone(G,id))
   .concat(r.ltvCap?[`<p class="note2 base">🏦 Ngân hàng hạ tỷ lệ cho vay tối đa còn ${r.ltvCap.pct}% giá căn cho khoản vay mới, trong ${r.ltvCap.until-r.round} quý tới.</p>`]:[]).join('');
  const btn=`<button id="qnext" style="margin-top:10px;width:100%" onclick="${G.done?'end()':'draw()'}">${G.done?'Xem kết quả':r.quiet?'Tiếp ▶':'Sang quý '+G.round+' ▶'}</button>`;
  $('bar','');
- if(r.quiet){$('modal',`<div class="modal"><div class="card compact" id="qpop">${pnl}<p class="one">${r.truth?'✅':'❌'} ${esc(r.ev.text)} <small>(tin ${r.truth?'thật':'giả'}, giá gần như đi ngang)</small></p>${rentRow}${pay}${notes}${btn}</div></div>`);return}
+ if(r.quiet){$('modal',`<div class="modal"><div class="card compact" id="qpop">${pnl}<p class="one">${r.truth?'✅':'❌'} ${esc(r.ev.text)} <small>(tin ${r.truth?'thật':'giả'})</small></p><p class="zl" id="qzl">${G.zones.map((z,i)=>`<span class="${chc(z.last)}">${esc(short(z))} ${flat(z.last)?'đứng giá':sp(z.last)}${i<G.zones.length-1?' ·':''}</span>`).join(' ')}</p>${rentRow}${pay}${notes}${btn}</div></div>`);return}
  $('modal',`<div class="modal"><div class="card" id="qpop">${pnl}
  <h3>${r.truth?'✅ Tin là THẬT':'❌ Tin là GIẢ'}</h3><p style="opacity:.85">${r.ev.text}<br><small>Nguồn: ${r.ev.source||''}</small></p>
  ${G.zones.map(z=>`<div class="row"><span>${z.name}</span><span class="${chc(z.last)}">${pc(z.last)}</span></div>`).join('')}

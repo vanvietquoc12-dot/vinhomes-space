@@ -1,6 +1,7 @@
 // Nhà Đầu Tư Tí Hon — game engine v3 (pure logic, dùng chung cho trình duyệt và mô phỏng Node)
 // v3: chọn độ dài ván (8–20 quý), vay thế chấp ngân hàng theo từng căn (rules.mortgage), lãi cơ sở thả nổi,
 //     tin "giữa ván" (phase:"mid"), tin đổi lãi cơ sở (baseRateChangePct), phát mãi khi thiếu tiền góp.
+// v3.2: kết quả quý có res.breakdown = lời/lỗ quý tách theo thành phần (giá, thuê, lãi, phát mãi, phạt, phí, ưu đãi, tình huống), đã làm tròn khớp tổng.
 (function (root) {
   function rng(seed) { let s = seed >>> 0 || 1; return () => { s ^= s << 13; s ^= s >>> 17; s ^= s << 5; return ((s >>> 0) % 1e9) / 1e9; }; }
   function shuffle(a, r) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
@@ -100,6 +101,7 @@
     G.ev = G.sched[G.round - 1];
     G.evTruth = G.r() < G.ev.reliability; G.revealed = false; G.perks = {}; G.stats.boughtThisQ = false;
     G.dilemma = null; G.w0 = worth(G); // tài sản ròng đầu quý (để tính lời/lỗ quý)
+    G.qb = { fee: 0, perk: 0, penalty: 0, dilemma: 0 }; // lời/lỗ phát sinh trong quý do thao tác (xem breakdown)
     if (G.dQuarters.has(G.round)) { const i = G.dilemmas.findIndex(d => eligible(G, d)); if (i >= 0) G.dilemma = G.dilemmas.splice(i, 1)[0]; }
   }
 
@@ -160,6 +162,8 @@
   }
   function buy(G, id, o) {
     const q = buyQuote(G, id, o); if (!q.ok) return false;
+    const z = zone(G, id), adj = z.cur - q.price; // mua: tài sản ròng tính căn theo giá trừ phí bán => mất ngay phí; giảm giá (+) / giá cộng thêm của CĐT (−)
+    G.qb.fee -= z.cur * G.fee; if (adj >= 0) G.qb.perk += adj; else G.qb.fee += adj;
     G.cash -= q.down; const u = { uid: ++G.uid, zone: id, cost: q.price, boughtRound: G.round, loan: q.loan > 0 ? makeLoan(G, q.loan, q.termYears, q.pkg.id) : null };
     if (q.dev) G.perks.devSupport = null; // hỗ trợ CĐT dùng cho 1 lần mua
     if (G.perks.discount) { if (G.perks.discount.lock) u.lockUntil = G.round + G.perks.discount.lock; G.perks.discount = null; }
@@ -174,6 +178,7 @@
   function sellTarget(G, id) { return G.units.filter(u => u.zone === id && !locked(G, u)).sort((a, b) => sellQuote(G, b).net - sellQuote(G, a).net)[0] || null; }
   function sell(G, id) {
     const u = sellTarget(G, id); if (!u) return false; const q = sellQuote(G, u); if (!q.ok) return false;
+    G.qb.perk += q.gross - zone(G, id).cur * (1 - G.fee); G.qb.penalty -= q.penalty; // người mua trả thêm (+), phạt tất toán (−)
     G.cash += q.net; G.stats.penalties += q.penalty; G.perks.premium = 0; G.units.splice(G.units.indexOf(u), 1); G.stats.trades++; return q;
   }
   function prepayQuote(G, uid, amt) {
@@ -182,7 +187,7 @@
   }
   function prepay(G, uid, amt) {
     const q = prepayQuote(G, uid, amt); if (!q || !q.ok || q.amount <= 0) return false; const u = unit(G, uid);
-    G.cash -= q.total; G.stats.penalties += q.penalty; u.loan.bal -= q.amount; if (u.loan.bal <= 0.5) u.loan = null; return q;
+    G.cash -= q.total; G.stats.penalties += q.penalty; G.qb.penalty -= q.penalty; u.loan.bal -= q.amount; if (u.loan.bal <= 0.5) u.loan = null; return q;
   }
   const LEASE_Q = 2;
   function rent(G, id) { // cho thuê 2 quý (quý này + quý sau): có tiền thuê mỗi quý nhưng không bán được trong thời gian đó
@@ -211,16 +216,35 @@
     if (e.extendPromo) { const x = e.extendPromo; let fee = 0; // khóa lãi cố định thêm N tháng sau kỳ cố định hiện tại
       G.units.forEach(u => { const L = u.loan; if (!L) return; const from = Math.max(L.m, fixedUntil(L)); L.lock = { from, to: from + (x.months || 12), rate: x.promoRatePctYear != null ? x.promoRatePctYear : G.baseRate + L.margin };
         fee += L.bal * (x.feePctOfBalance || 0) / 100; });
-      G.cash -= fee; G.stats.penalties += fee; e._fee = fee; }
+      G.cash -= fee; G.stats.penalties += fee; G.qb.dilemma -= fee; e._fee = fee; }
     if (e.developerSupport) G.perks.devSupport = Object.assign({}, e.developerSupport); // áp cho lần mua có vay kế tiếp trong quý
     if (e.graceMonths) G.units.forEach(u => { if (u.loan) u.loan.grace = Math.max(u.loan.grace, u.loan.m + e.graceMonths); }); // ân hạn gốc thêm N tháng từ bây giờ
     if (e.setTermYears) G.units.forEach(u => { const L = u.loan; if (L) { L.termMonths = Math.max(L.m + 12, e.setTermYears * 12); L.termYears = L.termMonths / 12; } }); // tổng thời hạn mới
-    if (e.cost) G.cash -= e.cost;
+    if (e.cost) { G.cash -= e.cost; G.qb.dilemma -= e.cost; }
     if (e.revealNextEvent) G.revealed = e.revealMode || 'truth';
   }
 
+  // ---- lời/lỗ quý theo thành phần: làm tròn từng phần (triệu) sao cho tổng đúng bằng số lời/lỗ đã làm tròn ----
+  const BD_KEYS = ['gia', 'thue', 'lai', 'phatmai', 'phat', 'phi', 'uudai', 'tinhhuong', 'khac'];
+  const BD_LABEL = { gia: 'giá', thue: 'thuê', lai: 'lãi', phatmai: 'phát mãi', phat: 'phạt', phi: 'phí', uudai: 'ưu đãi', tinhhuong: 'tình huống', khac: 'khác' };
+  const BD_LOSS_PCT = 5; // hiện dòng tách khi lỗ >= 5% tài sản ròng đầu quý, hoặc có phát mãi / phạt
+  function roundParts(vals, total) { // làm tròn theo phần dư lớn nhất: tổng các phần = total
+    const r = vals.map(Math.round); let d = total - r.reduce((a, b) => a + b, 0);
+    while (d !== 0) { const s = Math.sign(d); let k = -1, best = -Infinity;
+      vals.forEach((v, i) => { const x = s * (v - r[i]); if (x > best) { best = x; k = i; } }); r[k] += s; d -= s; }
+    return r;
+  }
+  function breakdown(G, res, raw) {
+    raw.khac = res.pnl - Object.values(raw).reduce((a, b) => a + b, 0); // sai số dấu phẩy động (~0)
+    const vals = BD_KEYS.map(k => raw[k] || 0), total = Math.round(res.pnl), rr = roundParts(vals, total);
+    const parts = BD_KEYS.map((k, i) => ({ key: k, label: BD_LABEL[k], value: vals[i], rounded: rr[i] })).filter(p => p.rounded !== 0);
+    const base = G.w0 > 0 ? G.w0 : G.p.startCapital, lossPct = -res.pnl / base * 100;
+    const why = res.fireSales.length ? 'fireSale' : parts.some(p => p.key === 'phat') ? 'penalty' : lossPct >= BD_LOSS_PCT ? 'loss' : '';
+    return { total, parts, raw, lossPct, why, show: !!why && parts.length >= 2 };
+  }
   function endQuarter(G) {
     const ev = G.ev, truth = G.evTruth, delta = truth ? ev.change : ev.falseChange;
+    const cur0 = {}; G.zones.forEach(z => { cur0[z.id] = z.cur; }); const held = G.units.map(u => u.zone); // để tách lời/lỗ do giá
     const affected = G.zones.filter(z => hits(ev, z));
     const exposure = G.units.some(u => affected.some(z => z.id === u.zone));
     if (delta !== 0) { G.stats.calls++; if ((delta > 0 && exposure) || (delta < 0 && !exposure)) G.stats.callRight++; }
@@ -258,10 +282,19 @@
       G.cash += pick.net; G.stats.penalties += pick.pen; G.units.splice(G.units.indexOf(pick.u), 1); G.stats.fireSales++;
       fireSales.push({ zone: pick.z.id, name: pick.z.name, market: pick.z.cur, price: pick.price, debt: pick.bal, penalty: pick.pen, net: pick.net });
     }
-    const quietEv = ev.quiet === true || (ev.quiet !== false && ev.phase !== 'mid' && G.Q >= G.compactMinQ && Math.max(Math.abs(ev.change || 0), Math.abs(ev.falseChange || 0)) <= G.quietMax);
+    // tin có thể đổi lãi cơ sở / hạ LTV (kể cả khi tin giả nên không đổi) luôn hiện popup đầy đủ
+    const rateEv = !!(ev.baseRateChangePct || ev.falseBaseRateChangePct) || ev.ltvCapPct != null;
+    const quietEv = !rateEv && (ev.quiet === true || (ev.quiet !== false && ev.phase !== 'mid' && G.Q >= G.compactMinQ && Math.max(Math.abs(ev.change || 0), Math.abs(ev.falseChange || 0)) <= G.quietMax));
     const res = { ev, truth, delta, rent: rentQ, pay: { p: P, i: I, total: P + I }, promoEnds, baseFrom, baseTo: G.baseRate, baseEvent, ltvCap, fireSales, forced: fireSales.length,
       worth: worth(G), pnl: worth(G) - G.w0, debt: debt(G), round: G.round };
     res.quiet = quietEv && !promoEnds.length && !fireSales.length && !ltvCap && Math.abs(res.baseTo - res.baseFrom) < 0.25 && !baseEvent;
+    const f = G.fee, qb = G.qb || { fee: 0, perk: 0, penalty: 0, dilemma: 0 };
+    res.breakdown = breakdown(G, res, {
+      gia: held.reduce((a, id) => a + (zone(G, id).cur - cur0[id]) * (1 - f), 0), // biến động giá căn đang giữ (theo giá trừ phí bán)
+      thue: rentQ, lai: -I,
+      phatmai: -fireSales.reduce((a, x) => a + (x.market - x.price) * (1 - f), 0), // chiết khấu phát mãi
+      phat: qb.penalty - fireSales.reduce((a, x) => a + x.penalty, 0), // phạt trả nợ trước hạn (bán, trả bớt, phát mãi)
+      phi: qb.fee, uudai: qb.perk, tinhhuong: qb.dilemma });
     G.history.push(res); G.round++;
     if (G.round <= G.Q) startQuarter(G); else G.done = true;
     return res;
@@ -283,6 +316,6 @@
   function rentQuote(G, z, quarters, bonusPct) { return z.cur * (z.rentPctPerQuarter || 0) / 100 * (1 + (bonusPct || 0) / 100) * (quarters == null ? LEASE_Q : quarters); }
   const API = { LEASE_Q, rentQuote, revealText, newGame, zone, unit, worth, debt, propValue, headroom, buy, buyQuote, buyPrice, sell, sellTarget, sellQuote, sellValue,
     prepay, prepayQuote, rent, unitRentQ, leased, choose, endQuarter, result, locked, hits, quarterPreview, loanRateNow, promoLeftMonths, penaltyPct,
-    mortRules, quarterOptions, annualize, schedule, maxLtv, eligible, stressQuarter, DEV_ID };
+    mortRules, quarterOptions, annualize, schedule, maxLtv, eligible, stressQuarter, DEV_ID, roundParts, BD_LOSS_PCT };
   if (typeof module !== 'undefined') module.exports = API; else root.Engine = API;
 })(this);
