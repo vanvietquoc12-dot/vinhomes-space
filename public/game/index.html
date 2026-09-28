@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Nhà Đầu Tư Tí Hon — game mô phỏng bất động sản</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8F%A0%3C/text%3E%3C/svg%3E">
 <meta property="og:title" content="Nhà Đầu Tư Tí Hon — bạn là nhà đầu tư kiểu gì?">
 <meta property="og:description" content="Game mô phỏng 3 phút: đọc tin, mua bán, vay, cho thuê và nhận danh hiệu.">
 <style>
@@ -22,57 +23,192 @@ button:disabled{opacity:.35;cursor:not-allowed}
 .bar{position:fixed;left:0;right:0;bottom:0;background:#0b2421;border-top:1px solid #2c6b62;padding:10px 12px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;justify-content:center;z-index:9}
 .bar:empty{display:none}.bar .main{flex:1;max-width:260px;font-size:1.05em}
 .modal{position:fixed;inset:0;background:#000a;display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
-.modal .card{max-width:480px;width:100%;background:var(--card2)}
+.modal .card{max-width:480px;width:100%;background:var(--card2);max-height:92vh;overflow:auto}
 .tag{display:inline-block;font-size:.72em;background:#0b2421;border-radius:6px;padding:2px 6px;margin-left:4px}
-.hero{width:100%;height:120px;object-fit:cover;border-radius:10px;margin-bottom:6px}
+.hero{display:block;width:100%;height:auto;aspect-ratio:1200/460;object-fit:cover;border-radius:10px;margin-bottom:8px;background:#2c6b62}
 .warn{font-size:.75em;opacity:.65;text-align:center;margin:12px 0}
 .row{display:flex;justify-content:space-between;padding:3px 0}
 h1,h2,h3{margin:.3em 0}
-</style></head><body><div class="wrap" id="app"></div><div id="bar" class="bar"></div><div id="modal"></div>
+/* bản đồ phân khu */
+.map{position:relative;width:100%;aspect-ratio:366/430;border-radius:16px;overflow:hidden;background:#d7ead9;margin:8px 0 4px;user-select:none;-webkit-user-select:none}
+.map svg.bg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.tile{position:absolute;background:#0f2e2aee;color:var(--tx);border-radius:10px;padding:3px 8px;box-shadow:0 3px 8px #0006;border:1.5px solid #ffffff22;display:flex;flex-direction:column;justify-content:center;cursor:pointer;line-height:1.25;-webkit-tap-highlight-color:transparent}
+.tile b{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile .pr{font-size:12px;font-weight:600;white-space:nowrap}
+.tile .pr i{font-style:normal;margin-left:3px}
+.tile:active{transform:scale(.97)}
+.tile.sel{border-color:#fff}
+.tile.hot{border:2px solid var(--gold);animation:glow 1.6s ease-in-out infinite}
+@keyframes glow{0%,100%{box-shadow:0 0 0 3px #e7b84b55,0 0 8px #e7b84b88}50%{box-shadow:0 0 0 5px #e7b84b88,0 0 18px #e7b84bdd}}
+.own{position:absolute;top:-9px;right:-8px;background:var(--gold);color:#1b1b1b;border-radius:10px;font-weight:700;font-size:10.5px;padding:1px 6px;font-style:normal;box-shadow:0 1px 3px #0006}
+.lock{position:absolute;top:-10px;left:-9px;font-size:11px;font-style:normal;background:#0b2421;border:1px solid var(--gold);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center}
+.hint{font-size:.75em;opacity:.8;text-align:center;margin:4px 0 8px}
+.hint .g{color:var(--gold);font-weight:700}
+/* bottom sheet */
+.dim{position:fixed;inset:0;background:#0008;z-index:8}
+.sheet{position:fixed;left:0;right:0;margin:0 auto;max-width:560px;bottom:var(--barh,64px);background:var(--card2);border-radius:18px 18px 0 0;padding:8px 14px 14px;box-shadow:0 -6px 20px #0008;z-index:10;max-height:calc(100vh - var(--barh,64px) - 40px);overflow:auto}
+.dim.anim{animation:fade .2s ease-out}.sheet.anim{animation:up .25s ease-out}
+@keyframes up{from{transform:translateY(100%)}}@keyframes fade{from{opacity:0}}
+.grab{width:40px;height:4px;border-radius:2px;background:#ffffff55;margin:0 auto 8px}
+.sheet .x{position:absolute;right:8px;top:6px;background:transparent;color:var(--tx);font-size:18px;padding:4px 8px;opacity:.7}
+.sheet .hd{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;padding-right:26px}
+.sheet .hd b{font-size:17px}.sheet .hd small{font-size:12px;opacity:.8}
+.spark{display:block;width:100%;height:auto;margin:8px 0 4px}
+.chip{display:inline-block;font-size:11.5px;background:#0b2421;border-radius:6px;padding:3px 7px;margin:2px 4px 2px 0}
+.chip.hotc{border:1px solid var(--gold)}
+.sheet .acts{display:flex;gap:8px;margin-top:10px}.sheet .acts button{flex:1;font-size:13px;line-height:1.35;padding:9px 3px}.acts button small{display:block;font-size:12px;white-space:nowrap}
+/* popup cuối quý */
+.pnl{text-align:center;padding:4px 0 10px;margin-bottom:8px;border-bottom:1px solid #ffffff22}
+.pnl small{display:block;font-size:.9em;opacity:.85}
+.pnl .big{font-size:46px;font-weight:800;line-height:1.1;letter-spacing:-.5px}
+.pnl .sub{font-size:.75em;opacity:.7;margin-top:2px}
+.dnote{display:block;font-size:.78em;opacity:.8;margin:0 4px 6px}
+</style></head><body><div class="wrap" id="app"></div><div id="bar" class="bar"></div><div id="sheet"></div><div id="modal"></div>
 <script src="engine.js"></script>
 <script>
-let D,G;const E=Engine;
+let D,G,sel=null,sheetAnim=false;const E=Engine;
 const $=(id,h)=>document.getElementById(id).innerHTML=h;
 const fmt=n=>(n<0?'-':'')+Math.round(Math.abs(n)).toLocaleString('vi-VN')+' tr';
+const sgn=n=>{const v=Math.round(n);return (v>0?'+':v<0?'\u2212':'')+Math.abs(v).toLocaleString('vi-VN')+' tr'};
 const pc=n=>(n>=0?'▲ +':'▼ ')+n.toFixed(1)+'%';
 const vol=r=>r<0.3?'Biến động thấp':r<0.5?'Biến động vừa':'Biến động cao';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 async function load(){for(const f of['data/game-data.json','data/sample-data.json']){try{const r=await fetch(f,{cache:'no-cache'});if(r.ok){D=await r.json();return}}catch(e){}}}
-function start(){$('bar','');$('modal','');
+function start(){sel=null;$('bar','');$('modal','');$('sheet','');
  $('app',`<h1>Nhà Đầu Tư Tí Hon</h1><div class="card">Bạn có 8 quý để làm giàu. Mỗi quý có một tin tức, nhưng <b>tin chưa chắc đã đúng</b>: hãy xem nguồn tin rồi quyết định mua, bán, vay hay cho thuê. Chốt quý xong mới biết tin thật hay giả.</div>`+
- D.projects.map(p=>`<div class="card">${p.image?`<img class="hero" src="${p.image}" alt="">`:''}<b>${p.name}</b><br><small>${p.tagline||''} · Vốn ${fmt(p.startCapital)}</small><br><button style="margin-top:8px" onclick="pick('${p.id}')">Chơi dự án này</button></div>`).join('')+
+ D.projects.map(p=>`<div class="card">${p.image?`<img class="hero" src="${p.image}" alt="${esc(p.name)}">`:''}<b>${p.name}</b><br><small>${p.tagline||''} · Vốn ${fmt(p.startCapital)}</small><br><button style="margin-top:8px" onclick="pick('${p.id}')">Chơi dự án này</button></div>`).join('')+
  (localStorage.bdsBest?`<p class="warn">Kỷ lục của bạn: ${localStorage.bdsBest}%</p>`:''))}
-function pick(id){G=E.newGame(D,id);draw()}
+function pick(id){G=E.newGame(D,id);sel=null;draw()}
+// tên ngắn cho ô trên bản đồ
+function short(z){if(z.short)return z.short;let n=z.name.replace(/^(Khu|Dãy|Phân khu)\s+/i,'');n=n[0].toUpperCase()+n.slice(1);
+ if(n.length>17){let o='';for(const w of n.split(' ')){if((o+' '+w).trim().length>17)break;o=(o+' '+w).trim()}n=o}
+ return n.replace(/\s+(du|mặt|ven|gần|khu|của)$/i,'')}
+const own=id=>G.units.filter(u=>u.zone===id),free=id=>own(id).filter(u=>!E.locked(G,u));
+const leasing=id=>own(id).filter(u=>u.leaseUntil&&u.leaseUntil>G.round);
+const hot=z=>E.hits(G.ev,z);
+const rentTxt=(v,q)=>`+${fmt(v)} trong ${q} quý`;
+
+/* ---------- bản đồ ---------- */
+const MW=366,MH=430,X=p=>p*MW/100,Y=p=>p*MH/100;
+const TW=38,TH=12; // kích thước ô mặc định (% bản đồ) khi dữ liệu không có wPct/hPct
+function rectOf(z){const m=z.map;return {x:+m.xPct,y:+m.yPct,w:+(m.wPct||TW),h:+(m.hPct||TH)}}
+const hitR=(a,b,pad=0)=>a.x<b.x+b.w+pad&&b.x<a.x+a.w+pad&&a.y<b.y+b.h+pad&&b.y<a.y+a.h+pad;
+function kindOf(l){l=l.toLowerCase();return /rừng/.test(l)?'forest':/biển|vịnh|sông/.test(l)?'sea':/hồ/.test(l)?'lake':/công viên|park/.test(l)?'park':/đại lộ|đường|trục/.test(l)?'road':'land'}
+function labelBox(t,cx,cy,fs){const w=t.length*fs*.56/MW*100,h=fs*1.3/MH*100;return {x:cx-w/2,y:cy-h/2,w,h}}
+// chọn vị trí nhãn không đè lên ô phân khu
+function place(t,cands,rects,fs){for(const [cx,cy] of cands){const b=labelBox(t,cx,cy,fs);if(b.x>=1&&b.x+b.w<=99&&!rects.some(r=>hitR(b,r,1.5)))return [cx,cy]}return cands[0]}
+function label(t,cx,cy,fill,halo,fs=11){return `<text class="flabel" x="${X(cx)}" y="${Y(cy)}" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="600" fill="${fill}" stroke="${halo}" stroke-width="3" paint-order="stroke" font-family="system-ui,sans-serif">${esc(t)}</text>`}
+const PARCEL=[['#b9d8c4','#6fa889'],['#c9d9b0','#8fa86f'],['#e9d8a8','#c4a55a'],['#bfe0e6','#6aa9b8']];
+function mapSVG(zs){
+ const R=zs.map(rectOf),rects=R.map(r=>({x:r.x-2,y:r.y-2.5,w:r.w+4,h:r.h+4.5})); // tính cả huy hiệu ở góc
+ const maxB=Math.max(...R.map(r=>r.y+r.h)),minT=Math.min(...R.map(r=>r.y));
+ let bg='',fg='',ov='',lab='';
+ const feats=(G.p.mapFeatures||[]).map(f=>({...f,kind:kindOf(f.label)}));
+ const order={park:0,land:0,forest:1,road:2,sea:3,lake:4};feats.sort((a,b)=>order[a.kind]-order[b.kind]);
+ // lưới đường mờ giữa các ô
+ bg+=`<path d="M${X(50)} ${Y(Math.max(minT-6,0))} V${Y(Math.min(maxB+4,100))}" stroke="#ffffffaa" stroke-width="7"/>`;
+ feats.forEach(f=>{const k=f.kind,a=f.area||'center';
+  if(k==='forest'||(k==='land'&&a==='top')){const b=Math.max(7,Math.min(12,minT-12));
+   bg+=`<path d="M0 0 H${MW} V${Y(b)} Q${X(80)} ${Y(b+4)} ${X(60)} ${Y(b+1)} T${X(22)} ${Y(b+2)} T0 ${Y(b)}Z" fill="#9fcf9a"/>`;
+   for(let i=0;i<9;i++)bg+=`<circle cx="${X(6+i*11)}" cy="${Y(b-1+(i%2)*1.5)}" r="${7+(i%3)*2}" fill="#7fb77e"/>`;
+   bg+=`<path d="M0 ${Y(b+5)} Q${X(25)} ${Y(b+7.5)} ${X(50)} ${Y(b+5.5)} T${MW} ${Y(b+6)}" stroke="#8cc6d9" stroke-width="8" fill="none"/>`;
+   lab+=label(f.label,Math.max(4,labelBox(f.label,0,0,11).w/2+3),b/2,'#2f6b3a','#d6efd4cc')}
+  else if(k==='sea'){const t=Math.max(70,Math.min(90,maxB+8));
+   bg+=`<path d="M0 ${Y(t)} Q${X(25)} ${Y(t-6)} ${X(50)} ${Y(t-2)} T${MW} ${Y(t-4)} V${MH} H0Z" fill="#f2e2b3"/><path d="M0 ${Y(t+2)} Q${X(25)} ${Y(t-4)} ${X(50)} ${Y(t)} T${MW} ${Y(t-2)} V${MH} H0Z" fill="url(#sea)"/><path d="M0 ${Y(t+2)} Q${X(25)} ${Y(t-4)} ${X(50)} ${Y(t)} T${MW} ${Y(t-2)} V${MH} H0Z" fill="url(#wave)"/>`;
+   lab+=label(f.label,100-labelBox(f.label,0,0,12).w/2-4,t+(100-t)*.62,'#ffffff','#2f7fa3aa',12)}
+  else if(k==='park'){const top=Math.max(...R.filter(r=>r.y<35).map(r=>r.y+r.h),20)+3,bot=Math.min(...R.filter(r=>r.y>60).map(r=>r.y),80)-3;
+   bg+=`<rect x="${X(4)}" y="${Y(top)}" width="${X(92)}" height="${Y(bot-top)}" rx="22" fill="#a9d9a0" stroke="#86c07c" stroke-width="2"/>`;
+   const cy=(top+bot)/2,[lx,ly]=place(f.label,[[50,cy],[30,cy],[28,cy-5],[28,cy+5],[70,cy],[50,top+4],[50,bot-4]],rects,11);
+   const lb=labelBox(f.label,lx,ly,11);
+   for(let i=0;i<14;i++){const tx=8+((i*37)%84),ty=top+3+((i*23)%Math.max(4,bot-top-6)),tr={x:tx-2,y:ty-2,w:4,h:4};
+    if(!rects.some(r=>hitR(tr,r,1))&&!hitR(tr,lb,1))bg+=`<circle cx="${X(tx)}" cy="${Y(ty)}" r="${5+(i%3)*1.5}" fill="#5aa25e"/>`}
+   lab+=label(f.label,lx,ly,'#1f5a34','#e3f5dccc')}
+  else if(k==='road'){const y=Math.min(95,maxB+4);
+   bg+=`<rect x="0" y="${Y(y)}" width="${MW}" height="${Y(5)}" fill="#9aa9a4"/><path d="M0 ${Y(y+2.5)} H${MW}" stroke="#ffffffcc" stroke-width="1.5" stroke-dasharray="10 8"/>`;
+   lab+=label(f.label,50,y+2.5,'#ffffff','#5d6b67',10.5)}
+  else if(k==='lake'){
+   // hồ bám ngay dưới ô phân khu có chữ "hồ" (vd biệt thự ven hồ) và tràn ra mép phải, để ô không che mất hồ
+   const zi=zs.findIndex(z=>/(^|\s)hồ(\s|$)/i.test(z.name)),r=zi>=0?R[zi]:null;
+   let cx,cy,rx,ry;
+   if(r){cx=Math.min(r.x+r.w*.68,90);cy=r.y+r.h+5.5;rx=Math.max(r.w*.48,15);ry=6.8}
+   else{const s={right:[88,50],left:[12,50],top:[50,12],bottom:[50,88],center:[50,50]}[a]||[50,50];[cx,cy]=s;rx=14;ry=8}
+   ov+=`<ellipse cx="${X(cx)}" cy="${Y(cy)}" rx="${X(rx)+6}" ry="${Y(ry)+5}" fill="#cfe9c8"/><ellipse class="lake" cx="${X(cx)}" cy="${Y(cy)}" rx="${X(rx)}" ry="${Y(ry)}" fill="url(#sea)"/><ellipse cx="${X(cx)}" cy="${Y(cy)}" rx="${X(rx)}" ry="${Y(ry)}" fill="url(#wave)"/>`;
+   lab+=label(f.label,Math.min(cx,100-labelBox(f.label,0,0,11).w/2-3),cy+(r?1.8:0),'#ffffff','#2f7fa3cc')}
+  else{const s={right:[85,50],left:[15,50],top:[50,6],bottom:[50,94],center:[50,50]}[a]||[50,50];const [lx,ly]=place(f.label,[s,[s[0],s[1]-8],[s[0],s[1]+8]],rects,11);lab+=label(f.label,lx,ly,'#2f5a4a','#ffffffaa')}
+ });
+ // hàng cây trang trí ở mép trên nếu dữ liệu không có đặc điểm nào ở phía trên
+ if(!feats.some(f=>f.area==='top'))for(let i=0;i<12;i++){const tx=4+i*8.4,ty=4+(i%2)*2.5,tr={x:tx-2,y:ty-2,w:4,h:4};if(!rects.some(r=>hitR(tr,r,1)))bg+=`<circle cx="${X(tx)}" cy="${Y(ty)}" r="${6+(i%3)*1.5}" fill="#a3cf9c"/>`}
+ // lô đất dưới mỗi ô
+ R.forEach((r,i)=>{const c=PARCEL[i%PARCEL.length];fg+=`<rect x="${X(r.x-2.5)}" y="${Y(r.y-3)}" width="${X(r.w+5)}" height="${Y(r.h+6)}" rx="12" fill="${c[0]}" stroke="${c[1]}" stroke-width="2"/>`});
+ return `<svg class="bg" viewBox="0 0 ${MW} ${MH}" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7cc4d8"/><stop offset="1" stop-color="#3f93b5"/></linearGradient><pattern id="wave" width="30" height="12" patternUnits="userSpaceOnUse"><path d="M0 6 q7.5 -5 15 0 t15 0" fill="none" stroke="#ffffff55" stroke-width="1.5"/></pattern></defs><rect width="${MW}" height="${MH}" fill="#d7ead9"/>${bg}${fg}${ov}${lab}</svg>`} // thứ tự: nền (rừng, biển, công viên, đường) → lô đất → hồ → nhãn
+function tileHTML(z){const r=rectOf(z),o=own(z.id).length,l=leasing(z.id).length,arr=G.round>1&&z.last?`<i class="${z.last>=0?'up':'down'}">${z.last>=0?'▲':'▼'}</i>`:'';
+ return `<div class="tile${hot(z)?' hot':''}${sel===z.id?' sel':''}" role="button" tabindex="0" data-zone="${z.id}" style="left:${r.x}%;top:${r.y}%;width:${r.w}%;height:${r.h}%" onclick="openZone('${z.id}')" title="${esc(z.name)}">
+ <b>${esc(short(z))}</b><span class="pr">${fmt(z.cur)}${arr}</span>${o?`<em class="own">×${o}</em>`:''}${l?`<em class="lock" title="Đang cho thuê">🔒</em>`:''}</div>`}
+function cardHTML(x){ // dạng thẻ cũ (khi phân khu không có tọa độ bản đồ)
+ const o=own(x.id),f=free(x.id),leased=o.filter(u=>u.leaseUntil).length,bp=E.buyPrice(G,x);
+ return `<div class="card zone"><div><div class="nm">${x.name}</div><small>${x.type} · ${vol(x.risk)}</small>
+  ${o.length?`<br><small>Đang giữ ${o.length}${leased?` · ${leased} đang cho thuê`:''}${o.length-f.length-leased>0?` · ${o.length-f.length-leased} đang khóa`:''}</small>`:''}</div>
+  <div class="price">${fmt(x.cur)}<br><small class="${x.last>=0?'up':'down'}">${G.round>1?pc(x.last):''}</small></div>
+  <div class="acts"><button ${G.cash<bp?'disabled':''} onclick="act('buy','${x.id}')">Mua<br>${fmt(bp)}</button>
+  <button class="alt" ${f.length?'':'disabled'} onclick="act('sell','${x.id}')">Bán, nhận<br>${fmt(E.sellValue(G,x))}</button>
+  <button class="alt" ${f.some(u=>!u.leaseUntil)?'':'disabled'} onclick="act('rent','${x.id}')">Cho thuê<br>${rentTxt(E.rentQuote(G,x),E.LEASE_Q)}</button></div></div>`}
 function draw(){
- const z=G.zones,own=id=>G.units.filter(u=>u.zone===id),free=id=>own(id).filter(u=>!E.locked(G,u));
- const ev=G.ev;
+ const ev=G.ev,mz=G.zones.filter(z=>z.map&&z.map.xPct!=null&&z.map.yPct!=null),cz=G.zones.filter(z=>!mz.includes(z));
  $('app',`<div class="top"><div>Quý<b>${G.round}/${G.Q}</b></div><div>Tài sản ròng<b>${fmt(E.worth(G))}</b></div><div>Tiền mặt<b>${fmt(G.cash)}</b></div><div>Nợ<b>${fmt(G.loan)}</b></div></div>
  <div class="card news"><div>📰 ${ev.text}</div><div class="src">Nguồn: ${ev.source||'Không rõ'}${ev.kind==='rumor'?' <span class="tag">tin đồn</span>':''}</div>
  ${G.revealed?`<div class="src">🔎 Tin nội bộ: <b>${E.revealText(G)}</b>.</div>`:''}</div>`+
  (G.perks.discount?`<div class="card">🎟️ Suất ưu đãi: lần mua kế tiếp rẻ hơn ${G.perks.discount.pct}% nhưng khóa ${G.perks.discount.lock} quý.</div>`:'')+
  (G.perks.premium?`<div class="card">💰 Có người trả thêm ${G.perks.premium}% nếu bạn bán một căn trong quý này.</div>`:'')+
- z.map(x=>{const o=own(x.id),f=free(x.id),leased=o.filter(u=>u.leaseUntil).length,bp=E.buyPrice(G,x);
-  const rentQ=x.cur*(x.rentPctPerQuarter||0)/100;
-  return `<div class="card zone"><div><div class="nm">${x.name}</div><small>${x.type} · ${vol(x.risk)}</small>
-  ${o.length?`<br><small>Đang giữ ${o.length}${leased?` · ${leased} đang cho thuê`:''}${o.length-f.length-leased>0?` · ${o.length-f.length-leased} đang khóa`:''}</small>`:''}</div>
-  <div class="price">${fmt(x.cur)}<br><small class="${x.last>=0?'up':'down'}">${G.round>1?pc(x.last):''}</small></div>
-  <div class="acts"><button ${G.cash<bp?'disabled':''} onclick="act('buy','${x.id}')">Mua<br>${fmt(bp)}</button>
-  <button class="alt" ${f.length?'':'disabled'} onclick="act('sell','${x.id}')">Bán, nhận<br>${fmt(E.sellValue(G,x))}</button>
-  <button class="alt" ${f.some(u=>!u.leaseUntil)?'':'disabled'} onclick="act('rent','${x.id}')">Cho thuê<br>+${fmt(rentQ)}/quý</button></div></div>`}).join('')+
- `<p class="warn">Bán mất phí ${Math.round(G.fee*100)}% (đã trừ sẵn trong giá "nhận"). Cho thuê: nhận tiền 2 quý, không bán được trong 2 quý đó. Vay tối đa ${Math.round(G.maxLtv*100)}% giá trị nhà đang giữ, lãi ${G.rate}%/quý.<br>${D.disclaimer||''}</p>`);
+ (mz.length?`<div class="map" id="map" data-project="${G.p.id}">${mapSVG(mz)}${mz.map(tileHTML).join('')}</div>
+ <p class="hint">Chạm vào một phân khu để mua, bán hoặc cho thuê<br><span class="g">Viền vàng</span>: tin quý này nhắc tới · <b style="color:var(--gold)">×1</b> căn đang giữ · 🔒 cho thuê</p>`:'')+
+ cz.map(cardHTML).join('')+
+ `<p class="warn">Bán mất phí ${Math.round(G.fee*100)}% (đã trừ sẵn trong giá "nhận"). Cho thuê: nhận tiền ${E.LEASE_Q} quý (ước tính theo giá hiện tại), không bán được trong ${E.LEASE_Q} quý đó. Vay tối đa ${Math.round(G.maxLtv*100)}% giá trị nhà đang giữ, lãi ${G.rate}%/quý.<br>${D.disclaimer||''}</p>`);
  const mb=E.maxBorrow(G);
  $('bar',`<button class="alt" ${mb>=100?'':'disabled'} onclick="act('borrow')">Vay ${fmt(Math.min(1000,mb))}</button><button class="alt" ${G.loan>0&&G.cash>0?'':'disabled'} onclick="act('repay')">Trả nợ</button><button class="main" onclick="next()">Chốt quý ▶</button>`);
- if(G.dilemma){const d=G.dilemma;$('modal',`<div class="modal"><div class="card"><h3>⚖️ Tình huống</h3><p>${d.text}</p>${d.options.map((o,i)=>`<button ${i?'class="alt"':''} style="margin:4px" onclick="choose(${i})">${o.label}</button>`).join('')}</div></div>`)} else $('modal','');
+ document.documentElement.style.setProperty('--barh',document.getElementById('bar').offsetHeight+'px');
+ drawSheet();
+ if(G.dilemma){const d=G.dilemma;$('modal',`<div class="modal"><div class="card"><h3>⚖️ Tình huống</h3><p>${d.text}</p>${d.options.map((o,i)=>`<button ${i?'class="alt"':''} style="margin:4px" onclick="choose(${i})">${o.label}</button>${dNote(o)}`).join('')}</div></div>`)} else $('modal','');
 }
+function dNote(o){const e=o.effect||{};if(!e.rentBonusPct)return '';
+ const u=G.units.filter(x=>!E.locked(G,x)).sort((a,b)=>E.zone(G,b.zone).cur-E.zone(G,a.zone).cur)[0];if(!u)return '';
+ const z=E.zone(G,u.zone),q=e.lockQuarters||0;return `<small class="dnote">${esc(short(z))}: tiền thuê ${rentTxt(E.rentQuote(G,z,q,e.rentBonusPct),q)} (đã gồm thưởng thuê)</small>`}
+/* ---------- bottom sheet ---------- */
+function openZone(id){sel=id;sheetAnim=true;draw()}
+function closeSheet(){sel=null;$('sheet','');document.querySelectorAll('.tile.sel').forEach(t=>t.classList.remove('sel'))}
+function chart(z){const h=z.hist||[z.cur];if(h.length<2)return `<div class="chip" style="display:block;text-align:center;margin:8px 0">Chưa có lịch sử giá, chốt quý để xem biến động</div>`;
+ const W=320,H=78,pl=5,pr=5,pt=14,pb=16,n=h.length;let mn=Math.min(...h),mx=Math.max(...h);const lo=mn,hi=mx,minSp=(mn+mx)/2*.06;if(mx-mn<minSp){const c=(mn+mx)/2;mn=c-minSp/2;mx=c+minSp/2} // biên độ tối thiểu 6% để dao động nhỏ không trông như sập giá
+ const sp=mx-mn;
+ const px=i=>pl+(W-pl-pr)*i/(n-1),py=v=>pt+(H-pt-pb)*(1-(v-mn)/sp);
+ const pts=h.map((v,i)=>px(i).toFixed(1)+','+py(v).toFixed(1)).join(' ');
+ const up=h[n-1]>=h[0],col=up?'#8fe3a1':'#ff9b8a';
+ const o=own(z.id),cost=o.length?o.reduce((a,u)=>a+u.cost,0)/o.length:0;
+ let s=`<svg class="spark" viewBox="0 0 ${W} ${H}" role="img" aria-label="Biểu đồ giá các quý trước"><polygon points="${px(0)},${H-pb} ${pts} ${px(n-1)},${H-pb}" fill="${col}22"/><polyline points="${pts}" fill="none" stroke="#e7b84b" stroke-width="2.5" stroke-linejoin="round"/>`;
+ if(cost&&cost>=mn-sp*.1&&cost<=mx+sp*.1){const y=Math.max(pt,Math.min(H-pb,py(cost)));s+=`<path d="M${pl} ${y} H${W-pr}" stroke="#ffffff88" stroke-dasharray="4 3"/><text x="${W*.42}" y="${y>(H-pb+pt)/2?y-4:y+11}" font-size="9" fill="#ffffffcc" text-anchor="middle">giá vốn TB ${fmt(cost)}</text>`}
+ h.forEach((v,i)=>{s+=`<circle cx="${px(i)}" cy="${py(v)}" r="${i===n-1?4:2.5}" fill="${i===n-1?'#e7b84b':'#f3f7f5'}"/><text x="${px(i)}" y="${H-3}" font-size="9" fill="#ffffff99" text-anchor="${i===0?'start':i===n-1?'end':'middle'}">${i===n-1?'Nay':'Q'+(i+1)}</text>`});
+ s+=`<text x="${W-pr}" y="10" font-size="9" fill="#ffffffaa" text-anchor="end">cao nhất ${fmt(hi)} · thấp nhất ${fmt(lo)}</text></svg>`;return s}
+function drawSheet(){if(!sel||!G||G.done){$('sheet','');return}
+ const z=E.zone(G,sel);if(!z){$('sheet','');return}
+ const o=own(z.id),f=free(z.id),ls=leasing(z.id),lk=o.filter(u=>E.locked(G,u)&&!ls.includes(u)),bp=E.buyPrice(G,z),canRent=f.some(u=>!u.leaseUntil);
+ const left=ls.reduce((a,u)=>a+E.rentQuote(G,z,u.leaseUntil-G.round,u.rentBonus||0),0),lq=ls.length?Math.max(...ls.map(u=>u.leaseUntil-G.round)):0;
+ const a=sheetAnim?' anim':'';sheetAnim=false;
+ $('sheet',`<div class="dim${a}" onclick="closeSheet()"></div><div class="sheet${a}" id="zsheet" role="dialog" aria-label="${esc(z.name)}"><div class="grab"></div><button class="x" onclick="closeSheet()" aria-label="Đóng">✕</button>
+ <div class="hd"><div><b>${esc(z.name)}</b><br><small>${z.type} · ${vol(z.risk)}</small></div><div style="text-align:right"><b>${fmt(z.cur)}</b><br><small class="${z.last>=0?'up':'down'}">${G.round>1?pc(z.last)+' quý trước':'Giá mở bán'}</small></div></div>
+ ${chart(z)}
+ <div>${hot(z)?'<span class="chip hotc">📰 Tin quý này nhắc tới phân khu này</span>':''}<span class="chip">Bạn đang giữ ${o.length} căn</span>${ls.length?`<span class="chip">🔒 ${ls.length} căn đang cho thuê · còn nhận ${rentTxt(left,lq)}</span>`:''}${lk.length?`<span class="chip">⛓ ${lk.length} căn khóa chuyển nhượng · còn ${Math.max(...lk.map(u=>u.lockUntil-G.round))} quý</span>`:''}${G.perks.discount?`<span class="chip">🎟️ Mua rẻ hơn ${G.perks.discount.pct}%, khóa ${G.perks.discount.lock} quý</span>`:''}</div>
+ <div class="acts"><button data-act="buy" ${G.cash<bp?'disabled':''} onclick="act('buy','${z.id}')">Mua${G.perks.discount?' (−'+G.perks.discount.pct+'%)':''}<small>${fmt(bp)}</small></button>
+ <button data-act="sell" class="alt" ${f.length?'':'disabled'} onclick="act('sell','${z.id}')">Bán, nhận<small>${fmt(E.sellValue(G,z))}</small></button>
+ <button data-act="rent" class="alt" ${canRent?'':'disabled'} onclick="act('rent','${z.id}')">Cho thuê<small>${rentTxt(E.rentQuote(G,z),E.LEASE_Q)}</small></button></div></div>`)}
 function act(k,id){if(k==='buy')E.buy(G,id);if(k==='sell')E.sell(G,id);if(k==='rent')E.rent(G,id);if(k==='borrow')E.borrow(G,Math.min(1000,E.maxBorrow(G)));if(k==='repay')E.repay(G,Math.min(G.loan,G.cash));draw()}
 function choose(i){E.choose(G,i);draw()}
-function next(){const r=E.endQuarter(G);
- $('bar','');$('modal',`<div class="modal"><div class="card"><h3>${r.truth?'✅ Tin là THẬT':'❌ Tin là GIẢ'}</h3><p style="opacity:.85">${r.ev.text}<br><small>Nguồn: ${r.ev.source||''}</small></p>
+function next(){sel=null;$('sheet','');const r=E.endQuarter(G),p=Math.round(r.pnl);
+ $('bar','');$('modal',`<div class="modal"><div class="card" id="qpop"><div class="pnl" id="pnl"><small>Quý này bạn ${p>0?'lời':p<0?'lỗ':'hòa vốn'}</small><div class="big ${p>=0?'up':'down'}">${sgn(r.pnl)}</div><small class="sub">Tài sản ròng: ${fmt(r.worth-r.pnl)} → ${fmt(r.worth)} (đã gồm tiền thuê, lãi vay, giá nhà)</small></div>
+ <h3>${r.truth?'✅ Tin là THẬT':'❌ Tin là GIẢ'}</h3><p style="opacity:.85">${r.ev.text}<br><small>Nguồn: ${r.ev.source||''}</small></p>
  ${G.zones.map(z=>`<div class="row"><span>${z.name}</span><span class="${z.last>=0?'up':'down'}">${pc(z.last)}</span></div>`).join('')}
  ${r.rent?`<div class="row"><span>Tiền thuê nhận</span><span class="up">+${fmt(r.rent)}</span></div>`:''}
  ${r.interest?`<div class="row"><span>Lãi vay phải trả</span><span class="down">-${fmt(r.interest)}</span></div>`:''}
  ${r.forced?`<p class="down">Hết tiền mặt nên phải bán gấp ${r.forced} căn.</p>`:''}
  <button style="margin-top:10px;width:100%" onclick="${G.done?'end()':'draw()'}">${G.done?'Xem kết quả':'Sang quý '+G.round+' ▶'}</button></div></div>`)}
-function end(){$('modal','');$('bar','');const R=E.result(G),t=R.title,pct=R.profitPct;
+function end(){sel=null;$('sheet','');$('modal','');$('bar','');const R=E.result(G),t=R.title,pct=R.profitPct;
  const best=parseFloat(localStorage.bdsBest||'-1e9');if(pct>best)localStorage.bdsBest=pct.toFixed(1);
  const c=D.cta||{};
  $('app',`<canvas id="cv" width="1080" height="1080" style="width:100%;border-radius:14px;margin-top:8px"></canvas>

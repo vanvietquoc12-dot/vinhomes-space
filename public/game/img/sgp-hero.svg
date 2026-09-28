@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 460" role="img" aria-label="Minh họa Vinhomes Sài Gòn Park: công viên, hồ và các tòa nhà">
+<defs>
+<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6d58a"/><stop offset=".55" stop-color="#bfe3d0"/><stop offset="1" stop-color="#9fd3b8"/></linearGradient>
+<linearGradient id="lake" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7cc4d8"/><stop offset="1" stop-color="#3f93b5"/></linearGradient>
+<linearGradient id="tw" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1d544c"/><stop offset="1" stop-color="#16433d"/></linearGradient>
+</defs>
+<rect width="1200" height="460" fill="url(#sky)"/>
+<circle cx="880" cy="120" r="54" fill="#fff3c9" opacity=".9"/>
+<g fill="#2c6b62" opacity=".45"><rect x="120" y="170" width="60" height="150"/><rect x="200" y="140" width="50" height="180"/><rect x="930" y="160" width="70" height="160"/><rect x="1020" y="190" width="50" height="130"/></g>
+<g fill="url(#tw)"><rect x="330" y="110" width="84" height="220" rx="4"/><rect x="424" y="70" width="96" height="260" rx="4"/><rect x="530" y="130" width="76" height="200" rx="4"/><rect x="690" y="90" width="90" height="240" rx="4"/><rect x="790" y="150" width="80" height="180" rx="4"/></g>
+<g fill="#e7b84b" opacity=".85"><rect x="444" y="90" width="12" height="8"/><rect x="468" y="90" width="12" height="8"/><rect x="492" y="90" width="12" height="8"/><rect x="444" y="110" width="12" height="8"/><rect x="492" y="130" width="12" height="8"/><rect x="468" y="150" width="12" height="8"/><rect x="710" y="110" width="12" height="8"/><rect x="734" y="110" width="12" height="8"/><rect x="758" y="130" width="12" height="8"/><rect x="734" y="150" width="12" height="8"/><rect x="350" y="130" width="10" height="8"/><rect x="384" y="150" width="10" height="8"/><rect x="550" y="150" width="10" height="8"/><rect x="810" y="170" width="10" height="8"/></g>
+<path d="M0 320 Q300 290 600 310 T1200 300 V460 H0Z" fill="#6fbf7f"/>
+<path d="M0 360 Q300 330 600 350 T1200 340 V460 H0Z" fill="#4d9f63"/>
+<path d="M640 380 Q760 340 900 360 Q1040 380 1000 420 Q900 450 760 440 Q620 425 640 380Z" fill="url(#lake)"/>
+<path d="M700 395 q20 -8 40 0 t40 0 M820 410 q20 -8 40 0 t40 0" stroke="#ffffff88" stroke-width="3" fill="none"/>
+<path d="M0 430 Q300 400 600 420 T1200 410" stroke="#f2e2b3" stroke-width="10" fill="none"/>
+<g fill="#2f7a45"><circle cx="120" cy="360" r="30"/><circle cx="170" cy="375" r="24"/><circle cx="300" cy="350" r="28"/><circle cx="350" cy="370" r="20"/><circle cx="480" cy="360" r="32"/><circle cx="560" cy="378" r="22"/><circle cx="1080" cy="360" r="30"/><circle cx="1130" cy="378" r="22"/></g>
+<g fill="#1f5a34"><rect x="117" y="380" width="6" height="22"/><rect x="297" y="370" width="6" height="22"/><rect x="477" y="382" width="6" height="22"/><rect x="1077" y="380" width="6" height="22"/></g>
+</svg>

@@ -13,7 +13,7 @@
       D, R, r, p, Q, round: 1, cash: p.startCapital, loan: 0,
       rate: (R.loan && R.loan.interestPctPerQuarter) || 2.5, maxLtv: ((R.loan && R.loan.maxLtvPct) || 50) / 100,
       fee: (R.sellFeePct || 2) / 100,
-      zones: D.zones.filter(z => z.project === projectId).map(z => ({ ...z, cur: z.price, last: 0 })),
+      zones: D.zones.filter(z => z.project === projectId).map(z => ({ ...z, cur: z.price, last: 0, hist: [z.price] })),
       units: [], events, dilemmas: shuffle(D.dilemmas || [], r), dQuarters,
       ev: null, evTruth: null, revealed: false, dilemma: null, perks: {},
       stats: { trades: 0, usedLoan: false, rent: 0, calls: 0, callRight: 0, boughtThisQ: false, log: [] },
@@ -29,7 +29,7 @@
   function startQuarter(G) {
     G.ev = G.events[(G.round - 1) % G.events.length];
     G.evTruth = G.r() < G.ev.reliability; G.revealed = false; G.perks = {}; G.stats.boughtThisQ = false;
-    G.dilemma = null;
+    G.dilemma = null; G.w0 = worth(G); // tài sản ròng đầu quý (để tính lời/lỗ quý)
     if (G.dQuarters.has(G.round)) {
       const ok = d => !(['d-quick', 'd-tenant'].includes(d.id) && !G.units.some(u => !locked(G, u)));
       const i = G.dilemmas.findIndex(ok); if (i >= 0) G.dilemma = G.dilemmas.splice(i, 1)[0];
@@ -86,14 +86,14 @@
     G.zones.forEach(z => {
       let c = (z.growth || 0) / 4 * 100 + (G.r() - 0.5) * (z.risk || 0) * 10;
       if (hits(ev, z)) c += delta;
-      const before = z.cur; z.cur = Math.max(z.price * 0.3, z.cur * (1 + c / 100)); z.last = (z.cur / before - 1) * 100;
+      const before = z.cur; z.cur = Math.max(z.price * 0.3, z.cur * (1 + c / 100)); z.last = (z.cur / before - 1) * 100; z.hist.push(z.cur);
     });
     // hết hợp đồng thuê
     G.units.forEach(u => { if (u.leaseUntil && u.leaseUntil <= G.round + 1) { u.leaseUntil = 0; u.rentBonus = 0; } });
     // âm tiền: tự bán căn rẻ nhất đang tự do
     let forced = 0;
     while (G.cash < 0) { const u = G.units.slice().sort((a, b) => zone(G, a.zone).cur - zone(G, b.zone).cur)[0]; if (!u) break; G.cash += zone(G, u.zone).cur * (1 - G.fee); G.units.splice(G.units.indexOf(u), 1); forced++; }
-    const res = { ev, truth, delta, rent: rentQ, interest, forced };
+    const res = { ev, truth, delta, rent: rentQ, interest, forced, worth: worth(G), pnl: worth(G) - G.w0 };
     G.history.push(res); G.round++;
     if (G.round <= G.Q) startQuarter(G); else G.done = true;
     return res;
@@ -110,6 +110,8 @@
   }
   function revealText(G) { if (!G.revealed) return ''; const d = G.evTruth ? G.ev.change : G.ev.falseChange;
     return G.revealed === 'direction' ? 'quý này giá sẽ ' + (d >= 0 ? 'TĂNG' : 'GIẢM') + ' theo tin' : 'tin này ' + (G.evTruth ? 'là THẬT' : 'là GIẢ'); }
-  const API = { revealText, newGame, zone, worth, propValue, maxBorrow, buy, sell, rent, borrow, repay, choose, endQuarter, result, buyPrice, sellValue, locked, hits };
+  // tiền thuê dự kiến cho cả thời gian khóa (theo giá hiện tại), có tính thưởng thuê của tình huống
+  function rentQuote(G, z, quarters, bonusPct) { return z.cur * (z.rentPctPerQuarter || 0) / 100 * (1 + (bonusPct || 0) / 100) * (quarters == null ? LEASE_Q : quarters); }
+  const API = { LEASE_Q, rentQuote, revealText, newGame, zone, worth, propValue, maxBorrow, buy, sell, rent, borrow, repay, choose, endQuarter, result, buyPrice, sellValue, locked, hits };
   if (typeof module !== 'undefined') module.exports = API; else root.Engine = API;
 })(this);

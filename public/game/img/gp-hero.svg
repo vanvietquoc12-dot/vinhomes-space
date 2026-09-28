@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 460" role="img" aria-label="Minh họa Vinhomes Green Paradise Cần Giờ: biển, bãi cát, rừng ngập mặn và các tòa nhà ven biển">
+<defs>
+<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd98e"/><stop offset=".6" stop-color="#ffe9c4"/><stop offset="1" stop-color="#cfeef0"/></linearGradient>
+<linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7cc4d8"/><stop offset="1" stop-color="#2f7fa3"/></linearGradient>
+<linearGradient id="tw" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1d544c"/><stop offset="1" stop-color="#16433d"/></linearGradient>
+</defs>
+<rect width="1200" height="460" fill="url(#sky)"/>
+<circle cx="300" cy="130" r="60" fill="#fff3c9"/>
+<path d="M0 250 Q120 215 240 240 T480 235 V300 H0Z" fill="#5d9f5e"/>
+<g fill="#3f7f45"><circle cx="40" cy="240" r="26"/><circle cx="95" cy="228" r="30"/><circle cx="160" cy="240" r="24"/><circle cx="220" cy="232" r="28"/><circle cx="290" cy="244" r="22"/><circle cx="350" cy="236" r="26"/><circle cx="410" cy="246" r="20"/></g>
+<g stroke="#2e5e33" stroke-width="3" fill="none"><path d="M60 262 l-10 20 M60 262 l10 20 M130 258 l-12 22 M130 258 l8 22 M250 262 l-10 20 M250 262 l10 20 M380 262 l-8 20 M380 262 l10 20"/></g>
+<g fill="url(#tw)"><rect x="560" y="80" width="80" height="200" rx="4"/><rect x="650" y="50" width="96" height="230" rx="4"/><rect x="756" y="110" width="72" height="170" rx="4"/><rect x="900" y="100" width="86" height="180" rx="4"/><rect x="996" y="140" width="70" height="140" rx="4"/></g>
+<g fill="#e7b84b" opacity=".85"><rect x="672" y="70" width="12" height="8"/><rect x="696" y="70" width="12" height="8"/><rect x="720" y="90" width="12" height="8"/><rect x="672" y="110" width="12" height="8"/><rect x="696" y="130" width="12" height="8"/><rect x="580" y="100" width="10" height="8"/><rect x="610" y="120" width="10" height="8"/><rect x="920" y="120" width="12" height="8"/><rect x="950" y="140" width="12" height="8"/><rect x="776" y="130" width="10" height="8"/><rect x="1016" y="160" width="10" height="8"/></g>
+<path d="M0 290 Q300 265 600 282 T1200 270 V330 H0Z" fill="#f2e2b3"/>
+<path d="M0 318 Q300 295 600 312 T1200 300 V460 H0Z" fill="url(#sea)"/>
+<g stroke="#ffffff88" stroke-width="3" fill="none"><path d="M60 360 q25 -10 50 0 t50 0 M300 390 q25 -10 50 0 t50 0 M620 350 q25 -10 50 0 t50 0 M860 400 q25 -10 50 0 t50 0 M1020 350 q25 -10 50 0 t50 0 M180 430 q25 -10 50 0 t50 0 M500 440 q25 -10 50 0 t50 0"/></g>
+<g transform="translate(860 225)"><rect x="-2" y="0" width="4" height="60" fill="#8a6a3a"/><path d="M0 0 q-40 -6 -60 18 M0 0 q40 -6 60 18 M0 0 q-24 -24 -48 -18 M0 0 q24 -24 48 -18" stroke="#3f7f45" stroke-width="8" fill="none" stroke-linecap="round"/></g>
+<g transform="translate(1120 235)"><rect x="-2" y="0" width="4" height="50" fill="#8a6a3a"/><path d="M0 0 q-34 -5 -50 15 M0 0 q34 -5 50 15 M0 0 q-20 -20 -40 -15 M0 0 q20 -20 40 -15" stroke="#3f7f45" stroke-width="7" fill="none" stroke-linecap="round"/></g>
+</svg>
