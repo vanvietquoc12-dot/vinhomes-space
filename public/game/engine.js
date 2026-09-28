@@ -49,7 +49,7 @@
     if (e.loanAdd) { G.loan += e.loanAdd; G.cash += e.loanAdd; G.stats.usedLoan = true; }
     if (e.interestPctPerQuarter) G.rate = e.interestPctPerQuarter;
     if (e.cost) G.cash -= e.cost;
-    if (e.revealNextEvent) G.revealed = true;
+    if (e.revealNextEvent) G.revealed = e.revealMode || 'truth';
   }
   function buyPrice(G, z) { return G.perks.discount ? z.cur * (1 - G.perks.discount.pct / 100) : z.cur; }
   function buy(G, id) {
@@ -108,6 +108,8 @@
     const title = G.D.titles.find(t => ok(t.when || {})) || G.D.titles[G.D.titles.length - 1];
     return { ...m, worth: worth(G), title };
   }
-  const API = { newGame, zone, worth, propValue, maxBorrow, buy, sell, rent, borrow, repay, choose, endQuarter, result, buyPrice, sellValue, locked, hits };
+  function revealText(G) { if (!G.revealed) return ''; const d = G.evTruth ? G.ev.change : G.ev.falseChange;
+    return G.revealed === 'direction' ? 'quý này giá sẽ ' + (d >= 0 ? 'TĂNG' : 'GIẢM') + ' theo tin' : 'tin này ' + (G.evTruth ? 'là THẬT' : 'là GIẢ'); }
+  const API = { revealText, newGame, zone, worth, propValue, maxBorrow, buy, sell, rent, borrow, repay, choose, endQuarter, result, buyPrice, sellValue, locked, hits };
   if (typeof module !== 'undefined') module.exports = API; else root.Engine = API;
 })(this);

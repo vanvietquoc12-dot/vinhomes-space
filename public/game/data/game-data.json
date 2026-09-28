@@ -5,76 +5,628 @@
   "rules": {
     "quarters": 8,
     "sellFeePct": 2,
-    "loan": {"maxLtvPct": 50, "interestPctPerQuarter": 2.5},
+    "loan": {
+      "maxLtvPct": 50,
+      "interestPctPerQuarter": 2.5
+    },
     "_flow": "Dau quy: hien tin (co do tin cay). Nguoi choi mua/ban/vay/cho thue. Bam Sang quy: tung xac suat reliability, dung thi ap change, sai thi ap falseChange, roi moi hien gia moi kem mui ten."
   },
   "projects": [
-    {"id": "sgp", "name": "Vinhomes Sài Gòn Park", "image": "", "startCapital": 5000, "tagline": "Đô thị công viên, kết nối trung tâm"},
-    {"id": "gp", "name": "Vinhomes Green Paradise · Cần Giờ", "image": "", "startCapital": 5000, "tagline": "Đại đô thị ven biển Cần Giờ"}
+    {
+      "id": "sgp",
+      "name": "Vinhomes Sài Gòn Park",
+      "image": "",
+      "startCapital": 5000,
+      "tagline": "Đô thị công viên, kết nối trung tâm"
+    },
+    {
+      "id": "gp",
+      "name": "Vinhomes Green Paradise · Cần Giờ",
+      "image": "",
+      "startCapital": 5000,
+      "tagline": "Đại đô thị ven biển Cần Giờ"
+    }
   ],
   "zones": [
-    {"id": "sgp-apt",   "project": "sgp", "name": "Khu căn hộ công viên",   "type": "Căn hộ",        "price": 800,  "risk": 0.15, "growth": 0.02,  "rentPctPerQuarter": 1.3},
-    {"id": "sgp-town",  "project": "sgp", "name": "Dãy nhà phố",            "type": "Liền kề",       "price": 1800, "risk": 0.35, "growth": 0.03,  "rentPctPerQuarter": 0.9},
-    {"id": "sgp-shop",  "project": "sgp", "name": "Trục thương mại",        "type": "Shophouse",     "price": 2400, "risk": 0.5,  "growth": 0.035, "rentPctPerQuarter": 1.1},
-    {"id": "sgp-villa", "project": "sgp", "name": "Khu biệt thự ven hồ",    "type": "Biệt thự",      "price": 3500, "risk": 0.6,  "growth": 0.04,  "rentPctPerQuarter": 0.5},
-    {"id": "gp-apt",    "project": "gp",  "name": "Khu căn hộ ven vịnh",    "type": "Căn hộ",        "price": 900,  "risk": 0.15, "growth": 0.02,  "rentPctPerQuarter": 1.3},
-    {"id": "gp-town",   "project": "gp",  "name": "Nhà phố gần biển",       "type": "Liền kề",       "price": 1900, "risk": 0.35, "growth": 0.03,  "rentPctPerQuarter": 0.9},
-    {"id": "gp-shop",   "project": "gp",  "name": "Phố thương mại du lịch", "type": "Shophouse",     "price": 2200, "risk": 0.5,  "growth": 0.035, "rentPctPerQuarter": 1.1},
-    {"id": "gp-villa",  "project": "gp",  "name": "Biệt thự mặt biển",      "type": "Biệt thự biển", "price": 3200, "risk": 0.6,  "growth": 0.04,  "rentPctPerQuarter": 0.5}
+    {
+      "id": "sgp-apt",
+      "project": "sgp",
+      "name": "Khu căn hộ công viên",
+      "type": "Căn hộ",
+      "price": 800,
+      "risk": 0.15,
+      "growth": 0.02,
+      "rentPctPerQuarter": 1.3
+    },
+    {
+      "id": "sgp-town",
+      "project": "sgp",
+      "name": "Dãy nhà phố",
+      "type": "Liền kề",
+      "price": 1800,
+      "risk": 0.35,
+      "growth": 0.03,
+      "rentPctPerQuarter": 0.9
+    },
+    {
+      "id": "sgp-shop",
+      "project": "sgp",
+      "name": "Trục thương mại",
+      "type": "Shophouse",
+      "price": 2400,
+      "risk": 0.5,
+      "growth": 0.035,
+      "rentPctPerQuarter": 1.1
+    },
+    {
+      "id": "sgp-villa",
+      "project": "sgp",
+      "name": "Khu biệt thự ven hồ",
+      "type": "Biệt thự",
+      "price": 3500,
+      "risk": 0.6,
+      "growth": 0.04,
+      "rentPctPerQuarter": 0.5
+    },
+    {
+      "id": "gp-apt",
+      "project": "gp",
+      "name": "Khu căn hộ ven vịnh",
+      "type": "Căn hộ",
+      "price": 900,
+      "risk": 0.15,
+      "growth": 0.02,
+      "rentPctPerQuarter": 1.3
+    },
+    {
+      "id": "gp-town",
+      "project": "gp",
+      "name": "Nhà phố gần biển",
+      "type": "Liền kề",
+      "price": 1900,
+      "risk": 0.35,
+      "growth": 0.03,
+      "rentPctPerQuarter": 0.9
+    },
+    {
+      "id": "gp-shop",
+      "project": "gp",
+      "name": "Phố thương mại du lịch",
+      "type": "Shophouse",
+      "price": 2200,
+      "risk": 0.5,
+      "growth": 0.035,
+      "rentPctPerQuarter": 1.1
+    },
+    {
+      "id": "gp-villa",
+      "project": "gp",
+      "name": "Biệt thự mặt biển",
+      "type": "Biệt thự biển",
+      "price": 3200,
+      "risk": 0.6,
+      "growth": 0.04,
+      "rentPctPerQuarter": 0.5
+    }
   ],
   "events": [
-    {"id": "g-road",   "project": "*",   "kind": "rumor", "text": "Tin đồn: tuyến đường kết nối mới sắp khởi công.",            "source": "Hội nhóm đầu tư", "reliability": 0.5, "zones": ["*"], "change": 8,  "falseChange": -2},
-    {"id": "g-rate-up","project": "*",   "kind": "news",  "text": "Ngân hàng báo sẽ tăng lãi suất vay mua nhà từ quý sau.",     "source": "Báo kinh tế",     "reliability": 0.9, "zones": ["*"], "change": -6, "falseChange": 1},
-    {"id": "g-rate-dn","project": "*",   "kind": "rumor", "text": "Nghe nói sắp có gói vay ưu đãi lãi suất.",                   "source": "Môi giới",        "reliability": 0.6, "zones": ["*"], "change": 5,  "falseChange": -1},
-    {"id": "g-slow",   "project": "*",   "kind": "news",  "text": "Chuyên gia dự báo thị trường chững lại, thanh khoản giảm.",  "source": "Báo kinh tế",     "reliability": 0.75,"zones": ["*"], "change": -5, "falseChange": 2},
-    {"id": "g-credit", "project": "*",   "kind": "rumor", "text": "Tin đồn: tín dụng bất động sản sắp bị siết.",                "source": "Hội nhóm đầu tư", "reliability": 0.4, "zones": ["*"], "change": -7, "falseChange": 2},
-    {"id": "g-flip",   "project": "*",   "kind": "rumor", "text": "Nhiều nhà đầu tư lướt sóng được cho là sắp bán cắt lỗ.",     "source": "Môi giới",        "reliability": 0.5, "zones": ["sgp-shop", "gp-shop", "sgp-villa", "gp-villa"], "change": -7, "falseChange": 3},
-    {"id": "g-lux",    "project": "*",   "kind": "rumor", "text": "Giới thượng lưu được cho là đang săn biệt thự có hồ bơi.",   "source": "Môi giới",        "reliability": 0.5, "zones": ["sgp-villa", "gp-villa"], "change": 8, "falseChange": -3},
-    {"id": "g-handover","project": "*",  "kind": "news",  "text": "Hàng loạt căn hộ sắp bàn giao cùng lúc, giá thuê có thể giảm.","source": "Báo kinh tế",   "reliability": 0.8, "zones": ["sgp-apt", "gp-apt"], "change": -5, "falseChange": 1},
-
-    {"id": "s-park",   "project": "sgp", "kind": "news",  "text": "Công viên trung tâm Sài Gòn Park dự kiến khánh thành quý tới.","source": "Chủ đầu tư",     "reliability": 0.85,"zones": ["sgp-apt", "sgp-town"], "change": 6, "falseChange": -3},
-    {"id": "s-mall",   "project": "sgp", "kind": "rumor", "text": "Tin đồn: trung tâm thương mại lớn sắp về khu Sài Gòn Park.", "source": "Hội nhóm đầu tư", "reliability": 0.45,"zones": ["sgp-shop"], "change": 12, "falseChange": -5},
-    {"id": "s-school", "project": "sgp", "kind": "news",  "text": "Trường liên cấp trong khu sắp tuyển sinh khóa đầu.",          "source": "Chủ đầu tư",     "reliability": 0.8, "zones": ["sgp-apt"], "change": 7, "falseChange": -2},
-    {"id": "s-book",   "project": "sgp", "kind": "rumor", "text": "Nghe nói tiến độ sổ hồng khu nhà phố sẽ chậm.",              "source": "Cư dân",          "reliability": 0.55,"zones": ["sgp-town"], "change": -9, "falseChange": 3},
-    {"id": "s-flood",  "project": "sgp", "kind": "news",  "text": "Mùa mưa, vài tuyến đường quanh khu có nguy cơ ngập.",          "source": "Báo địa phương",  "reliability": 0.7, "zones": ["sgp-villa", "sgp-town"], "change": -6, "falseChange": 1},
-    {"id": "s-metro",  "project": "sgp", "kind": "rumor", "text": "Tin đồn: tuyến metro sắp chốt thêm ga gần Sài Gòn Park.",     "source": "Hội nhóm đầu tư", "reliability": 0.35,"zones": ["*sgp"], "change": 10, "falseChange": -4},
-
-    {"id": "p-tour",   "project": "gp",  "kind": "news",  "text": "Mùa du lịch biển Cần Giờ sắp vào cao điểm.",                  "source": "Báo du lịch",     "reliability": 0.85,"zones": ["gp-villa", "gp-shop"], "change": 8, "falseChange": -3},
-    {"id": "p-storm",  "project": "gp",  "kind": "news",  "text": "Dự báo có bão lớn ven biển trong quý tới.",                    "source": "Khí tượng",       "reliability": 0.7, "zones": ["gp-villa", "gp-shop"], "change": -8, "falseChange": 1},
-    {"id": "p-link",   "project": "gp",  "kind": "rumor", "text": "Tin đồn: tuyến kết nối Cần Giờ với nội thành sắp được đẩy nhanh.","source": "Hội nhóm đầu tư","reliability": 0.35,"zones": ["*gp"], "change": 10, "falseChange": -4},
-    {"id": "p-ferry",  "project": "gp",  "kind": "news",  "text": "Tuyến phà sang Cần Giờ sắp tăng chuyến.",                     "source": "Báo địa phương",  "reliability": 0.8, "zones": ["gp-apt", "gp-town"], "change": 5, "falseChange": -2},
-    {"id": "p-far",    "project": "gp",  "kind": "rumor", "text": "Nhiều người than Cần Giờ còn xa, khách thuê chưa đông.",     "source": "Cư dân",          "reliability": 0.5, "zones": ["gp-apt", "gp-town"], "change": -6, "falseChange": 2},
-    {"id": "p-mall",   "project": "gp",  "kind": "rumor", "text": "Nghe nói phố thương mại du lịch sắp có thương hiệu lớn thuê.","source": "Môi giới",        "reliability": 0.45,"zones": ["gp-shop"], "change": 12, "falseChange": -5}
+    {
+      "id": "g-road",
+      "project": "*",
+      "kind": "rumor",
+      "text": "Tin đồn: tuyến đường kết nối mới sắp khởi công.",
+      "source": "Hội nhóm đầu tư",
+      "reliability": 0.5,
+      "zones": [
+        "*"
+      ],
+      "change": 8,
+      "falseChange": -2
+    },
+    {
+      "id": "g-rate-up",
+      "project": "*",
+      "kind": "news",
+      "text": "Ngân hàng báo sẽ tăng lãi suất vay mua nhà từ quý sau.",
+      "source": "Báo kinh tế",
+      "reliability": 0.9,
+      "zones": [
+        "*"
+      ],
+      "change": -6,
+      "falseChange": 1
+    },
+    {
+      "id": "g-rate-dn",
+      "project": "*",
+      "kind": "rumor",
+      "text": "Nghe nói sắp có gói vay ưu đãi lãi suất.",
+      "source": "Môi giới",
+      "reliability": 0.6,
+      "zones": [
+        "*"
+      ],
+      "change": 5,
+      "falseChange": -1
+    },
+    {
+      "id": "g-slow",
+      "project": "*",
+      "kind": "news",
+      "text": "Chuyên gia dự báo thị trường chững lại, thanh khoản giảm.",
+      "source": "Báo kinh tế",
+      "reliability": 0.75,
+      "zones": [
+        "*"
+      ],
+      "change": -5,
+      "falseChange": 2
+    },
+    {
+      "id": "g-credit",
+      "project": "*",
+      "kind": "rumor",
+      "text": "Tin đồn: tín dụng bất động sản sắp bị siết.",
+      "source": "Hội nhóm đầu tư",
+      "reliability": 0.4,
+      "zones": [
+        "*"
+      ],
+      "change": -7,
+      "falseChange": 5
+    },
+    {
+      "id": "g-flip",
+      "project": "*",
+      "kind": "rumor",
+      "text": "Nhiều nhà đầu tư lướt sóng được cho là sắp bán cắt lỗ.",
+      "source": "Môi giới",
+      "reliability": 0.5,
+      "zones": [
+        "sgp-shop",
+        "gp-shop",
+        "sgp-villa",
+        "gp-villa"
+      ],
+      "change": -7,
+      "falseChange": 3
+    },
+    {
+      "id": "g-lux",
+      "project": "*",
+      "kind": "rumor",
+      "text": "Giới thượng lưu được cho là đang săn biệt thự có hồ bơi.",
+      "source": "Môi giới",
+      "reliability": 0.5,
+      "zones": [
+        "sgp-villa",
+        "gp-villa"
+      ],
+      "change": 8,
+      "falseChange": -3
+    },
+    {
+      "id": "g-handover",
+      "project": "*",
+      "kind": "news",
+      "text": "Hàng loạt căn hộ sắp bàn giao cùng lúc, giá thuê có thể giảm.",
+      "source": "Báo kinh tế",
+      "reliability": 0.8,
+      "zones": [
+        "sgp-apt",
+        "gp-apt"
+      ],
+      "change": -5,
+      "falseChange": 1
+    },
+    {
+      "id": "s-park",
+      "project": "sgp",
+      "kind": "news",
+      "text": "Công viên trung tâm Sài Gòn Park dự kiến khánh thành quý tới.",
+      "source": "Chủ đầu tư",
+      "reliability": 0.85,
+      "zones": [
+        "sgp-apt",
+        "sgp-town"
+      ],
+      "change": 6,
+      "falseChange": -3
+    },
+    {
+      "id": "s-mall",
+      "project": "sgp",
+      "kind": "rumor",
+      "text": "Tin đồn: trung tâm thương mại lớn sắp về khu Sài Gòn Park.",
+      "source": "Hội nhóm đầu tư",
+      "reliability": 0.45,
+      "zones": [
+        "sgp-shop"
+      ],
+      "change": 12,
+      "falseChange": -8
+    },
+    {
+      "id": "s-school",
+      "project": "sgp",
+      "kind": "news",
+      "text": "Trường liên cấp trong khu sắp tuyển sinh khóa đầu.",
+      "source": "Chủ đầu tư",
+      "reliability": 0.8,
+      "zones": [
+        "sgp-apt"
+      ],
+      "change": 7,
+      "falseChange": -2
+    },
+    {
+      "id": "s-book",
+      "project": "sgp",
+      "kind": "rumor",
+      "text": "Nghe nói tiến độ sổ hồng khu nhà phố sẽ chậm.",
+      "source": "Cư dân",
+      "reliability": 0.55,
+      "zones": [
+        "sgp-town"
+      ],
+      "change": -9,
+      "falseChange": 3
+    },
+    {
+      "id": "s-flood",
+      "project": "sgp",
+      "kind": "news",
+      "text": "Mùa mưa, vài tuyến đường quanh khu có nguy cơ ngập.",
+      "source": "Báo địa phương",
+      "reliability": 0.7,
+      "zones": [
+        "sgp-villa",
+        "sgp-town"
+      ],
+      "change": -6,
+      "falseChange": 1
+    },
+    {
+      "id": "s-metro",
+      "project": "sgp",
+      "kind": "rumor",
+      "text": "Tin đồn: tuyến metro sắp chốt thêm ga gần Sài Gòn Park.",
+      "source": "Hội nhóm đầu tư",
+      "reliability": 0.35,
+      "zones": [
+        "*sgp"
+      ],
+      "change": 10,
+      "falseChange": -7
+    },
+    {
+      "id": "p-tour",
+      "project": "gp",
+      "kind": "news",
+      "text": "Mùa du lịch biển Cần Giờ sắp vào cao điểm.",
+      "source": "Báo du lịch",
+      "reliability": 0.85,
+      "zones": [
+        "gp-villa",
+        "gp-shop"
+      ],
+      "change": 8,
+      "falseChange": -3
+    },
+    {
+      "id": "p-storm",
+      "project": "gp",
+      "kind": "news",
+      "text": "Dự báo có bão lớn ven biển trong quý tới.",
+      "source": "Khí tượng",
+      "reliability": 0.7,
+      "zones": [
+        "gp-villa",
+        "gp-shop"
+      ],
+      "change": -8,
+      "falseChange": 1
+    },
+    {
+      "id": "p-link",
+      "project": "gp",
+      "kind": "rumor",
+      "text": "Tin đồn: tuyến kết nối Cần Giờ với nội thành sắp được đẩy nhanh.",
+      "source": "Hội nhóm đầu tư",
+      "reliability": 0.35,
+      "zones": [
+        "*gp"
+      ],
+      "change": 10,
+      "falseChange": -7
+    },
+    {
+      "id": "p-ferry",
+      "project": "gp",
+      "kind": "news",
+      "text": "Tuyến phà sang Cần Giờ sắp tăng chuyến.",
+      "source": "Báo địa phương",
+      "reliability": 0.8,
+      "zones": [
+        "gp-apt",
+        "gp-town"
+      ],
+      "change": 5,
+      "falseChange": -2
+    },
+    {
+      "id": "p-far",
+      "project": "gp",
+      "kind": "rumor",
+      "text": "Nhiều người than Cần Giờ còn xa, khách thuê chưa đông.",
+      "source": "Cư dân",
+      "reliability": 0.5,
+      "zones": [
+        "gp-apt",
+        "gp-town"
+      ],
+      "change": -6,
+      "falseChange": 2
+    },
+    {
+      "id": "p-mall",
+      "project": "gp",
+      "kind": "rumor",
+      "text": "Nghe nói phố thương mại du lịch sắp có thương hiệu lớn thuê.",
+      "source": "Môi giới",
+      "reliability": 0.45,
+      "zones": [
+        "gp-shop"
+      ],
+      "change": 12,
+      "falseChange": -8
+    },
+    {
+      "id": "b-whale",
+      "project": "*",
+      "kind": "rumor",
+      "text": "Hội nhóm rỉ tai: có đại gia sắp gom sạch biệt thự trong khu.",
+      "source": "Hội nhóm đầu tư",
+      "reliability": 0.3,
+      "zones": [
+        "sgp-villa",
+        "gp-villa"
+      ],
+      "change": 10,
+      "falseChange": -7
+    },
+    {
+      "id": "b-sgp-shop",
+      "project": "sgp",
+      "kind": "rumor",
+      "text": "Môi giới khẳng định: shophouse Sài Gòn Park sắp tăng giá gấp rưỡi.",
+      "source": "Môi giới",
+      "reliability": 0.25,
+      "zones": [
+        "sgp-shop"
+      ],
+      "change": 12,
+      "falseChange": -7
+    },
+    {
+      "id": "b-gp-city",
+      "project": "gp",
+      "kind": "rumor",
+      "text": "Hội nhóm: Cần Giờ sắp thành thành phố biển, giá sẽ gấp đôi.",
+      "source": "Hội nhóm đầu tư",
+      "reliability": 0.25,
+      "zones": [
+        "gp-villa",
+        "gp-shop"
+      ],
+      "change": 12,
+      "falseChange": -7
+    },
+    {
+      "id": "b-apt",
+      "project": "*",
+      "kind": "rumor",
+      "text": "Môi giới báo căn hộ sắp hết hàng, phải chốt ngay kẻo lỡ.",
+      "source": "Môi giới",
+      "reliability": 0.3,
+      "zones": [
+        "sgp-apt",
+        "gp-apt"
+      ],
+      "change": 8,
+      "falseChange": -6
+    },
+    {
+      "id": "b-panic",
+      "project": "*",
+      "kind": "rumor",
+      "text": "Tin đồn hoảng loạn: giá nhà sắp sập, bán ngay kẻo muộn.",
+      "source": "Hội nhóm đầu tư",
+      "reliability": 0.25,
+      "zones": [
+        "*"
+      ],
+      "change": -8,
+      "falseChange": 4
+    }
   ],
   "dilemmas": [
-    {"id": "d-lock",   "text": "Chủ đầu tư mở suất ưu đãi: giá rẻ hơn 8% nhưng khóa chuyển nhượng 2 quý.", "options": [
-      {"label": "Mua suất ưu đãi", "effect": {"buyDiscountPct": 8, "lockQuarters": 2}},
-      {"label": "Bỏ qua", "effect": {}}]},
-    {"id": "d-tenant", "text": "Có khách muốn thuê dài hạn một căn của bạn với giá cao, nhưng không được bán trong 3 quý.", "options": [
-      {"label": "Cho thuê dài hạn", "effect": {"rentBonusPct": 50, "lockQuarters": 3}},
-      {"label": "Giữ tự do", "effect": {}}]},
-    {"id": "d-quick",  "text": "Một người mua trả ngay giá cao hơn thị trường 5% cho một căn bạn đang giữ, chỉ trong quý này.", "options": [
-      {"label": "Bán ngay", "effect": {"sellPremiumPct": 5}},
-      {"label": "Giữ lại", "effect": {}}]},
-    {"id": "d-refi",   "text": "Ngân hàng đề nghị giảm lãi vay còn 1,5%/quý nếu bạn vay thêm ít nhất 1.000 triệu.", "options": [
-      {"label": "Vay thêm", "effect": {"loanAdd": 1000, "interestPctPerQuarter": 1.5}},
-      {"label": "Không vay", "effect": {}}]},
-    {"id": "d-tip",    "text": "Một môi giới rỉ tai phân khu nào sắp có tin tốt, phí xem tin là 50 triệu.", "options": [
-      {"label": "Trả 50 triệu", "effect": {"cost": 50, "revealNextEvent": true}},
-      {"label": "Tự phán đoán", "effect": {}}]}
+    {
+      "id": "d-lock",
+      "text": "Chủ đầu tư mở suất ưu đãi: giá rẻ hơn 5% nhưng khóa chuyển nhượng 3 quý.",
+      "options": [
+        {
+          "label": "Mua suất ưu đãi",
+          "effect": {
+            "buyDiscountPct": 5,
+            "lockQuarters": 3
+          }
+        },
+        {
+          "label": "Bỏ qua",
+          "effect": {}
+        }
+      ]
+    },
+    {
+      "id": "d-tenant",
+      "text": "Có khách muốn thuê dài hạn một căn của bạn với giá cao gấp rưỡi, nhưng không được bán trong 2 quý.",
+      "options": [
+        {
+          "label": "Cho thuê dài hạn",
+          "effect": {
+            "rentBonusPct": 150,
+            "lockQuarters": 2
+          }
+        },
+        {
+          "label": "Giữ tự do",
+          "effect": {}
+        }
+      ]
+    },
+    {
+      "id": "d-quick",
+      "text": "Một người mua trả ngay giá cao hơn thị trường 5% cho một căn bạn đang giữ, chỉ trong quý này.",
+      "options": [
+        {
+          "label": "Bán ngay",
+          "effect": {
+            "sellPremiumPct": 5
+          }
+        },
+        {
+          "label": "Giữ lại",
+          "effect": {}
+        }
+      ]
+    },
+    {
+      "id": "d-refi",
+      "text": "Ngân hàng đề nghị giảm lãi vay còn 1,5%/quý nếu bạn vay thêm ít nhất 1.000 triệu.",
+      "options": [
+        {
+          "label": "Vay thêm",
+          "effect": {
+            "loanAdd": 1000,
+            "interestPctPerQuarter": 1.5
+          }
+        },
+        {
+          "label": "Không vay",
+          "effect": {}
+        }
+      ]
+    },
+    {
+      "id": "d-tip",
+      "text": "Một môi giới bán tin nội bộ: quý tới là tin tốt hay xấu, phí 200 triệu.",
+      "options": [
+        {
+          "label": "Trả 200 triệu",
+          "effect": {
+            "cost": 200,
+            "revealNextEvent": true,
+            "revealMode": "direction"
+          }
+        },
+        {
+          "label": "Tự phán đoán",
+          "effect": {}
+        }
+      ]
+    }
   ],
   "titles": [
-    {"id": "t-none",     "name": "Người đứng ngoài",       "desc": "Bạn chỉ xem thị trường chạy. Ván sau thử xuống tiền nhé!", "when": {"maxTrades": 0}},
-    {"id": "t-legend",   "name": "Huyền thoại địa ốc",     "desc": "Đọc tin chuẩn, vào lệnh chuẩn, lãi vượt trội.",         "when": {"minProfitPct": 45}},
-    {"id": "t-surfer",   "name": "Chiến thần lướt sóng",   "desc": "Mua nhanh bán nhanh, sóng nào cũng bắt được.",           "when": {"minTrades": 8, "minProfitPct": 10}},
-    {"id": "t-lever",    "name": "Tay chơi đòn bẩy",       "desc": "Dám vay, dám thắng, biết lúc dừng.",                     "when": {"usedLoan": true, "minProfitPct": 15}},
-    {"id": "t-cash",     "name": "Nhà đầu tư dòng tiền",   "desc": "Tiền thuê đều đặn, ngủ ngon mỗi đêm.",                   "when": {"minRentPct": 8, "minProfitPct": 0}},
-    {"id": "t-reader",   "name": "Thám tử tin đồn",        "desc": "Bạn phân biệt tin thật tin giả rất giỏi.",               "when": {"minRumorCallPct": 70, "minProfitPct": 5}},
-    {"id": "t-coast",    "name": "Nhà đầu tư ven biển",    "desc": "Chọn đúng lúc, giữ đúng chỗ bên bờ biển.",               "when": {"project": "gp", "minProfitPct": 10}},
-    {"id": "t-park",     "name": "Cư dân công viên",       "desc": "Giữ tài sản xanh giữa lòng thành phố.",                  "when": {"project": "sgp", "minProfitPct": 10}},
-    {"id": "t-safe",     "name": "Nhà đầu tư an toàn",     "desc": "Không lỗ là đã thắng.",                                  "when": {"minProfitPct": 0}},
-    {"id": "t-brave",    "name": "Tân binh dũng cảm",      "desc": "Lỗ hôm nay, kinh nghiệm cho ngày mai.",                  "when": {}}
+    {
+      "id": "t-none",
+      "name": "Người đứng ngoài",
+      "desc": "Bạn chỉ xem thị trường chạy. Ván sau thử xuống tiền nhé!",
+      "when": {
+        "maxTrades": 0
+      }
+    },
+    {
+      "id": "t-legend",
+      "name": "Huyền thoại địa ốc",
+      "desc": "Đọc tin chuẩn, vào lệnh chuẩn, lãi vượt trội.",
+      "when": {
+        "minProfitPct": 45
+      }
+    },
+    {
+      "id": "t-surfer",
+      "name": "Chiến thần lướt sóng",
+      "desc": "Mua nhanh bán nhanh, sóng nào cũng bắt được.",
+      "when": {
+        "minTrades": 8,
+        "minProfitPct": 10
+      }
+    },
+    {
+      "id": "t-lever",
+      "name": "Tay chơi đòn bẩy",
+      "desc": "Dám vay, dám thắng, biết lúc dừng.",
+      "when": {
+        "usedLoan": true,
+        "minProfitPct": 15
+      }
+    },
+    {
+      "id": "t-cash",
+      "name": "Nhà đầu tư dòng tiền",
+      "desc": "Tiền thuê đều đặn, ngủ ngon mỗi đêm.",
+      "when": {
+        "minRentPct": 8,
+        "minProfitPct": 0
+      }
+    },
+    {
+      "id": "t-reader",
+      "name": "Thám tử tin đồn",
+      "desc": "Bạn phân biệt tin thật tin giả rất giỏi.",
+      "when": {
+        "minRumorCallPct": 70,
+        "minProfitPct": 5
+      }
+    },
+    {
+      "id": "t-coast",
+      "name": "Nhà đầu tư ven biển",
+      "desc": "Chọn đúng lúc, giữ đúng chỗ bên bờ biển.",
+      "when": {
+        "project": "gp",
+        "minProfitPct": 10
+      }
+    },
+    {
+      "id": "t-park",
+      "name": "Cư dân công viên",
+      "desc": "Giữ tài sản xanh giữa lòng thành phố.",
+      "when": {
+        "project": "sgp",
+        "minProfitPct": 10
+      }
+    },
+    {
+      "id": "t-safe",
+      "name": "Nhà đầu tư an toàn",
+      "desc": "Không lỗ là đã thắng.",
+      "when": {
+        "minProfitPct": 0
+      }
+    },
+    {
+      "id": "t-brave",
+      "name": "Tân binh dũng cảm",
+      "desc": "Lỗ hôm nay, kinh nghiệm cho ngày mai.",
+      "when": {}
+    }
   ],
   "_titleRules": "Duyet tu tren xuong, lay danh hieu dau tien khop. trades = so lan mua+ban. minRentPct = tong tien thue / von ban dau (%). minRumorCallPct = % so quy nguoi choi mua khi tin tot thanh that hoac ban/dung ngoai khi tin xau thanh that. Zones '*' = tat ca, '*sgp' / '*gp' = moi phan khu cua du an do.",
-  "cta": {"label": "Nhắn Zalo tư vấn", "zaloUrl": "https://zalo.me/0868581888", "formUrl": "https://vinhome.site/"}
+  "cta": {
+    "label": "Nhắn Zalo tư vấn",
+    "zaloUrl": "https://zalo.me/0868581888",
+    "formUrl": "https://vinhome.site/"
+  }
 }

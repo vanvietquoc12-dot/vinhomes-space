@@ -47,7 +47,7 @@ function draw(){
  const ev=G.ev;
  $('app',`<div class="top"><div>Quý<b>${G.round}/${G.Q}</b></div><div>Tài sản ròng<b>${fmt(E.worth(G))}</b></div><div>Tiền mặt<b>${fmt(G.cash)}</b></div><div>Nợ<b>${fmt(G.loan)}</b></div></div>
  <div class="card news"><div>📰 ${ev.text}</div><div class="src">Nguồn: ${ev.source||'Không rõ'}${ev.kind==='rumor'?' <span class="tag">tin đồn</span>':''}</div>
- ${G.revealed?`<div class="src">🔎 Môi giới rỉ tai: tin này <b>${G.evTruth?'là THẬT':'là GIẢ'}</b>.</div>`:''}</div>`+
+ ${G.revealed?`<div class="src">🔎 Tin nội bộ: <b>${E.revealText(G)}</b>.</div>`:''}</div>`+
  (G.perks.discount?`<div class="card">🎟️ Suất ưu đãi: lần mua kế tiếp rẻ hơn ${G.perks.discount.pct}% nhưng khóa ${G.perks.discount.lock} quý.</div>`:'')+
  (G.perks.premium?`<div class="card">💰 Có người trả thêm ${G.perks.premium}% nếu bạn bán một căn trong quý này.</div>`:'')+
  z.map(x=>{const o=own(x.id),f=free(x.id),leased=o.filter(u=>u.leaseUntil).length,bp=E.buyPrice(G,x);
