@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nhà Đầu Tư Tí Hon — game mô phỏng BĐS</title>
+<style>
+body{font-family:system-ui,sans-serif;margin:0;background:#0f2e2a;color:#f3f7f5}
+.wrap{max-width:720px;margin:auto;padding:16px}
+.card{background:#16433d;border-radius:14px;padding:14px;margin:10px 0}
+button{background:#e7b84b;color:#1b1b1b;border:0;border-radius:10px;padding:10px 14px;font-weight:600;margin:4px;cursor:pointer}
+button.alt{background:#2c6b62;color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+small{opacity:.75}.news{font-size:1.1em;background:#244f49;padding:10px;border-radius:10px}
+.warn{font-size:.8em;opacity:.7;text-align:center}
+</style></head><body><div class="wrap" id="app"></div>
+<p class="warn" id="disc">Giá trong game chỉ là mô phỏng, không phải giá chào bán thật.</p>
+<script>
+const ROUNDS=8;
+let D,S;const $=h=>document.getElementById('app').innerHTML=h;
+const fmt=n=>Math.round(n).toLocaleString('vi-VN')+' tr';
+async function load(){for(const f of['data/game-data.json','data/sample-data.json']){try{const r=await fetch(f);if(r.ok){D=await r.json();return}}catch(e){}}}
+function start(){$(`<h1>Nhà Đầu Tư Tí Hon</h1><div class="card">Chọn dự án để bắt đầu:</div>`+
+ D.projects.map(p=>`<div class="card"><b>${p.name}</b><br><small>${p.tagline||''}</small><br><small>Vốn khởi đầu ${fmt(p.startCapital)}</small><br><button onclick="pick('${p.id}')">Chơi dự án này</button></div>`).join('')+
+ (localStorage.bdsBest?`<p><small>Kỷ lục của bạn: ${localStorage.bdsBest}%</small></p>`:'')+`<p><small>Mua bán qua ${ROUNDS} quý, mỗi quý có một tin tức làm giá lên xuống. Cuối game bạn nhận danh hiệu theo mức lãi.</small></p>`)}
+function pick(id){const p=D.projects.find(x=>x.id==id);S={p,cash:p.startCapital,round:1,zones:D.zones.filter(z=>z.project==id).map(z=>({...z,cur:z.price})),own:{},news:'Thị trường mở cửa. Hãy chọn nơi xuống tiền!'};draw()}
+const worth=()=>S.cash+S.zones.reduce((a,z)=>a+(S.own[z.id]||0)*z.cur,0);
+function draw(){$(`<h2>${S.p.name}</h2><div class="card">Quý ${S.round}/${ROUNDS} · Tiền mặt <b>${fmt(S.cash)}</b> · Tài sản <b>${fmt(worth())}</b></div>
+<div class="news">📰 ${S.news}</div><div class="grid">`+S.zones.map(z=>`<div class="card"><b>${z.name}</b><br><small>${z.type} · rủi ro ${Math.round(z.risk*100)}%</small><br>Giá: ${fmt(z.cur)}<br>Đang giữ: ${S.own[z.id]||0}<br>
+<button onclick="buy('${z.id}')">Mua</button><button class="alt" onclick="sell('${z.id}')">Bán</button></div>`).join('')+
+`</div><button onclick="next()">Sang quý tiếp ▶</button>`)}
+function buy(id){const z=S.zones.find(x=>x.id==id);if(S.cash>=z.cur){S.cash-=z.cur;S.own[id]=(S.own[id]||0)+1}draw()}
+function sell(id){const z=S.zones.find(x=>x.id==id);if(S.own[id]){S.own[id]--;S.cash+=z.cur*0.98}draw()}
+function next(){const e=D.events[Math.floor(Math.random()*D.events.length)];
+ S.zones.forEach(z=>{let c=z.growth/4*100+(Math.random()-.5)*z.risk*10;if(e.zones.includes('*')||e.zones.includes(z.id))c+=e.change;z.cur=Math.max(z.price*.3,z.cur*(1+c/100))});
+ S.news=e.text;if(++S.round>ROUNDS)return end();draw()}
+function end(){const pct=(worth()/S.p.startCapital-1)*100,t=D.titles.find(x=>pct>=x.minProfitPct);
+ $(`<div class="card" style="text-align:center"><h1>${t.name}</h1><p>${t.desc}</p><h2>${pct>=0?'+':''}${pct.toFixed(1)}%</h2><p>Tài sản cuối: ${fmt(worth())}</p></div>
+<canvas id="cv" width="1080" height="1080" style="width:100%;border-radius:14px"></canvas>
+<button onclick="share('${t.name}',${pct.toFixed(1)})">Chia sẻ kết quả</button><button class="alt" onclick="saveImg()">Tải ảnh kết quả</button>
+<a href="${D.cta?.zaloUrl||'#'}" target="_blank" rel="noopener"><button>${D.cta?.label||'Nhắn Zalo tư vấn'}</button></a>
+${D.cta?.formUrl?`<a href="${D.cta.formUrl}" target="_blank" rel="noopener"><button class="alt">Để lại thông tin</button></a>`:''}
+<button class="alt" onclick="start()">Chơi lại</button>`);
+ const best=parseFloat(localStorage.bdsBest||'-1e9');if(pct>best)localStorage.bdsBest=pct.toFixed(1);drawCard(t,pct)}
+function drawCard(t,pct){const c=document.getElementById('cv'),x=c.getContext('2d');
+ const g=x.createLinearGradient(0,0,1080,1080);g.addColorStop(0,'#0f2e2a');g.addColorStop(1,'#2c6b62');x.fillStyle=g;x.fillRect(0,0,1080,1080);
+ x.fillStyle='#e7b84b';x.fillRect(80,80,920,8);x.textAlign='center';x.fillStyle='#f3f7f5';
+ x.font='600 44px system-ui';x.fillText('NHÀ ĐẦU TƯ TÍ HON',540,200);x.font='36px system-ui';x.fillText(S.p.name,540,260);
+ x.fillStyle='#e7b84b';x.font='bold 84px system-ui';wrap(x,t.name,540,470,900,96);
+ x.fillStyle='#f3f7f5';x.font='40px system-ui';wrap(x,t.desc,540,640,880,52);
+ x.font='bold 120px system-ui';x.fillStyle=pct>=0?'#8fe3a1':'#ff9b8a';x.fillText((pct>=0?'+':'')+pct.toFixed(1)+'%',540,860);
+ x.fillStyle='#f3f7f5';x.font='30px system-ui';x.fillText('Bạn được danh hiệu gì? Chơi thử ngay!',540,960);x.font='22px system-ui';x.globalAlpha=.7;x.fillText('Game mô phỏng, giá không phải giá thật',540,1010);x.globalAlpha=1}
+function wrap(x,t,cx,y,w,lh){const ws=t.split(' ');let l='',ls=[];ws.forEach(v=>{const tt=l?l+' '+v:v;if(x.measureText(tt).width>w){ls.push(l);l=v}else l=tt});ls.push(l);ls.forEach((v,i)=>x.fillText(v,cx,y+i*lh))}
+function saveImg(){const a=document.createElement('a');a.download='ket-qua-nha-dau-tu.png';a.href=document.getElementById('cv').toDataURL('image/png');a.click()}
+function share(n,p){const txt=`Mình vừa đạt danh hiệu "${n}" (${p}%) trong game Nhà Đầu Tư Tí Hon! Thử xem bạn được gì:`;
+ if(navigator.share)navigator.share({title:'Nhà Đầu Tư Tí Hon',text:txt,url:location.href});else{navigator.clipboard.writeText(txt+' '+location.href);alert('Đã sao chép nội dung chia sẻ!')}}
+load().then(()=>{if(D.disclaimer)document.getElementById('disc').textContent=D.disclaimer;start()});
+</script></body></html>

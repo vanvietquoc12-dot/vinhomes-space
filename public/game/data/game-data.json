@@ -1,0 +1,264 @@
+{
+  "_note": "GIA MO PHONG (don vi: trieu dong), khong phai gia chao ban that. Ten phan khu la ten minh hoa trong game.",
+  "disclaimer": "Giá và tin tức trong game chỉ là mô phỏng để giải trí, không phải giá chào bán hay thông tin chính thức của dự án.",
+  "projects": [
+    {
+      "id": "sgp",
+      "name": "Vinhomes Sài Gòn Park",
+      "image": "",
+      "startCapital": 5000,
+      "tagline": "Đô thị công viên, kết nối trung tâm"
+    },
+    {
+      "id": "gp",
+      "name": "Vinhomes Green Paradise · Cần Giờ",
+      "image": "",
+      "startCapital": 5000,
+      "tagline": "Đại đô thị ven biển Cần Giờ"
+    }
+  ],
+  "zones": [
+    {
+      "id": "sgp-apt",
+      "project": "sgp",
+      "name": "Khu căn hộ công viên",
+      "type": "Căn hộ",
+      "price": 800,
+      "risk": 0.15,
+      "growth": 0.025
+    },
+    {
+      "id": "sgp-town",
+      "project": "sgp",
+      "name": "Dãy nhà phố",
+      "type": "Liền kề",
+      "price": 1800,
+      "risk": 0.35,
+      "growth": 0.045
+    },
+    {
+      "id": "sgp-shop",
+      "project": "sgp",
+      "name": "Trục thương mại",
+      "type": "Shophouse",
+      "price": 2400,
+      "risk": 0.5,
+      "growth": 0.055
+    },
+    {
+      "id": "sgp-villa",
+      "project": "sgp",
+      "name": "Khu biệt thự ven hồ",
+      "type": "Biệt thự",
+      "price": 3500,
+      "risk": 0.6,
+      "growth": 0.07
+    },
+    {
+      "id": "gp-apt",
+      "project": "gp",
+      "name": "Khu căn hộ ven vịnh",
+      "type": "Căn hộ",
+      "price": 900,
+      "risk": 0.2,
+      "growth": 0.03
+    },
+    {
+      "id": "gp-town",
+      "project": "gp",
+      "name": "Nhà phố gần biển",
+      "type": "Liền kề",
+      "price": 1900,
+      "risk": 0.4,
+      "growth": 0.05
+    },
+    {
+      "id": "gp-shop",
+      "project": "gp",
+      "name": "Phố thương mại du lịch",
+      "type": "Shophouse",
+      "price": 2200,
+      "risk": 0.55,
+      "growth": 0.06
+    },
+    {
+      "id": "gp-villa",
+      "project": "gp",
+      "name": "Biệt thự mặt biển",
+      "type": "Biệt thự biển",
+      "price": 3200,
+      "risk": 0.7,
+      "growth": 0.08
+    }
+  ],
+  "events": [
+    {
+      "text": "Tuyến đường kết nối mới được khởi công.",
+      "zones": [
+        "*"
+      ],
+      "change": 8
+    },
+    {
+      "text": "Lãi suất vay mua nhà tăng.",
+      "zones": [
+        "*"
+      ],
+      "change": -6
+    },
+    {
+      "text": "Ngân hàng tung gói vay ưu đãi lãi suất.",
+      "zones": [
+        "*"
+      ],
+      "change": 5
+    },
+    {
+      "text": "Thị trường chững lại, thanh khoản giảm.",
+      "zones": [
+        "*"
+      ],
+      "change": -4
+    },
+    {
+      "text": "Tiến độ sổ hồng chậm hơn dự kiến.",
+      "zones": [
+        "sgp-town",
+        "gp-town"
+      ],
+      "change": -9
+    },
+    {
+      "text": "Trường liên cấp trong khu đi vào hoạt động.",
+      "zones": [
+        "sgp-apt",
+        "gp-apt"
+      ],
+      "change": 7
+    },
+    {
+      "text": "Công viên trung tâm khánh thành, cư dân về ở đông.",
+      "zones": [
+        "sgp-apt",
+        "sgp-town"
+      ],
+      "change": 6
+    },
+    {
+      "text": "Trung tâm thương mại lớn khai trương.",
+      "zones": [
+        "sgp-shop",
+        "gp-shop"
+      ],
+      "change": 10
+    },
+    {
+      "text": "Lượng căn bàn giao cùng lúc nhiều, giá cho thuê giảm.",
+      "zones": [
+        "sgp-apt",
+        "gp-apt"
+      ],
+      "change": -5
+    },
+    {
+      "text": "Du lịch biển hút khách mùa cao điểm.",
+      "zones": [
+        "gp-villa",
+        "gp-shop"
+      ],
+      "change": 12
+    },
+    {
+      "text": "Bão lớn, khách du lịch tạm vắng.",
+      "zones": [
+        "gp-villa",
+        "gp-shop"
+      ],
+      "change": -8
+    },
+    {
+      "text": "Tuyến kết nối Cần Giờ với nội thành rút ngắn thời gian đi lại.",
+      "zones": [
+        "gp-apt",
+        "gp-town",
+        "gp-villa",
+        "gp-shop"
+      ],
+      "change": 9
+    },
+    {
+      "text": "Tuyến phà sang Cần Giờ tăng chuyến.",
+      "zones": [
+        "gp-apt",
+        "gp-town"
+      ],
+      "change": 4
+    },
+    {
+      "text": "Biệt thự hồ bơi riêng được giới thượng lưu săn đón.",
+      "zones": [
+        "sgp-villa",
+        "gp-villa"
+      ],
+      "change": 8
+    },
+    {
+      "text": "Nhà đầu tư lướt sóng bán tháo cắt lỗ.",
+      "zones": [
+        "sgp-shop",
+        "gp-shop",
+        "sgp-villa"
+      ],
+      "change": -7
+    },
+    {
+      "text": "Chính sách thắt chặt tín dụng bất động sản.",
+      "zones": [
+        "*"
+      ],
+      "change": -5
+    }
+  ],
+  "titles": [
+    {
+      "minProfitPct": 60,
+      "name": "Huyền thoại địa ốc",
+      "desc": "Mọi quyết định của bạn đều đúng thời điểm."
+    },
+    {
+      "minProfitPct": 40,
+      "name": "Cá mập bất động sản",
+      "desc": "Bạn đọc thị trường như đọc sách."
+    },
+    {
+      "minProfitPct": 20,
+      "name": "Nhà đầu tư ven biển",
+      "desc": "Chọn đúng lúc, giữ đúng chỗ."
+    },
+    {
+      "minProfitPct": 5,
+      "name": "Nhà đầu tư vững tay",
+      "desc": "Tài sản tăng đều, ngủ ngon mỗi đêm."
+    },
+    {
+      "minProfitPct": 0,
+      "name": "Nhà đầu tư an toàn",
+      "desc": "Không lỗ là đã thắng."
+    },
+    {
+      "minProfitPct": -15,
+      "name": "Người học việc",
+      "desc": "Thị trường vừa dạy bạn một bài học nhẹ."
+    },
+    {
+      "minProfitPct": -1000,
+      "name": "Tân binh dũng cảm",
+      "desc": "Lỗ hôm nay, kinh nghiệm cho ngày mai."
+    }
+  ],
+  "cta": {
+    "label": "Nhắn Zalo tư vấn",
+    "zaloUrl": "https://zalo.me/0868581888",
+    "formUrl": "https://vinhome.site/"
+  }
+}
