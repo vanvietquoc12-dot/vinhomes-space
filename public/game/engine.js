@@ -1,6 +1,6 @@
 // Nhà Đầu Tư Tí Hon — game engine v3 (pure logic, dùng chung cho trình duyệt và mô phỏng Node)
 // v3: chọn độ dài ván (8–20 quý), vay thế chấp ngân hàng theo từng căn (rules.mortgage), lãi cơ sở thả nổi,
-//     tin "giữa ván" (phase:"mid"), tin đổi lãi cơ sở (baseRateChangePct), phát mại khi thiếu tiền góp.
+//     tin "giữa ván" (phase:"mid"), tin đổi lãi cơ sở (baseRateChangePct), phát mãi khi thiếu tiền góp.
 (function (root) {
   function rng(seed) { let s = seed >>> 0 || 1; return () => { s ^= s << 13; s ^= s >>> 17; s ^= s << 5; return ((s >>> 0) % 1e9) / 1e9; }; }
   function shuffle(a, r) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
@@ -247,7 +247,7 @@
     if (truth && ev.ltvCapPct != null) { G.ltvCap = { pct: ev.ltvCapPct, until: G.round + (ev.effectQuarters || 1) }; ltvCap = G.ltvCap; }
     // hết hợp đồng thuê
     G.units.forEach(u => { if (u.leaseUntil && u.leaseUntil <= G.round + 1) { u.leaseUntil = 0; u.rentBonus = 0; } });
-    // thiếu tiền góp: ngân hàng phát mại căn (giá thị trường trừ chiết khấu), trả hết nợ căn đó
+    // thiếu tiền góp: ngân hàng phát mãi căn (giá thị trường trừ chiết khấu), trả hết nợ căn đó
     const fireSales = [];
     while (G.cash < -1e-9 && G.units.length) {
       // ưu tiên căn rẻ nhất đang tự do đủ bù thiếu hụt; không có thì căn rẻ nhất (kể cả đang cho thuê) đủ bù; không nữa thì căn thu về nhiều nhất

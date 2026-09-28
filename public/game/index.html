@@ -81,7 +81,7 @@ button.mini{background:#2c6b62;color:#fff;font-size:11.5px;padding:5px 8px;borde
 .acts.col{flex-direction:column;gap:2px}.sheet .acts button.buyb{flex:none;width:100%;font-size:14px;padding:10px 8px}.sheet .acts button.buyb small{white-space:normal}.acts button small.det{white-space:normal;font-size:10.5px;font-weight:500;opacity:.9}
 button.ghost.cfg{font-size:12.5px;padding:4px;opacity:.9}
 .note2{font-size:.85em;background:#0b242199;border-radius:8px;padding:6px 8px;margin:6px 0}.promo-end{border-left:3px solid var(--gold)}.firesale{border-left:3px solid var(--down)}
-.compact .one{margin:6px 0;font-size:.95em}
+.res .vs{margin-top:4px;font-weight:600}.compact .one{margin:6px 0;font-size:.95em}
 .res{text-align:center}.res .big{font-size:40px;font-weight:800}
 #buyp .acts,#prep .acts{display:flex;gap:8px;margin-top:8px}#buyp .acts button{flex:1}#prep .acts.col button{width:100%;margin:3px 0}
 </style></head><body><div class="wrap" id="app"></div><div id="bar" class="bar"></div><div id="sheet"></div><div id="modal"></div>
@@ -213,7 +213,7 @@ function draw(){
  (mz.length?`<div class="map" id="map" data-project="${G.p.id}">${mapSVG(mz)}${mz.map(tileHTML).join('')}</div>
  <p class="hint">Chạm vào một phân khu để mua, bán hoặc cho thuê<br><span class="g">Viền vàng</span>: tin quý này nhắc tới · <b style="color:var(--gold)">×1</b> căn đang giữ · 🔒 cho thuê</p>`:'')+
  portfolioHTML()+cz.map(cardHTML).join('')+
- `<p class="warn">Mua có thể vay ngân hàng tới ${M.maxLtvPct}% giá căn: lãi ưu đãi, hết ưu đãi thì thả nổi (lãi cơ sở + biên độ). Mỗi quý trừ 3 tháng trả góp gốc + lãi; mua xong phải còn đủ tiền góp 1 quý (tính theo lãi thả nổi); không đủ tiền góp, ngân hàng phát mại căn thấp hơn giá thị trường ${M.fireSaleDiscountPct}%. Bán mất phí ${Math.round(G.fee*100)}%, trả nợ trước hạn bị phạt theo năm vay. Cho thuê: nhận tiền ${E.LEASE_Q} quý, không bán được trong ${E.LEASE_Q} quý đó. Lãi suất là số tạm để mô phỏng.<br>${D.disclaimer||''}</p>`);
+ `<p class="warn">Mua có thể vay ngân hàng tới ${M.maxLtvPct}% giá căn: lãi ưu đãi, hết ưu đãi thì thả nổi (lãi cơ sở + biên độ). Mỗi quý trừ 3 tháng trả góp gốc + lãi; mua xong phải còn đủ tiền góp 1 quý (tính theo lãi thả nổi); không đủ tiền góp, ngân hàng phát mãi căn thấp hơn giá thị trường ${M.fireSaleDiscountPct}%. Bán mất phí ${Math.round(G.fee*100)}%, trả nợ trước hạn bị phạt theo năm vay. Cho thuê: nhận tiền ${E.LEASE_Q} quý, không bán được trong ${E.LEASE_Q} quý đó. Lãi suất là số tạm để mô phỏng.<br>${D.disclaimer||''}</p>`);
  const im=instM();
  $('bar',`<div class="binfo" id="binfo">${im>0?`Trả góp ngân hàng<b>~${mTxt(im)}/tháng</b>`:`Chưa vay<b>ngân hàng</b>`}</div><button class="main" onclick="next()">Chốt quý ▶</button>`);
  document.documentElement.style.setProperty('--barh',document.getElementById('bar').offsetHeight+'px');
@@ -307,7 +307,7 @@ function showQuarter(r){const p=Math.round(r.pnl),zn=id=>esc(short(E.zone(G,id))
  const pay=r.pay.total>0?`<div class="row" id="payrow" data-total="${Math.round(r.pay.total)}" data-p="${Math.round(r.pay.p)}" data-i="${Math.round(r.pay.i)}"><span>Trả góp ngân hàng</span><span class="down r">−${fmt(r.pay.total)}<br><small>gốc ${fmt(r.pay.p)}, lãi ${fmt(r.pay.i)}</small></span></div>`:'';
  const debt=E.debt(G),notes=r.promoEnds.map(x=>`<p class="note2 promo-end">⏰ <b>Hết ưu đãi:</b> lãi căn ${zn(x.zone)} tăng từ ${pr(x.from)} lên ${pr(x.to)}/năm từ quý sau.</p>`)
   .concat(r.baseEvent||(debt>0&&Math.abs(r.baseTo-r.baseFrom)>=0.1)?[`<p class="note2 base">🏦 Lãi cơ sở ngân hàng: ${pr(r.baseFrom)} → ${pr(r.baseTo)}/năm${r.baseEvent?' (theo tin quý này)':''}${debt>0?', áp dụng cho khoản vay đã hết ưu đãi từ quý sau':''}.</p>`]:[])
-  .concat(r.fireSales.map(x=>`<p class="note2 firesale">🚨 <b>Không đủ tiền trả góp</b>, ngân hàng phát mại căn ${zn(x.zone)}: bán ${fmt(x.price)} (thấp hơn thị trường ${G.M.fireSaleDiscountPct}%), trừ phí, trả nợ ${fmt(x.debt)}${x.penalty?` và phạt trả trước ${fmt(x.penalty)}`:''}, bạn còn nhận ${fmt(x.net)}.</p>`))
+  .concat(r.fireSales.map(x=>`<p class="note2 firesale">🚨 <b>Không đủ tiền trả góp</b>, ngân hàng phát mãi căn ${zn(x.zone)}: bán ${fmt(x.price)} (thấp hơn thị trường ${G.M.fireSaleDiscountPct}%), trừ phí, trả nợ ${fmt(x.debt)}${x.penalty?` và phạt trả trước ${fmt(x.penalty)}`:''}, bạn còn nhận ${fmt(x.net)}.</p>`))
   .concat(G.cash<0?[`<p class="note2 firesale">⚠️ Tiền mặt đang âm ${fmt(-G.cash)}: bán các căn còn lại cũng không đủ trả nợ ngân hàng. Hãy bán bớt hoặc cho thuê để bù.</p>`]:[])
   .concat(r.ltvCap?[`<p class="note2 base">🏦 Ngân hàng hạ tỷ lệ cho vay tối đa còn ${r.ltvCap.pct}% giá căn cho khoản vay mới, trong ${r.ltvCap.until-r.round} quý tới.</p>`]:[]).join('');
  const btn=`<button id="qnext" style="margin-top:10px;width:100%" onclick="${G.done?'end()':'draw()'}">${G.done?'Xem kết quả':r.quiet?'Tiếp ▶':'Sang quý '+G.round+' ▶'}</button>`;
@@ -317,15 +317,18 @@ function showQuarter(r){const p=Math.round(r.pnl),zn=id=>esc(short(E.zone(G,id))
  <h3>${r.truth?'✅ Tin là THẬT':'❌ Tin là GIẢ'}</h3><p style="opacity:.85">${r.ev.text}<br><small>Nguồn: ${r.ev.source||''}</small></p>
  ${G.zones.map(z=>`<div class="row"><span>${z.name}</span><span class="${chc(z.last)}">${pc(z.last)}</span></div>`).join('')}
  ${rentRow}${pay}${notes}${btn}</div></div>`)}
-const sp=n=>(n>=0?'+':'\u2212')+Math.abs(n).toFixed(1)+'%';
+const sp=n=>(n>=0?'+':'\u2212')+Math.abs(n).toFixed(1).replace('.',',')+'%';
+/* so với gửi tiết kiệm (chỉ hiển thị, tiền mặt trong game không sinh lãi) */
+function vsSave(ann){const d=(D.rules||{}).deposit12mPctYear;if(d==null)return null;const x=Math.round((ann-d)*10)/10,v=Math.abs(x).toFixed(1).replace('.',',');
+ return {txt:x>0?`Hơn gửi tiết kiệm ${pr(d)}/năm: +${v} điểm`:x<0?`Kém gửi tiết kiệm ${pr(d)}/năm: \u2212${v} điểm`:`Ngang gửi tiết kiệm ${pr(d)}/năm`,up:x>=0}}
 function end(){sel=null;BP=null;$('sheet','');$('modal','');$('bar','');if(!G._fin){G._fin=1;track('finish',{q:G.totalQ})}const R=E.result(G),t=R.title,pct=R.profitPct,ann=R.annualPct;
  const best=parseFloat(localStorage.bdsBestAnn||'-1e9');if(ann>best)localStorage.bdsBestAnn=ann.toFixed(1);
  const c=D.cta||{};
  $('app',`<canvas id="cv" width="1080" height="1080" style="width:100%;border-radius:14px;margin-top:8px"></canvas>
- <div class="card res" id="res"><div class="big ${pct>=0?'up':'down'}">${sp(pct)}</div><div>sau ${G.totalQ} quý (${G.totalQ/4} năm) · <b>≈ ${sp(ann)}/năm</b></div></div>
+ <div class="card res" id="res"><div class="big ${pct>=0?'up':'down'}">${sp(pct)}</div><div>sau ${G.totalQ} quý (${G.totalQ/4} năm) · <b>≈ ${sp(ann)}/năm</b></div>${(v=>v?`<div class="vs ${v.up?'up':'down'}" id="rvs">${v.txt}</div>`:'')(vsSave(ann))}</div>
  <div class="card"><div class="row"><span>Tài sản ròng cuối ván</span><b>${fmt(R.worth)}</b></div><div class="row"><span>Số giao dịch</span><b>${R.trades}</b></div><div class="row"><span>Tiền thuê đã nhận</span><b>${fmt(G.stats.rent)}</b></div>
  <div class="row"><span>Lãi ngân hàng đã trả</span><b id="rint">${fmt(R.interestPaid)}</b></div>${R.penalties>0?`<div class="row"><span>Phạt trả nợ trước hạn</span><b>${fmt(R.penalties)}</b></div>`:''}
- <div class="row"><span>Dư nợ còn lại</span><b id="rdebt">${fmt(R.debt)}</b></div>${R.fireSales?`<div class="row"><span>Căn bị ngân hàng phát mại</span><b class="down">${R.fireSales}</b></div>`:''}
+ <div class="row"><span>Dư nợ còn lại</span><b id="rdebt">${fmt(R.debt)}</b></div>${R.fireSales?`<div class="row"><span>Căn bị ngân hàng phát mãi</span><b class="down">${R.fireSales}</b></div>`:''}
  <div class="row"><span>Đoán đúng hướng tin</span><b>${Math.round(R.rumorCallPct)}%</b></div></div>
  <a id="zalo" href="${c.zaloUrl||'#'}" target="_blank" rel="noopener" onclick="track('zalo')"><button style="width:100%;font-size:1.15em;padding:14px">${c.label||'Nhắn Zalo tư vấn'}</button></a>
  <div style="text-align:center;margin-top:6px"><button class="ghost" onclick="share()">Chia sẻ</button><button class="ghost" onclick="saveImg()">Tải ảnh</button>${c.formUrl?`<a href="${c.formUrl}" target="_blank" rel="noopener"><button class="ghost">Để lại thông tin</button></a>`:''}<button class="ghost" id="replay" onclick="track('replay');start()">Chơi lại</button></div>
@@ -337,11 +340,12 @@ function drawCard(t,pct,ann){const c=document.getElementById('cv'),x=c.getContex
  x.fillStyle='#e7b84b';x.font='bold 84px system-ui';wrap(x,t.name,540,440,900,96);
  x.fillStyle='#f3f7f5';x.font='40px system-ui';wrap(x,t.desc,540,620,880,52);
  x.font='bold 120px system-ui';x.fillStyle=pct>=0?'#8fe3a1':'#ff9b8a';x.fillText(sp(pct),540,840);
- x.fillStyle='#f3f7f5';x.font='38px system-ui';x.fillText(`sau ${G.totalQ} quý · ≈ ${sp(ann)}/năm`,540,905);
- x.font='30px system-ui';x.fillText('Bạn là nhà đầu tư kiểu gì? Chơi thử ngay!',540,975);x.font='22px system-ui';x.globalAlpha=.7;x.fillText('Game mô phỏng, giá và lãi suất không phải số thật',540,1025);x.globalAlpha=1}
+ x.fillStyle='#f3f7f5';x.font='38px system-ui';x.fillText(`sau ${G.totalQ} quý · ≈ ${sp(ann)}/năm`,540,900);
+ const vs=vsSave(ann);if(vs){x.font='600 34px system-ui';x.fillStyle=vs.up?'#8fe3a1':'#ffb4a6';x.fillText(vs.txt,540,952);x.fillStyle='#f3f7f5'}
+ x.font='30px system-ui';x.fillText('Bạn là nhà đầu tư kiểu gì? Chơi thử ngay!',540,1005);x.font='22px system-ui';x.globalAlpha=.7;x.fillText('Game mô phỏng, giá và lãi suất không phải số thật',540,1045);x.globalAlpha=1}
 function wrap(x,t,cx,y,w,lh){const ws=t.split(' ');let l='',ls=[];ws.forEach(v=>{const tt=l?l+' '+v:v;if(x.measureText(tt).width>w){ls.push(l);l=v}else l=tt});ls.push(l);ls.forEach((v,i)=>x.fillText(v,cx,y+i*lh))}
 function saveImg(){const a=document.createElement('a');a.download='nha-dau-tu-ti-hon.png';a.href=document.getElementById('cv').toDataURL('image/png');a.click()}
-async function share(){const {t,pct,ann}=window._res,txt=`Mình là "${t.name}" (${sp(pct)} sau ${G.totalQ} quý, ≈ ${sp(ann)}/năm) trong game Nhà Đầu Tư Tí Hon! Bạn là nhà đầu tư kiểu gì?`;
+async function share(){const {t,pct,ann}=window._res,txt=`Mình là "${t.name}" (${sp(pct)} sau ${G.totalQ} quý, ≈ ${sp(ann)}/năm${(v=>v?', '+v.txt.toLowerCase():'')(vsSave(ann))}) trong game Nhà Đầu Tư Tí Hon! Bạn là nhà đầu tư kiểu gì?`;
  try{const b=await new Promise(r=>document.getElementById('cv').toBlob(r));const f=new File([b],'ket-qua.png',{type:'image/png'});
   if(navigator.canShare&&navigator.canShare({files:[f]}))return navigator.share({files:[f],text:txt+' '+location.href});
   if(navigator.share)return navigator.share({title:'Nhà Đầu Tư Tí Hon',text:txt,url:location.href})}catch(e){}
