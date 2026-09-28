@@ -80,7 +80,15 @@ function start(){sel=null;$('bar','');$('modal','');$('sheet','');
  $('app',`<h1>Nhà Đầu Tư Tí Hon</h1><div class="card">Bạn có 8 quý để làm giàu. Mỗi quý có một tin tức, nhưng <b>tin chưa chắc đã đúng</b>: hãy xem nguồn tin rồi quyết định mua, bán, vay hay cho thuê. Chốt quý xong mới biết tin thật hay giả.</div>`+
  D.projects.map(p=>`<div class="card">${p.image?`<img class="hero" src="${p.image}" alt="${esc(p.name)}">`:''}<b>${p.name}</b><br><small>${p.tagline||''} · Vốn ${fmt(p.startCapital)}</small><br><button style="margin-top:8px" onclick="pick('${p.id}')">Chơi dự án này</button></div>`).join('')+
  (localStorage.bdsBest?`<p class="warn">Kỷ lục của bạn: ${localStorage.bdsBest}%</p>`:''))}
-function pick(id){G=E.newGame(D,id);sel=null;draw()}
+/* bộ đếm sự kiện ẩn danh (start/finish/zalo/replay): chỉ gửi từ vinhomes.space, không cookie/ID; lỗi thì bỏ qua.
+   Tắt khi test: ?test=1 hoặc ?notrack (notrack được nhớ trên máy này; ?notrack=0 để bật lại). */
+const TRACK=(()=>{try{const h=location.hostname,q=new URLSearchParams(location.search);
+ if(q.has('notrack')){if(q.get('notrack')==='0')localStorage.removeItem('bdsNoTrack');else localStorage.bdsNoTrack='1'}
+ return (h==='vinhomes.space'||h==='www.vinhomes.space')&&!q.has('test')&&!q.has('notrack')&&!localStorage.bdsNoTrack}catch(e){return false}})();
+window._evLog=[];
+function track(e){const p=G&&G.p?G.p.id:'';window._evLog.push(e+(p?':'+p:''));if(!TRACK)return;
+ try{const u='/api/ev?e='+e+(p?'&p='+p:'');if(!(navigator.sendBeacon&&navigator.sendBeacon(u)))fetch(u,{method:'POST',keepalive:true}).catch(()=>{})}catch(err){}}
+function pick(id){G=E.newGame(D,id);sel=null;track('start');draw()}
 // tên ngắn cho ô trên bản đồ
 function short(z){if(z.short)return z.short;let n=z.name.replace(/^(Khu|Dãy|Phân khu)\s+/i,'');n=n[0].toUpperCase()+n.slice(1);
  if(n.length>17){let o='';for(const w of n.split(' ')){if((o+' '+w).trim().length>17)break;o=(o+' '+w).trim()}n=o}
@@ -230,13 +238,13 @@ function showQuarter(r){const p=Math.round(r.pnl);
  ${r.interest?`<div class="row"><span>Lãi vay phải trả</span><span class="down">-${fmt(r.interest)}</span></div>`:''}
  ${r.forced?`<p class="down">Hết tiền mặt nên phải bán gấp ${r.forced} căn.</p>`:''}
  <button style="margin-top:10px;width:100%" onclick="${G.done?'end()':'draw()'}">${G.done?'Xem kết quả':'Sang quý '+G.round+' ▶'}</button></div></div>`)}
-function end(){sel=null;$('sheet','');$('modal','');$('bar','');const R=E.result(G),t=R.title,pct=R.profitPct;
+function end(){sel=null;$('sheet','');$('modal','');$('bar','');if(!G._fin){G._fin=1;track('finish')}const R=E.result(G),t=R.title,pct=R.profitPct;
  const best=parseFloat(localStorage.bdsBest||'-1e9');if(pct>best)localStorage.bdsBest=pct.toFixed(1);
  const c=D.cta||{};
  $('app',`<canvas id="cv" width="1080" height="1080" style="width:100%;border-radius:14px;margin-top:8px"></canvas>
  <div class="card"><div class="row"><span>Số giao dịch</span><b>${R.trades}</b></div><div class="row"><span>Tiền thuê đã nhận</span><b>${fmt(G.stats.rent)}</b></div><div class="row"><span>Đoán đúng hướng tin</span><b>${Math.round(R.rumorCallPct)}%</b></div></div>
- <a href="${c.zaloUrl||'#'}" target="_blank" rel="noopener"><button style="width:100%;font-size:1.15em;padding:14px">${c.label||'Nhắn Zalo tư vấn'}</button></a>
- <div style="text-align:center;margin-top:6px"><button class="ghost" onclick="share()">Chia sẻ</button><button class="ghost" onclick="saveImg()">Tải ảnh</button>${c.formUrl?`<a href="${c.formUrl}" target="_blank" rel="noopener"><button class="ghost">Để lại thông tin</button></a>`:''}<button class="ghost" onclick="start()">Chơi lại</button></div>
+ <a id="zalo" href="${c.zaloUrl||'#'}" target="_blank" rel="noopener" onclick="track('zalo')"><button style="width:100%;font-size:1.15em;padding:14px">${c.label||'Nhắn Zalo tư vấn'}</button></a>
+ <div style="text-align:center;margin-top:6px"><button class="ghost" onclick="share()">Chia sẻ</button><button class="ghost" onclick="saveImg()">Tải ảnh</button>${c.formUrl?`<a href="${c.formUrl}" target="_blank" rel="noopener"><button class="ghost">Để lại thông tin</button></a>`:''}<button class="ghost" id="replay" onclick="track('replay');start()">Chơi lại</button></div>
  <p class="warn">${D.disclaimer||''}</p>`);drawCard(t,pct);window._res={t,pct}}
 function drawCard(t,pct){const c=document.getElementById('cv'),x=c.getContext('2d');
  const g=x.createLinearGradient(0,0,1080,1080);g.addColorStop(0,'#0f2e2a');g.addColorStop(1,'#2c6b62');x.fillStyle=g;x.fillRect(0,0,1080,1080);

@@ -6,4 +6,5 @@ cp /workspace/game-bds/index.html /workspace/game-bds/engine.js public/game/ && 
 mkdir -p public/game/img && cp /workspace/game-bds/img/*.svg public/game/img/
 npm run build
 npx -y wrangler@3 pages deploy out --project-name vinhomes-space --branch main --commit-dirty=true
-npx -y wrangler@3 deploy --config /workspace/vs-worker/wrangler.toml
+# Worker vinhomes-space: assets + /api/ev, /api/stats (D1 vinhomes-game-stats); source in worker/
+npx -y wrangler@3 deploy --config worker/wrangler.toml

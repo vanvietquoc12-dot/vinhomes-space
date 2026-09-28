@@ -1,0 +1,17 @@
+# Worker phục vụ vinhomes.space: tài sản tĩnh (Next static export trong ../out) + API đếm sự kiện game ẩn danh.
+# Deploy (từ /workspace/vinhomes-space): npx -y wrangler@3 deploy --config worker/wrangler.toml
+name = "vinhomes-space"
+main = "index.js"
+compatibility_date = "2026-09-01"
+
+[assets]
+directory = "../out"
+binding = "ASSETS"
+not_found_handling = "404-page"
+html_handling = "auto-trailing-slash"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "vinhomes-game-stats"
+database_id = "c26fe462-b6d6-4b23-95a0-6c0b8e389380"
+migrations_dir = "migrations"
