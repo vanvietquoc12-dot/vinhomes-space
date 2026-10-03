@@ -749,6 +749,42 @@
       "winner": "higherNetWorth",
       "dilemmaPlace": "underRoomClock",
       "dilemmaTimeoutNote": "Hết giờ chưa chọn thì bỏ qua."
+    },
+    "depositChoice": {
+      "enabled": true,
+      "_note": "Chưa bật. Engine chưa đọc. Solo vẫn dùng deposit12mPctYear 6,8% cho đến khi máy tính chuyển sang 3 lựa chọn. Lãi là %/năm, lãi quý = (1+năm)^(1/4)-1, không phải mức đó mỗi quý.",
+      "defaultId": "demand",
+      "options": [
+        {
+          "id": "demand",
+          "label": "Rút ngay",
+          "termQuarters": 0,
+          "ratePctYear": 0.1,
+          "source": "Vietcombank không kỳ hạn, bảng Topi tháng 10/2026"
+        },
+        {
+          "id": "q1",
+          "label": "Khóa 1 quý",
+          "termQuarters": 1,
+          "ratePctYear": 2.4,
+          "source": "Vietcombank kỳ hạn 3 tháng, VietnamBiz 3/10/2026"
+        },
+        {
+          "id": "q4",
+          "label": "Khóa 4 quý",
+          "termQuarters": 4,
+          "ratePctYear": 5.9,
+          "source": "Vietcombank kỳ hạn 12 tháng, VietnamBiz 3/10/2026. Không dùng 6,8% ngày 28/9."
+        }
+      ],
+      "earlyBreak": {
+        "confirm": true,
+        "withdrawnRatePctYear": 0.1,
+        "remainderKeepsTerm": true,
+        "alreadyCounted": "recalculate",
+        "_note": "Rút trước hạn phải bấm xác nhận. Phần rút tính lại từ đầu kỳ bằng 0,1%/năm, không mất trắng. Phần còn lại giữ lãi kỳ hạn đến đúng quý mở. Lãi kỳ hạn đã cộng thì tính lại, phần chênh trừ vào khoản vừa rút, không trừ vào tiền mặt đang có. Thực nhận = số rút − phần chênh. Nguồn: Vietcombank tiền gửi rút gốc linh hoạt.",
+        "clawbackFrom": "withdrawn"
+      }
     }
   },
   "projects": [
