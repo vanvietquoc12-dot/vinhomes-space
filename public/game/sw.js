@@ -1,5 +1,5 @@
 /* Vỏ game thôi. Không nhớ phòng đấu (/room-api) và không nhớ API thống kê. */
-const CACHE = 'van-dau-tu-shell-v1';
+const CACHE = 'van-dau-tu-shell-v2';
 const SHELL = [
   './',
   './index.html',
