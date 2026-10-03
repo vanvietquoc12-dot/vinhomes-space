@@ -76,9 +76,19 @@
       units: [], uid: 0, sched, uniqueEvents: events.length, dilemmas: shuffle(dPool, r), dQuarters,
       ev: null, evTruth: null, revealed: false, dilemma: null, perks: {},
       stats: { trades: 0, usedLoan: false, rent: 0, calls: 0, callRight: 0, boughtThisQ: false, log: [], interest: 0, principal: 0, penalties: 0, fireSales: 0, deposit: 0 },
-      history: []
+      history: [], inc: incomeOf(D, opts.incomeId)
     };
     startQuarter(G); return G;
+  }
+  // v3.8 bước 2: thu nhập kê khai (rules.income) CHỈ để ngân hàng xét hạn mức vay (DTI), không bao giờ cộng vào tiền mặt (addToCash=false).
+  // Hạn mức: tổng góp THÁNG của mọi khoản vay (đang có + khoản đang xin) <= dtiMaxPct% x (thu nhập + rentCountPct% tiền thuê tháng của các căn ĐANG cho thuê).
+  // Góp tháng tính theo rules.income.dtiBasis: "currentRateFirstMonth" (mặc định, như ngân hàng xét hồ sơ: lãi hiện tại của từng khoản, tháng kế tiếp) hoặc "floating" (lãi thả nổi, như luật dự phòng).
+  // opts.incomeId = 'none' chỉ dùng cho mô phỏng/kiểm thử (tắt DTI).
+  function incomeOptions(D) { const I = D.rules && D.rules.income; return I && Array.isArray(I.options) ? I.options : []; }
+  function incomeOf(D, id) {
+    const I = D.rules && D.rules.income, os = incomeOptions(D); if (!os.length || id === 'none') return null;
+    const o = os.find(x => x.id === id) || os.find(x => x.id === I.defaultId) || os[os.length - 1];
+    return { id: o.id, label: o.label, monthly: +o.monthlyTr || 0, maxPct: I.dtiMaxPct != null ? +I.dtiMaxPct : 40, rentCountPct: I.rentCountPct != null ? +I.rentCountPct : 0, basis: I.dtiBasis === 'floating' ? 'floating' : 'current' };
   }
   function zone(G, id) { return G.zones.find(z => z.id === id); }
   function unit(G, uid) { return G.units.find(u => u.uid === uid); }
@@ -135,6 +145,14 @@
     for (let k = 0; k < 3 && bal > 1e-9; k++) { const n = Math.max(1, L.termMonths - L.m - k), p = Math.min(bal, bal / n); t += bal * i + p; bal -= p; } return t; }
   const stressAll = G => G.units.reduce((a, u) => a + (u.loan ? stressQuarter(G, u.loan) : 0), 0);
   function preview(G, L, months) { let bal = L.bal, P = 0, I = 0; for (let k = 0; k < months && bal > 1e-9; k++) { const s = monthStep(G, L, L.m + k, bal); P += s.p; I += s.i; bal -= s.p; } return { p: P, i: I, total: P + I }; }
+  // góp tháng của 1 khoản vay theo cơ sở DTI; dti(G, Lnew) = tỷ lệ nợ trên thu nhập nếu thêm khoản vay Lnew (null = hiện tại)
+  const dtiPay = (G, L) => (G.inc && G.inc.basis === 'floating' ? stressQuarter(G, L) / 3 : preview(G, L, 1).total);
+  function dti(G, Lnew) {
+    const I = G.inc; if (!I) return null;
+    const pay = G.units.reduce((a, u) => a + (u.loan && u.loan.bal > 1e-9 ? dtiPay(G, u.loan) : 0), 0) + (Lnew ? dtiPay(G, Lnew) : 0);
+    const rentM = G.units.reduce((a, u) => a + (leased(G, u) ? unitRentQ(G, u) : 0), 0) / 3, base = I.monthly + I.rentCountPct / 100 * rentM, limit = I.maxPct / 100 * base;
+    return { pay, rentM, income: I.monthly, base, limit, maxPct: I.maxPct, pct: base > 0 ? pay / base * 100 : (pay > 1e-9 ? Infinity : 0), ok: pay <= limit + 1e-9, basis: I.basis };
+  }
   function quarterPreview(G, u) { return u.loan ? preview(G, u.loan, 3) : { p: 0, i: 0, total: 0 }; }
   function loanRateNow(G, u) { return u.loan ? rateAt(G, u.loan, u.loan.m) : 0; }
   function promoLeftMonths(u) { return u.loan ? Math.max(0, fixedUntil(u.loan) - u.loan.m) : 0; }
@@ -166,9 +184,9 @@
     const L = loan > 0 ? makeLoan(G, loan, termYears, k.id) : null, first = L ? preview(G, L, 1) : { p: 0, i: 0, total: 0 }, q1 = L ? preview(G, L, 3) : first;
     // dự phòng: sau khi trả trước phải còn đủ tiền góp 1 quý (mọi khoản vay, tính theo lãi thả nổi sau ưu đãi)
     const rq = M.buyReserveQuarters != null ? M.buyReserveQuarters : 1, reserve = rq * (stressAll(G) + (L ? stressQuarter(G, L) : 0));
-    const okDown = G.cash >= down - 1e-9, okRes = G.cash - down >= reserve - 1e-9;
-    return { zone: id, price, ltvPct: ltv, maxLtvPct: cap, capped: cap < M.maxLtvPct, termYears, pkg: k, dev, loan, down, reserve, reserveQuarters: rq,
-      ok: okDown && okRes, why: !okDown ? 'down' : !okRes ? 'reserve' : '', short: Math.max(0, down + reserve - G.cash),
+    const okDown = G.cash >= down - 1e-9, okRes = G.cash - down >= reserve - 1e-9, d = L ? dti(G, L) : null, okDti = !d || d.ok; // DTI chỉ xét khi có vay
+    return { zone: id, dti: d, price, ltvPct: ltv, maxLtvPct: cap, capped: cap < M.maxLtvPct, termYears, pkg: k, dev, loan, down, reserve, reserveQuarters: rq,
+      ok: okDown && okRes && okDti, why: !okDown ? 'down' : !okRes ? 'reserve' : !okDti ? 'dti' : '', short: Math.max(0, down + reserve - G.cash),
       firstMonth: first, firstQuarter: q1, promoRate: k.promoRatePctYear, promoMonths: k.promoMonths || 0, margin: k.floatMarginPct, base: G.baseRate, floatRate: G.baseRate + k.floatMarginPct,
       postPromo: postPromo(G, L), cashAfter: G.cash - down, cover: okDown ? coverQuarters(G, L, G.cash - down) : null };
   }
@@ -194,7 +212,8 @@
   }
   // v3.6: các mức LTV được chọn (giống nút trong bảng vay: mốc ≤ trần + đúng trần)
   function ltvOptions(G) { const m = maxLtv(G); return [...new Set(G.M.ltvOptionsPct.filter(x => x <= m).concat([m]))].sort((a, b) => a - b); }
-  // v3.6: khi không mua được (thiếu tiền trả trước / dự phòng 1 quý), tìm thiết lập GẦN NHẤT làm buyQuote.ok = true.
+  // v3.6: khi không mua được (thiếu tiền trả trước / dự phòng 1 quý / v3.8 vượt hạn mức nợ trên thu nhập), tìm thiết lập GẦN NHẤT làm buyQuote.ok = true
+  // (ok gồm cả dự phòng lẫn DTI nên gợi ý luôn qua cả hai; thời hạn dài hơn làm góp tháng nhỏ lại nên cũng có thể gỡ DTI).
   // Ưu tiên: đổi 1 thứ (thời hạn hoặc tỷ lệ vay, ít nấc nhất; hòa thì đổi thời hạn) > đổi cả hai > có đổi gói. Không có => null.
   function buyFix(G, id, o) {
     o = o || {}; const q0 = buyQuote(G, id, o); if (q0.ok) return null;
@@ -428,7 +447,7 @@
       (w.minRentPct == null || m.rentPct >= w.minRentPct) && (w.minRumorCallPct == null || m.rumorCallPct >= w.minRumorCallPct) &&
       (w.project == null || m.project === w.project);
     const title = G.D.titles.find(t => ok(t.when || {})) || G.D.titles[G.D.titles.length - 1];
-    return { ...m, worth: worth(G), debt: debt(G), interestPaid: s.interest, depositInterest: s.deposit, penalties: s.penalties, fireSales: s.fireSales, title };
+    return { ...m, income: G.inc, worth: worth(G), debt: debt(G), interestPaid: s.interest, depositInterest: s.deposit, penalties: s.penalties, fireSales: s.fireSales, title };
   }
   function revealText(G) { if (!G.revealed) return ''; const d = G.evTruth ? G.ev.change : G.ev.falseChange;
     return G.revealed === 'direction' ? 'quý này giá sẽ ' + (d >= 0 ? 'TĂNG' : 'GIẢM') + ' theo tin' : 'tin này ' + (G.evTruth ? 'là THẬT' : 'là GIẢ'); }
@@ -465,12 +484,12 @@
     const rentNow = G.units.reduce((a, u) => a + (leased(G, u) ? unitRentQ(G, u) : 0), 0), intNow = G.units.reduce((a, u) => a + (u.loan ? quarterPreview(G, u).i : 0), 0);
     const cov = coverQuarters(G, null, Math.max(0, G.cash));
     const kpi = { debtToAssets: assets > 0 ? dbt / assets * 100 : 0, rentQ: rentNow, interestQ: intNow, rentCovers: intNow <= 1e-9 ? null : rentNow / intNow,
-      cover: cov, leverage: equity > 0 ? assets / equity : null };
+      cover: cov, leverage: equity > 0 ? assets / equity : null, dti: dti(G, null) };
     const wR = r1(worth(G)), saleFeeR = Math.max(0, equityR - wR);
     return { cash: G.cash, cashR, depositRatePctYear: dRate, props, loans, propValue: pv, assets, debt: dbt, debtR, equity, equityR, start, delta: equityR - r1(start), saleFee, saleFeeR, worth: worth(G), worthR: wR, gap: equityR - wR,
       assetRows: aRows, sourceRows: sRows, total: tot, cf, kpi, round: G.round };
   }
-  const API = { LEASE_Q, rentQuote, revealText, newGame, zone, unit, worth, debt, propValue, headroom, buy, buyQuote, buyFix, ltvOptions, buyPrice, sell, sellTarget, sellQuote, sellValue,
+  const API = { dti, incomeOptions, incomeOf, LEASE_Q, rentQuote, revealText, newGame, zone, unit, worth, debt, propValue, headroom, buy, buyQuote, buyFix, ltvOptions, buyPrice, sell, sellTarget, sellQuote, sellValue,
     prepay, prepayQuote, rent, unitRentQ, leased, choose, endQuarter, result, locked, hits, quarterPreview, loanRateNow, promoLeftMonths, penaltyPct,
     mortRules, quarterOptions, depositRateQ, annualize, schedule, maxLtv, eligible, stressQuarter, DEV_ID, roundParts, BD_LOSS_PCT, marketWide, lesson, LESSON, ledger, CF_KEYS, coverQuarters };
   if (typeof module !== 'undefined') module.exports = API; else root.Engine = API;
