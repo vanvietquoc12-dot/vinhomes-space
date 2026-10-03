@@ -182,7 +182,7 @@ export class Room {
         maybeTimeout(room, now);
         if (room.phase !== 'play' || room.ready[pid] || +body.quarter !== room.quarter) return finish(409, view(room, pid, now));
         const kind = String(body.kind || '');
-        if (!['buy', 'sell', 'rent', 'prepay', 'choose'].includes(kind)) return finish(400, { error: 'kind' });
+        if (!['buy', 'sell', 'rent', 'prepay', 'choose', 'lock', 'break'].includes(kind)) return finish(400, { error: 'kind' });
         room.actions[pid].push({ kind, a: body.a, b: body.b, t: now });
         return finish(200, view(room, pid, now));
       }
