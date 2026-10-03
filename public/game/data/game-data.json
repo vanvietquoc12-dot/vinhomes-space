@@ -703,6 +703,30 @@
       "pickerNote": "Thu nhập này chỉ để ngân hàng xét hạn mức, không cộng vào tiền mặt.",
       "dtiBlockedMsg": "Thu nhập kê khai chưa đủ hạn mức, hãy giảm tỷ lệ vay hoặc chọn căn rẻ hơn.",
       "ledgerNote": "Thu nhập kê khai chỉ để ngân hàng tính hạn mức vay. Nó không vào tiền mặt, nên không nằm trong phần thu chi. 70% tiền thuê được tính vào hạn mức là luật của game, không phải quy định ngân hàng."
+    },
+    "refinance": {
+      "enabled": false,
+      "_note": "Lat sau, engine chua doc. Dao han = chuyen khoan vay sang goi moi khi het ky co dinh, khong phai tu dong tha noi (cai do da co).",
+      "when": "afterPromo",
+      "amount": "remainingBalance",
+      "cashOut": false,
+      "term": "notLongerThanRemaining",
+      "package": "anyCurrentPackage",
+      "fee": "prepayPenaltyPctByYear",
+      "repeat": "eachTimePromoEnds",
+      "blockedIf": "cashBelowFee",
+      "sources": [
+        {
+          "name": "KBank: vay de tra no vay mua nha, khong vuot du no va thoi han con lai; phi tra truoc han 2% nam 1-3",
+          "url": "https://www.kasikornbank.com.vn/VN/personal/HomeLoan/Pages/vay-de-tra-no-vay-mua-nha.aspx",
+          "date": "2026-10-03"
+        },
+        {
+          "name": "VnExpress: KBank ho tro chuyen khoan vay khi het lai suat uu dai (7/2026)",
+          "url": "https://vnexpress.net/kbank-ho-tro-chi-phi-cho-khach-hang-chuyen-khoan-vay-mua-nha-5094660.html",
+          "date": "2026-10-03"
+        }
+      ]
     }
   },
   "projects": [

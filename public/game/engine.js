@@ -453,6 +453,37 @@
     return G.revealed === 'direction' ? 'quý này giá sẽ ' + (d >= 0 ? 'TĂNG' : 'GIẢM') + ' theo tin' : 'tin này ' + (G.evTruth ? 'là THẬT' : 'là GIẢ'); }
   // tiền thuê dự kiến cho cả thời gian khóa (theo giá hiện tại), có tính thưởng thuê của tình huống
   function rentQuote(G, z, quarters, bonusPct) { return z.cur * (z.rentPctPerQuarter || 0) / 100 * (1 + (bonusPct || 0) / 100) * (quarters == null ? LEASE_Q : quarters); }
+
+  // Hồ sơ một khoản vay. Lịch dùng đúng monthStep mà payQuarter trừ, lãi cơ sở giữ như hiện tại
+  // (kỳ cố định rồi thả nổi). Mục tái cấp vốn trong dữ liệu không được đọc — nút chuyển khoản vay chỉ để xem.
+  function loanFile(G, uid) {
+    const u = unit(G, uid); if (!u || !u.loan || u.loan.bal <= 1e-9) return null;
+    const L = u.loan, z = zone(G, u.zone), fu = fixedUntil(L), cnt = {};
+    G.units.forEach(x => { cnt[x.zone] = (cnt[x.zone] || 0) + 1; });
+    let m = L.m, bal = L.bal, prevR = Math.round(bal);
+    const month = preview(G, L, 1), rate = rateAt(G, L, m), pp = postPromo(G, L);
+    const fixedLeft = Math.max(0, fu - m), fixedQ = fixedLeft ? Math.ceil(fixedLeft / 3) : 0;
+    const qGame = Math.max(1, G.Q - G.round + 1);
+    const path = [{ bal }], quarters = [];
+    for (let q = 0; bal > 0.5 && q < Math.ceil(L.termMonths / 3) + 3; q++) {
+      const m0 = m; let P = 0, I = 0, sawFixed = false;
+      for (let k = 0; k < 3 && bal > 1e-9; k++) { if (m < fu) sawFixed = true; const st = monthStep(G, L, m, bal); P += st.p; I += st.i; bal -= st.p; m++; }
+      if (bal <= 0.5 || m >= L.termMonths) { P += Math.max(0, bal); bal = 0; }
+      const rr = roundParts([I, P], Math.round(I + P)), iR = rr[0], pR = rr[1];
+      const inGame = q < qGame;
+      quarters.push({ round: G.round + q, i: I, p: P, total: I + P, bal, m0, m, inGame, iR, pR, payR: iR + pR, balR: prevR - pR, prevR,
+        tagEnd: sawFixed && m >= fu, tagFloat: m0 >= fu && m0 === fu });
+      path.push({ bal }); prevR -= pR;
+    }
+    const rows = quarters.filter(r => r.inGame), end = rows[rows.length - 1];
+    return { uid, zone: u.zone, name: z.name, n: G.units.filter(x => x.zone === u.zone && x.uid <= u.uid).length, multi: cnt[u.zone] > 1,
+      pkgName: L.pkgName, termYears: L.termYears, bal: L.bal, balR: Math.round(L.bal), month: month.total, monthP: month.p, monthI: month.i,
+      rate, floatRate: G.baseRate + L.margin, fixedLeft, fixedQ, floating: fixedLeft <= 0,
+      post: pp ? { monthly: pp.monthly, rate: pp.rate, afterMonths: pp.afterMonths } : null,
+      quarters, rows, path, gameEndIndex: rows.length, endBal: end ? end.bal : L.bal, endBalR: end ? end.balR : Math.round(L.bal),
+      principalInGame: rows.reduce((a, r) => a + r.p, 0),
+      refiSub: fixedLeft > 0 ? ('Chưa hết kỳ cố định, còn ' + fixedQ + ' quý. Lát sau mới làm được.') : 'Lát sau mới làm được.' };
+  }
   // v3.7 sổ tài chính (bước 1): bảng cân đối theo GIÁ THỊ TRƯỜNG (chưa trừ phí bán) => tài sản = nợ + vốn chủ đúng tuyệt đối;
   // thanh trên vẫn là worth() (sau phí bán ước tính). Dòng tiền quý vừa chốt lấy từ history[].cf. Chỉ số: nợ/tài sản, thuê đủ trả lãi, tiền mặt đủ góp, đòn bẩy.
   function ledger(G) {
@@ -489,7 +520,7 @@
     return { cash: G.cash, cashR, depositRatePctYear: dRate, props, loans, propValue: pv, assets, debt: dbt, debtR, equity, equityR, start, delta: equityR - r1(start), saleFee, saleFeeR, worth: worth(G), worthR: wR, gap: equityR - wR,
       assetRows: aRows, sourceRows: sRows, total: tot, cf, kpi, round: G.round };
   }
-  const API = { dti, incomeOptions, incomeOf, LEASE_Q, rentQuote, revealText, newGame, zone, unit, worth, debt, propValue, headroom, buy, buyQuote, buyFix, ltvOptions, buyPrice, sell, sellTarget, sellQuote, sellValue,
+  const API = { dti, incomeOptions, incomeOf, loanFile, LEASE_Q, rentQuote, revealText, newGame, zone, unit, worth, debt, propValue, headroom, buy, buyQuote, buyFix, ltvOptions, buyPrice, sell, sellTarget, sellQuote, sellValue,
     prepay, prepayQuote, rent, unitRentQ, leased, choose, endQuarter, result, locked, hits, quarterPreview, loanRateNow, promoLeftMonths, penaltyPct,
     mortRules, quarterOptions, depositRateQ, annualize, schedule, maxLtv, eligible, stressQuarter, DEV_ID, roundParts, BD_LOSS_PCT, marketWide, lesson, LESSON, ledger, CF_KEYS, coverQuarters };
   if (typeof module !== 'undefined') module.exports = API; else root.Engine = API;

@@ -114,7 +114,21 @@ button.ghost.cfg{font-size:12.5px;padding:4px;opacity:.9}
 .lgrow:first-child{border-top:0}.lgrow small{display:block;font-size:11.5px;opacity:.7;font-weight:400}.lgrow .amt{font-weight:700;white-space:nowrap}.lgrow.tot{background:#e7b84b18;font-weight:700}.lgrow.tot .amt:not(.up):not(.down){color:var(--gold)}.lgz{opacity:.5}.lgrow.sub{background:none;font-weight:600;font-size:12.5px;padding:5px 10px}.lgrow.sub .amt:not(.up):not(.down){color:inherit}
 .lgbal{display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap;font-size:12.5px;margin:8px 2px 0;opacity:.9}.lgrecon{font-size:12px;line-height:1.45;margin:8px 2px 0;padding:8px 10px;background:#0b2421;border-radius:10px;border-left:3px solid var(--gold)}.lgrecon small{opacity:.7}.lgrecon b{font-weight:700}.lgnote{font-size:11.5px;opacity:.7;margin-top:8px;line-height:1.4}
 .lgkpi{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}.lgkpi .c{background:#0b2421;border-radius:10px;padding:9px 10px}.lgkpi small{display:block;font-size:11px;opacity:.7}.lgkpi b{font-size:16px}.lgkpi .ok{color:var(--up)}.lgkpi .c.wide{grid-column:1/-1}.lgkpi .warn{color:var(--down)}
-</style></head><body><div class="wrap" id="app"></div><div id="bar" class="bar"></div><div id="sheet"></div><div id="modal"></div><div id="ledger"></div>
+/* hồ sơ khoản vay */
+.lfh{display:flex;align-items:center;gap:8px}.lfh h3{margin:0;font-size:17px;flex:1}.lfback{background:transparent;border:0;color:var(--gold);font-size:22px;padding:0 2px;line-height:1}
+.lfsub{font-size:12.5px;opacity:.8;margin:2px 0 10px 26px}
+.lfnums{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}.lfnums div{background:#0b2421;border-radius:10px;padding:8px 6px}.lfnums small{display:block;font-size:11px;opacity:.7}.lfnums b{font-size:15px}
+.lfst{margin:8px 2px 0;font-size:12.5px;line-height:1.4}.lfst b{color:var(--gold)}
+.lfchart{background:#0b2421;border-radius:12px;padding:8px 8px 4px}.lfcap{display:flex;justify-content:space-between;font-size:11px;opacity:.75;margin-bottom:2px}
+.lftbl{width:100%;border-collapse:collapse;font-size:12.5px;background:#0b2421;border-radius:12px;overflow:hidden}
+.lftbl th{font-size:11px;font-weight:600;opacity:.65;text-align:right;padding:6px 5px}.lftbl th:first-child,.lftbl td:first-child{text-align:left}
+.lftbl td{padding:7px 5px;text-align:right;border-top:1px solid #1d544c;font-variant-numeric:tabular-nums}
+.lftbl tr.now{background:#e7b84b22;box-shadow:inset 3px 0 0 var(--gold)}.lftbl tr.flip td{border-top:1px dashed #e7b84b88}
+.lftag{color:var(--gold);font-size:10.5px;display:block;font-weight:600}
+.lfbtn{margin-top:12px;width:100%;border:1.5px solid #2c6b62;background:#0b2421;color:#9fb2ad;border-radius:10px;padding:10px;font-weight:700;font-size:14px;text-align:left}
+.lfbtn:disabled{opacity:1;cursor:not-allowed}.lfbtn small{display:block;font-weight:500;font-size:12px;opacity:.9;margin-top:2px}
+.lgloan{cursor:pointer}
+</style></head><body><div class="wrap" id="app"></div><div id="bar" class="bar"></div><div id="sheet"></div><div id="modal"></div><div id="ledger"></div><div id="loanfile"></div>
 <script src="engine.js"></script>
 <script>
 let D,G,sel=null,sheetAnim=false,selQ=null,selInc=null,BP=null;const E=Engine;
@@ -137,7 +151,7 @@ const incR=()=>(D.rules||{}).income||{},incOpts=()=>E.incomeOptions(D);
 function getInc(){const o=incOpts();return o.some(x=>x.id===selInc)?selInc:((o.find(x=>x.id===incR().defaultId)||o[o.length-1]||{}).id||null)}
 function setInc(id){selInc=id;document.querySelectorAll('#incChips button').forEach(b=>b.classList.toggle('on',b.dataset.inc===id))}
 const dtiMsg=()=>(incR().dtiBlockedMsg||'Vượt hạn mức nợ trên thu nhập').replace(/\.\s*$/,'');
-function start(){sel=null;BP=null;LG=null;$('ledger','');selQ=getLen();selInc=getInc();$('bar','');$('modal','');$('sheet','');
+function start(){sel=null;BP=null;LG=null;$('ledger','');$('loanfile','');selQ=getLen();selInc=getInc();$('bar','');$('modal','');$('sheet','');
  const best=localStorage.bdsBestAnn;
  $('app',`<h1>Nhà Đầu Tư Tí Hon</h1><div class="card">Bạn có <b id="introQ">${selQ} quý (${selQ/4} năm)</b> để làm giàu. Mỗi quý có một tin tức, nhưng <b>tin chưa chắc đã đúng</b>: hãy xem nguồn tin rồi quyết định mua (có thể vay ngân hàng), bán hay cho thuê. Chốt quý xong mới biết tin thật hay giả.</div>
  <div class="card"><b>Độ dài ván</b><div class="chips" id="lenChips">${lenOpts().map(q=>`<button class="chipb${q===selQ?' on':''}" data-q="${q}" onclick="setLen(${q})">${q} quý<small>${q/4} năm</small></button>`).join('')}</div><small class="note">Ván dài có thêm tin tức, tình huống, và đủ thời gian để khoản vay hết ưu đãi rồi thả nổi lãi.</small></div>`+
@@ -325,9 +339,9 @@ function why(z,k){const o=own(z.id);if(!o.length)return '<small class="why">Chư
 /* ---------- v3.7 sổ tài chính (bước 1): chạm "Tài sản ròng" trên thanh trên ---------- */
 let LG=null;
 function openLedger(){if(!G||G.done)return;LG={tab:LG&&LG.tab||0};drawLedger()}
-function closeLedger(){LG=null;$('ledger','')}
+function closeLedger(){LG=null;$('ledger','');$('loanfile','')}
 function lgAmt(v,sign){if(!v)return '<span class="amt lgz">0</span>';return `<span class="amt${sign&&v>0?' up':sign&&v<0?' down':''}">${sign?sgn(v):fmt(v)}</span>`}
-function lgRow(label,sub,amt,cls){return `<div class="lgrow${cls?' '+cls:''}"><div>${label}${sub?`<small>${sub}</small>`:''}</div>${amt}</div>`}
+function lgRow(label,sub,amt,cls,attrs){return `<div class="lgrow${cls?' '+cls:''}"${attrs||''}><div>${label}${sub?`<small>${sub}</small>`:''}</div>${amt}</div>`}
 function drawLedger(){if(!LG||!G)return;const L=E.ledger(G),t=LG.tab,nm=x=>esc(x.name)+(x.multi?` (căn ${x.n})`:''),eqR=L.equityR,dl=L.delta;
  const tabs=['Cân đối','Thu chi quý','Chỉ số'].map((s,i)=>`<button class="lgtab${i===t?' on':''}" data-tab="${i}" onclick="LG.tab=${i};drawLedger()">${s}</button>`).join('');
  let body='';
@@ -338,7 +352,7 @@ function drawLedger(){if(!LG||!G)return;const L=E.ledger(G),t=LG.tab,nm=x=>esc(x
     :lgRow(nm(r),'giá thị trường'+(r.leased?' · cho thuê':r.locked?' · đang khóa':''),`<span class="amt" data-r="${r.r}" data-zone="${r.zone}">${fmt(r.r)}</span>`)).join('')+
   lgRow('Tổng tài sản','',`<span class="amt" id="lgta">${fmt(L.total)}</span>`,'tot')+`</div>
   <div class="lgsec">NGUỒN VỐN <span class="lgchip" id="lgst">${fmt(L.total)}</span></div><div class="lgbox" id="lgsources">`+
-  L.sourceRows.map(r=>r.key==='loan'?lgRow('Vay · '+nm(r),`còn ${fmt(r.r)} · ${r.kind==='promo'?'lãi ưu đãi':r.kind==='lock'?'lãi cố định':'lãi thả nổi'} ${pr(r.rate)}${r.kind!=='float'&&r.leftQ>0?` · hết sau ${r.leftQ} quý`:''}`,`<span class="amt" data-r="${r.r}">${fmt(r.r)}</span>`)
+  L.sourceRows.map(r=>r.key==='loan'?lgRow('Vay · '+nm(r),`còn ${fmt(r.r)} · ${r.kind==='promo'?'lãi ưu đãi':r.kind==='lock'?'lãi cố định':'lãi thả nổi'} ${pr(r.rate)}${r.kind!=='float'&&r.leftQ>0?` · hết sau ${r.leftQ} quý`:''}`,`<span class="amt" data-r="${r.r}">${fmt(r.r)}</span>`,'loan lgloan',` data-uid="${r.uid}" onclick="openLoanFile(${r.uid})"`)
     :(L.debtR||G.units.some(u=>u.loan)?lgRow('Cộng nợ vay','bằng số Nợ trên thanh trên',`<span class="amt" id="lgdebt">${fmt(L.debtR)}</span>`,'tot sub'):'')+lgRow('Vốn chủ sở hữu',r.value>=0?'tiền của bạn trong các căn và tiền mặt':'âm: nợ lớn hơn tài sản',`<span class="amt" data-r="${r.r}">${fmt(r.r)}</span>`)).join('')+
   lgRow('Tổng nguồn vốn','',`<span class="amt" id="lgsa">${fmt(L.total)}</span>`,'tot')+`</div>
   <div class="lgnote" id="lgfoot">${G.units.length?`Giá căn lấy theo thị trường (chưa trừ phí bán). Thanh trên ghi tài sản ròng sau phí bán ước tính (~${fmt(L.saleFeeR)}) nên hiện ${fmt(L.worthR)}, tức là số tiền bạn thực nhận nếu bán hết hôm nay${pen?' (chưa tính phạt trả nợ trước hạn)':''}.`:`Giá căn lấy theo thị trường (chưa trừ phí bán). Bạn chưa có căn nào nên vốn chủ bằng đúng tài sản ròng trên thanh trên (${fmt(L.worthR)}).`}</div>`}
@@ -364,7 +378,49 @@ function drawLedger(){if(!LG||!G)return;const L=E.ledger(G),t=LG.tab,nm=x=>esc(x
   ${d?`<div class="lgnote" id="lgdtinote">${esc(incR().ledgerNote||'')}</div>`:''}`}
  $('ledger',`<div class="lg" id="lgback" onclick="if(event.target===this)closeLedger()"><div class="lgb" id="lgbody"><div class="lghandle"></div>
  <div class="lghrow"><h3>📒 Sổ tài chính</h3><button class="lgx" id="lgx" onclick="closeLedger()" aria-label="Đóng">✕</button></div><div class="lgtabs">${tabs}</div><div id="lgtab${t}">${body}</div></div></div>`)}
+function openLoanFile(uid){if(!LG||!G)return;LG.loan=uid;drawLoanFile()}
+function closeLoanFile(){if(LG)LG.loan=null;$('loanfile','')}
+function lfNum(n){return Math.round(n).toLocaleString('vi-VN')}
+function loanChart(F){const W=340,H=132,L=34,R=6,T=10,B=108,pts=F.path,n=pts.length,max=Math.max(1e-9,...pts.map(p=>p.bal));
+ const x=i=>n<=1?L+8:L+(W-L-R)*i/(n-1),y=v=>B-(B-T)*(v/max),gi=Math.min(F.gameEndIndex,n-1);
+ const seg=(a,b)=>pts.slice(a,b+1).map((p,k)=>(x(a+k).toFixed(1))+','+(y(p.bal).toFixed(1))).join(' ');
+ const top=(max/1000).toLocaleString('vi-VN',{maximumFractionDigits:2});
+ const nx=x(n-1),gx=x(gi),x0=x(0),near=gx-x0<54||nx-gx<64;
+ const endLab=near?`<text x="${Math.min(W-4,Math.max(gx+2,L+2))}" y="${T+11}" text-anchor="${nx-gx<64?'end':'start'}" fill="#e7b84b" font-size="10">hết ván</text>`:`<text x="${gx-18}" y="124" fill="#e7b84b" font-size="10">hết ván</text>`;
+ const nowLab=`<text x="${x0}" y="124" fill="#c9d6d2" font-size="10">nay</text>`;
+ return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="132" id="lfchart" aria-label="Dư nợ đến hết hạn">
+ <line x1="${L}" y1="${T}" x2="${L}" y2="${B}" stroke="#2c6b62"/><line x1="${L}" y1="${B}" x2="${W-4}" y2="${B}" stroke="#2c6b62"/>
+ <text x="1" y="12" fill="#c9d6d2" font-size="10">${top}</text><text x="18" y="${B}" fill="#c9d6d2" font-size="10">0</text>
+ <polyline fill="none" stroke="#ff9b8a" stroke-width="2.4" points="${seg(0,gi)}"/>
+ ${gi<n-1?`<polyline fill="none" stroke="#ff9b8a" stroke-width="2.4" stroke-dasharray="4 3" points="${seg(gi,n-1)}"/>`:''}
+ <line id="lfend" x1="${gx}" y1="${T}" x2="${gx}" y2="${B}" stroke="#e7b84b" stroke-dasharray="2 2"/>
+ <circle cx="${gx}" cy="${y(pts[gi].bal)}" r="3.5" fill="#e7b84b"/>
+ ${nowLab}${endLab}${n>1?`<text x="${W-4}" y="124" text-anchor="end" fill="#c9d6d2" font-size="10">năm ${F.termYears}</text>`:''}</svg>`}
+function drawLoanFile(){if(!LG||LG.loan==null)return;const F=E.loanFile(G,LG.loan);if(!F){closeLoanFile();return}
+ const nm=esc(F.name)+(F.multi?` (căn ${F.n})`:''),paidR=F.rows.reduce((a,r)=>a+r.pR,0);
+ const cap=F.endBalR<=0?`Hết ván khoản này đã trả hết. Đường không dự đoán giá nhà.`
+  :(paidR<F.balR*0.25?`Trong ván này gốc trả rất ít. Hết ván vẫn còn khoảng ${fmt(F.endBalR)}. Đường không dự đoán giá nhà.`
+  :`Trong ván này gốc trả khoảng ${fmt(paidR)}. Hết ván còn khoảng ${fmt(F.endBalR)}. Đường không dự đoán giá nhà.`);
+ const st=F.floating?`Đang thả nổi <b>${pr(F.rate)}/năm</b>.`
+  :(F.post?`Ưu đãi còn <b>${F.fixedQ} quý</b>. Sau đó thả nổi khoảng <b>${pr(F.post.rate)}/năm</b>, góp lên ≈ ${mTxt(F.post.monthly)}/tháng.`
+  :`Ưu đãi còn <b>${F.fixedQ} quý</b>. Khoản vay hết hạn trong kỳ cố định.`);
+ const trs=F.rows.map(r=>{const tags=[r.round===G.round?'đang ở':'',r.tagEnd?'hết ưu đãi':'',r.tagFloat?('thả nổi '+pr(F.floatRate)):''] .filter(Boolean);
+  return `<tr class="${r.round===G.round?'now':''}${r.tagFloat?' flip':''}" data-round="${r.round}" data-pay="${r.payR}" data-i="${r.iR}" data-p="${r.pR}" data-bal="${r.balR}"><td>${r.round}${tags.map(t=>`<small class="lftag">${t}</small>`).join('')}</td><td>${lfNum(r.payR)}</td><td>${lfNum(r.iR)}</td><td>${lfNum(r.pR)}</td><td>${lfNum(r.balR)}</td></tr>`}).join('');
+ $('loanfile',`<div class="lg" id="lfback" onclick="if(event.target===this)closeLoanFile()"><div class="lgb" id="lfbody"><div class="lghandle"></div>
+ <div class="lfh"><button class="lfback" id="lfbackbtn" onclick="closeLoanFile()" aria-label="Quay lại">‹</button><h3>Hồ sơ khoản vay</h3><button class="lgx" id="lfx" onclick="closeLedger()" aria-label="Đóng">✕</button></div>
+ <div class="lfsub" id="lfsub">${nm} · ${esc(F.pkgName)}</div>
+ <div class="lfnums" id="lfnums"><div><small>Dư nợ còn</small><b id="lfbal">${fmt(F.balR)}</b></div><div><small>Góp tháng này</small><b id="lfmonth">≈ ${mTxt(F.month)}</b></div><div><small>Lãi đang áp</small><b id="lfrate">${pr(F.rate)}/năm</b></div></div>
+ <div class="lfst" id="lfst">${st}</div>
+ <div class="lgsec">DƯ NỢ ĐẾN HẾT HẠN</div>
+ <div class="lfchart"><div class="lfcap"><span>tỷ đồng</span><span>vàng = hết ván · nét đứt = lịch</span></div>${loanChart(F)}
+ <div class="lgnote" id="lfcap" data-end="${F.endBalR}" style="margin:0 4px 6px">${cap}</div></div>
+ <div class="lgsec">LỊCH TRẢ GÓP TRONG VÁN</div>
+ <table class="lftbl" id="lftbl"><tr><th>Quý</th><th>Góp</th><th>Lãi</th><th>Gốc</th><th>Còn nợ</th></tr>${trs}</table>
+ <div class="lgnote">Góp = lãi + gốc, đơn vị triệu đồng. Gốc trừ vào dư nợ, không phải tiền mất. Các quý sau của khoản vay xem trên biểu đồ.</div>
+ <button class="lfbtn" id="lfrefi" disabled>Chuyển khoản vay<small>${esc(F.refiSub)}</small></button>
+ </div></div>`)}
 /* ---------- bảng tùy chỉnh khoản vay ---------- */
+
 function ltvChoices(){const m=E.maxLtv(G);return [...new Set(G.M.ltvOptionsPct.filter(x=>x<=m).concat([m]))].sort((a,b)=>a-b)}
 function devPkg(){const d=G.perks.devSupport;return {id:E.DEV_ID,name:'Hỗ trợ lãi suất của chủ đầu tư',bank:`giá +${pr(d.priceMarkupPct||0)}${d.grace?', ân hạn gốc':''}`,promoRatePctYear:d.customerRatePctYear||0,promoMonths:d.months||0,floatMarginPct:G.M.packages[0].floatMarginPct}}
 function openBuy(id){const M=G.M;BP={id,ltv:Math.min(M.defaultLtvPct,E.maxLtv(G)),term:M.defaultTermYears,pkg:G.perks.devSupport?E.DEV_ID:M.packages[0].id,open:false,det:false};drawBuy()}
@@ -410,7 +466,7 @@ function askPrepay(uid){const u=E.unit(G,uid);if(!u||!u.loan)return;const bal=u.
 function doPrepay(uid,amt){$('modal','');E.prepay(G,uid,amt);draw()}
 function act(k,id){if(k==='buy')E.buy(G,id);if(k==='sell')E.sell(G,id);if(k==='rent')E.rent(G,id);draw()}
 function choose(i){E.choose(G,i);draw()}
-function next(){sel=null;BP=null;LG=null;$('ledger','');$('sheet','');showQuarter(E.endQuarter(G))}
+function next(){sel=null;BP=null;LG=null;$('ledger','');$('loanfile','');$('sheet','');showQuarter(E.endQuarter(G))}
 /* dòng tách lời/lỗ quý (engine tính sẵn trong r.breakdown, các phần đã làm tròn cộng lại đúng bằng số lớn), vd "−785 = giá −123 · lãi −242 · phát mãi −372 · phạt −48" */
 const bn=n=>(n>0?'+':n<0?'\u2212':'')+Math.abs(n).toLocaleString('vi-VN');
 function bdHTML(b){if(!b||!b.show)return '';const ps=b.parts;
