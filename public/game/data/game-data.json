@@ -727,6 +727,28 @@
           "date": "2026-10-03"
         }
       ]
+    },
+    "room": {
+      "enabled": false,
+      "_note": "Che do phong dau. Engine chua doc. Solo khong dung khoi nay.",
+      "clockSeconds": 60,
+      "shared": [
+        "seed",
+        "project",
+        "quarters",
+        "income"
+      ],
+      "income": "hostChoosesOnce",
+      "books": "separate",
+      "prices": "samePath",
+      "dilemma": "sameCard",
+      "dilemmaIneligible": "hide",
+      "uncommitted": "drop",
+      "dilemmaTimeout": "skip",
+      "lockQuarter": "noEdit",
+      "winner": "higherNetWorth",
+      "dilemmaPlace": "underRoomClock",
+      "dilemmaTimeoutNote": "Hết giờ chưa chọn thì bỏ qua."
     }
   },
   "projects": [

@@ -123,7 +123,9 @@
     G.evTruth = G.r() < G.ev.reliability; G.revealed = false; G.perks = {}; G.stats.boughtThisQ = false;
     G.dilemma = null; G.w0 = worth(G); // tài sản ròng đầu quý (để tính lời/lỗ quý)
     G.qb = { fee: 0, perk: 0, penalty: 0, dilemma: 0 }; G.qa = { buy: [], sell: [] }; G.cf = newCF(G.cash); // qa: phân khu đã mua/bán trong quý // lời/lỗ phát sinh trong quý do thao tác (xem breakdown)
-    if (G.dQuarters.has(G.round)) { const i = G.dilemmas.findIndex(d => eligible(G, d)); if (i >= 0) G.dilemma = G.dilemmas.splice(i, 1)[0]; }
+    // Solo: rút lá đầu tiên người chơi đủ điều kiện rồi bỏ khỏi bộ. Đấu: lá đã chia sẵn theo seed (G.duel.deal), không đủ điều kiện thì bỏ qua, không rút lá khác.
+    if (G.duel && G.duel.deal) { const card = G.duel.deal[G.round] || null; if (card && eligible(G, card)) G.dilemma = card; }
+    else if (G.dQuarters.has(G.round)) { const i = G.dilemmas.findIndex(d => eligible(G, d)); if (i >= 0) G.dilemma = G.dilemmas.splice(i, 1)[0]; }
   }
 
   // ---- khoản vay ----
@@ -520,7 +522,53 @@
     return { cash: G.cash, cashR, depositRatePctYear: dRate, props, loans, propValue: pv, assets, debt: dbt, debtR, equity, equityR, start, delta: equityR - r1(start), saleFee, saleFeeR, worth: worth(G), worthR: wR, gap: equityR - wR,
       assetRows: aRows, sourceRows: sRows, total: tot, cf, kpi, round: G.round };
   }
-  const API = { dti, incomeOptions, incomeOf, loanFile, LEASE_Q, rentQuote, revealText, newGame, zone, unit, worth, debt, propValue, headroom, buy, buyQuote, buyFix, ltvOptions, buyPrice, sell, sellTarget, sellQuote, sellValue,
+
+  // Đấu 2 người (chưa có phòng mạng). Thị trường không dùng RNG riêng: mua/bán/chọn tình huống không gọi G.r,
+  // nên hai ván cùng seed vẫn cùng tin, giá và lãi suất. Các hàm dưới chỉ gắn khi có G.duel; solo không đụng tới.
+  function duelBind(G) {
+    if (!G.duel) {
+      // Chia một lá cho mỗi quý có tình huống, theo thứ tự bộ đã xáo từ seed. Không nhìn vay/không vay.
+      const quarters = [...G.dQuarters].sort((a, b) => a - b), deal = {};
+      quarters.forEach((q, i) => { deal[q] = G.dilemmas[i] || null; });
+      G.duel = { lock: false, pending: null, deal };
+    }
+    return G.duel;
+  }
+  function duelSheet(G, spec) {
+    if (!G.duel || G.duel.lock || G.done) return false;
+    G.duel.pending = spec ? { kind: spec.kind || 'buy', id: spec.id, opts: spec.opts || null } : null;
+    return true;
+  }
+  function duelAct(G, kind, a, b) {
+    if (!G.duel || G.duel.lock || G.done) return false;
+    let ok = false;
+    if (kind === 'buy') ok = !!buy(G, a, b || {});
+    else if (kind === 'sell') ok = !!sell(G, a);
+    else if (kind === 'rent') ok = !!rent(G, a);
+    else if (kind === 'prepay') ok = !!prepay(G, a, b);
+    else if (kind === 'choose') { if (G.dilemma) { choose(G, a); ok = !G.dilemma; } }
+    else return false;
+    if (ok) G.duel.pending = null;
+    return ok;
+  }
+  function duelChot(G) {
+    if (!G.duel || G.duel.lock || G.done) return false;
+    G.duel.pending = null; // bảng vay đang mở mà chưa bấm mua: không mua
+    G.duel.lock = true;
+    return true;
+  }
+  // Hết giờ hoặc cả hai đã chốt: bỏ việc chưa bấm xong, tình huống chưa chọn thì bỏ qua (không tự chọn phương án 1), rồi sang quý.
+  function duelAdvance(G) {
+    if (!G.duel || G.done) return null;
+    const dropped = G.duel.pending;
+    G.duel.pending = null;
+    const skipped = G.dilemma ? G.dilemma.id : null;
+    if (G.dilemma) G.dilemma = null;
+    const res = endQuarter(G);
+    if (G.duel) G.duel.lock = false;
+    return { res, dropped, skipped };
+  }
+  const API = { dti, incomeOptions, incomeOf, loanFile, duelBind, duelSheet, duelAct, duelChot, duelAdvance, LEASE_Q, rentQuote, revealText, newGame, zone, unit, worth, debt, propValue, headroom, buy, buyQuote, buyFix, ltvOptions, buyPrice, sell, sellTarget, sellQuote, sellValue,
     prepay, prepayQuote, rent, unitRentQ, leased, choose, endQuarter, result, locked, hits, quarterPreview, loanRateNow, promoLeftMonths, penaltyPct,
     mortRules, quarterOptions, depositRateQ, annualize, schedule, maxLtv, eligible, stressQuarter, DEV_ID, roundParts, BD_LOSS_PCT, marketWide, lesson, LESSON, ledger, CF_KEYS, coverQuarters };
   if (typeof module !== 'undefined') module.exports = API; else root.Engine = API;
