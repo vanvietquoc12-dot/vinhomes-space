@@ -527,7 +527,10 @@
     const amtR = Math.round(W), net0 = Math.round(receive);
     let clawR = amtR - net0; if (clawR < 0) clawR = 0;
     const netR = amtR - clawR;
-    return { id: l.id, openRound: l.openRound, ratePctYear: l.ratePctYear, demand, W, fair, receive, rest, amtR, clawR, netR, restR: Math.round(rest), credited: l.credited };
+    let termR = Math.round(W - prin), keptR = Math.round(Math.max(0, fair - prin));
+    if (termR - keptR !== clawR) keptR = termR - clawR;
+    if (keptR < 0) { keptR = 0; termR = clawR; }
+    return { id: l.id, openRound: l.openRound, ratePctYear: l.ratePctYear, demand, W, fair, receive, rest, amtR, clawR, netR, termR, keptR, restR: Math.round(rest), credited: l.credited };
   }
   function breakDeposit(G, id, amount) {
     const q = breakQuote(G, id, amount); if (!q || G.done) return false;
