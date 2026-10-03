@@ -15,3 +15,11 @@ binding = "DB"
 database_name = "vinhomes-game-stats"
 database_id = "c26fe462-b6d6-4b23-95a0-6c0b8e389380"
 migrations_dir = "migrations"
+
+[[durable_objects.bindings]]
+name = "ROOMS"
+class_name = "Room"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Room"]

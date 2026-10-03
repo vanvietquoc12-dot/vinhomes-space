@@ -3,6 +3,9 @@
 //        start kèm q hợp lệ: đếm thêm 1 dòng e='q<q>' (số ván theo độ dài)
 //   GET  /api/stats?days=7                               -> JSON số đếm theo ngày (chỉ tổng hợp)
 // Không lưu cookie, IP, user-agent hay ID người chơi. Sự kiện/dự án lạ bị bỏ qua.
+import { Room, handleRoom } from './room.js';
+export { Room };
+
 const EVENTS = ['start', 'finish', 'zalo', 'replay'];
 const PROJECTS = ['sgp', 'gp'];
 const LENGTHS = ['8', '12', '16', '20'];
@@ -73,6 +76,7 @@ export default {
       if (request.method !== 'GET' && request.method !== 'HEAD') return new Response('Method Not Allowed', { status: 405, headers: { allow: 'GET' } });
       try { return await handleStats(env, url); } catch (err) { return json({ error: 'stats unavailable' }, 500); }
     }
+    if (url.pathname === '/room-api' || url.pathname.startsWith('/room-api/')) return handleRoom(request, env);
     if (url.pathname.startsWith('/api/')) return json({ error: 'not found' }, 404);
     return env.ASSETS.fetch(request); // mọi thứ khác: tài sản tĩnh, giữ nguyên 404-page / auto-trailing-slash
   },

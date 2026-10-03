@@ -146,9 +146,12 @@ button.ghost.cfg{font-size:12.5px;padding:4px;opacity:.9}
 #roomfloat .rf{width:min(536px,calc(100% - 24px))}
 .rfnote{margin:4px 0 0;text-align:center;background:#0b2421ee;border-radius:8px;padding:4px 8px}
 .rcode{font-size:28px;letter-spacing:4px;font-weight:800;color:var(--gold);margin:4px 0}
+.rlink{font-size:14px;word-break:break-all;line-height:1.4;margin:2px 0 0;color:var(--gold)}
+.rlock{font-weight:700;font-size:16px;line-height:1.35;margin-top:2px}
+button.rcopy{width:100%;margin-top:8px}
 button.rstart{width:100%;margin-top:10px;background:#2c6b62;color:#d5e4e0}
 button.rstart:not(:disabled){background:var(--gold);color:#1b1b1b}
-button.chipb.lock{opacity:1;cursor:default}
+button.chipb.lock{position:static;top:auto;left:auto;width:auto;height:auto;min-width:56px;border-radius:0;display:inline-block;flex:1;font-size:.9em;align-items:stretch;justify-content:flex-start;opacity:.85;cursor:default;pointer-events:none}button.chipb.lock.on{background:var(--gold);color:#1b1b1b;opacity:1}
 .rdil{border-left:4px solid var(--gold)}
 .rdil #rskip{text-align:left;margin:8px 0 0}
 .rdil .dilacts{display:flex;flex-direction:column;gap:6px}
@@ -184,7 +187,7 @@ function start(){ROOM=null;if(ROOM_T){clearInterval(ROOM_T);ROOM_T=null}const rf
  <div class="card"><b>Độ dài ván</b><div class="chips" id="lenChips">${lenOpts().map(q=>`<button class="chipb${q===selQ?' on':''}" data-q="${q}" onclick="setLen(${q})">${q} quý<small>${q/4} năm</small></button>`).join('')}</div><small class="note">Ván dài có thêm tin tức, tình huống, và đủ thời gian để khoản vay hết ưu đãi rồi thả nổi lãi.</small></div>`+
  (incOpts().length?`<div class="card" id="incCard"><b>Thu nhập mỗi tháng</b> <small>(kê khai khi vay)</small><div class="chips col" id="incChips">${incOpts().map(o=>`<button class="chipb pk inc${o.id===selInc?' on':''}" data-inc="${o.id}" onclick="setInc('${o.id}')"><b>${esc(o.label)}</b><small>${esc(o.hint||'')}</small></button>`).join('')}</div>${incR().pickerNote?`<small class="note" id="incNote">${esc(incR().pickerNote)}</small>`:''}</div>`:'')+
  D.projects.map(p=>`<div class="card">${p.image?`<img class="hero" src="${p.image}" alt="${esc(p.name)}">`:''}<b>${p.name}</b><br><small>${p.tagline||''} · Vốn ${fmt(p.startCapital)}</small><br><button style="margin-top:8px" data-pick="${p.id}" onclick="pick('${p.id}')">Chơi dự án này</button></div>`).join('')+
- (roomApi()?`<div class="card" id="duelcard"><b>Đấu 2 người</b><br><small>Cùng một tin, giá và lãi suất. Mỗi người một sổ. Phòng trên máy này.</small><br><button style="margin-top:8px" id="duelopen" onclick="openDuel()">Mở phòng</button><div class="rjoin"><input id="rjoincode" inputmode="numeric" maxlength="4" placeholder="Mã 4 số" aria-label="Mã phòng"><button type="button" class="alt" id="dueljoin" onclick="joinDuel()">Vào phòng</button></div></div>`:'')+
+ (roomApi()?`<div class="card" id="duelcard"><b>Đấu 2 người</b><br><small>Cùng một tin, giá và lãi suất. Mỗi người một sổ. Gửi link phòng qua Zalo hoặc Facebook.</small><br><button style="margin-top:8px" id="duelopen" onclick="openDuel()">Mở phòng</button><div class="rjoin"><input id="rjoincode" inputmode="numeric" maxlength="4" placeholder="Mã 4 số" aria-label="Mã phòng"><button type="button" class="alt" id="dueljoin" onclick="joinDuel()">Vào phòng</button></div></div>`:'')+
  (best?`<p class="warn">Kỷ lục của bạn: ≈ ${String(best).replace('.',',')}%/năm</p>`:''))}
 /* bộ đếm sự kiện ẩn danh (start/finish/zalo/replay): chỉ gửi từ vinhomes.space, không cookie/ID; lỗi thì bỏ qua.
    Tắt khi test: ?test=1 hoặc ?notrack (notrack được nhớ trên máy này; ?notrack=0 để bật lại). */
@@ -200,7 +203,9 @@ function pick(id){G=E.newGame(D,id,undefined,{quarters:selQ||getLen(),incomeId:s
 function roomCfg(){return (D&&D.rules&&D.rules.room)||{}}
 function roomNote(){return roomCfg().dilemmaTimeoutNote||'Hết giờ chưa chọn thì bỏ qua.'}
 function roomMax(){const n=+roomCfg().clockSeconds;return n>0?n:60}
-function roomApi(){try{const q=new URLSearchParams(location.search);if(q.get('roomApi'))return q.get('roomApi');const h=location.hostname;if(h==='vinhomes.space'||h==='www.vinhomes.space')return null;if(location.port==='8792')return location.origin+'/room-api';return 'http://127.0.0.1:8792/room-api'}catch(e){return null}}
+function roomApi(){try{const q=new URLSearchParams(location.search);if(q.get('roomApi'))return q.get('roomApi');const h=location.hostname;if(h==='vinhomes.space'||h==='www.vinhomes.space'||location.port==='8792')return location.origin+'/room-api';return 'http://127.0.0.1:8792/room-api'}catch(e){return null}}
+function roomLink(code){const h=location.hostname;if(h==='vinhomes.space'||h==='www.vinhomes.space')return location.origin+'/game/?phong='+code;return 'https://vinhomes.space/game/?phong='+code}
+async function copyRoomLink(){if(!ROOM||!ROOM.code)return;const link=roomLink(ROOM.code);const btn=document.getElementById('rcopy');try{await navigator.clipboard.writeText(link);if(btn)btn.textContent='Đã chép'}catch(e){const box=document.getElementById('rlinkbox');if(box)box.textContent=link}}
 function projShort(p){return String(p.name||'').replace(/^Vinhomes\s+/,'')}
 function roomLocked(){return !!(ROOM&&(ROOM.phase==='wait'||ROOM.youReady))}
 function waitLine(){return 'Không sửa được nữa. đối thủ còn '+ROOM.secs+' giây, quý sẽ chuyển khi đối thủ chốt hoặc hết giờ.'}
@@ -331,15 +336,18 @@ function roomCommit(kind,a,b){
  roomFetch('/rooms/'+ROOM.code+'/act',{token:ROOM.token,quarter:G.round,kind,a,b}).then(st=>{if(st&&st.phase)roomApply(st)}).catch(()=>{});
 }
 function drawLobby(){if(!ROOM)return;$('bar','');document.getElementById('bar').classList.remove('room');$('modal','');$('sheet','');
- const lock=ROOM.role==='join',dis=lock?' lock':'';
- const pchips=D.projects.map(p=>`<button type="button" class="chipb${p.id===ROOM.project?' on':''}${dis}" ${lock?'':`onclick="roomPick('project','${p.id}')"`}>${esc(projShort(p))}</button>`).join('');
- const lchips=lenOpts().map(q=>`<button type="button" class="chipb${q===ROOM.quarters?' on':''}${dis}" ${lock?'':`onclick="roomPick('quarters',${q})"`}>${q} quý<small>${q/4} năm</small></button>`).join('');
- const ichips=incOpts().map(o=>{const sub=o.id===(incR().defaultId)?'Hạn mức rộng':'';return `<button type="button" class="chipb${o.id===ROOM.income?' on':''}${dis}" ${lock?'':`onclick="roomPick('income','${o.id}')"`}>${esc(o.label)}${sub?`<small>${sub}</small>`:''}</button>`}).join('');
+ const lock=ROOM.role==='join'||ROOM.players>=2;
+ const pchips=lock?`<div class="rlock" id="rprojv">${esc(projShort(D.projects.find(p=>p.id===ROOM.project)||{name:ROOM.project}))}</div>`
+  :D.projects.map(p=>`<button type="button" class="chipb${p.id===ROOM.project?' on':''}" onclick="roomPick('project','${p.id}')">${esc(projShort(p))}</button>`).join('');
+ const lchips=lock?`<div class="rlock" id="rlenv">${ROOM.quarters} quý · ${ROOM.quarters/4} năm</div>`
+  :lenOpts().map(q=>`<button type="button" class="chipb${q===ROOM.quarters?' on':''}" onclick="roomPick('quarters',${q})">${q} quý<small>${q/4} năm</small></button>`).join('');
+ const ichips=lock?(()=>{const o=incOpts().find(x=>x.id===ROOM.income)||{label:ROOM.income};return `<div class="rlock" id="rincv">${esc(o.label)}</div>`})()
+  :incOpts().map(o=>{const sub=o.id===(incR().defaultId)?'Hạn mức rộng':'';return `<button type="button" class="chipb${o.id===ROOM.income?' on':''}" onclick="roomPick('income','${o.id}')">${esc(o.label)}${sub?`<small>${sub}</small>`:''}</button>`}).join('');
  const incNote=incR().pickerNote?`<small class="note" id="rincnote">${esc(incR().pickerNote)}</small>`:'';
- const note=lock?'Bạn vào phòng này. Các lựa chọn do người tạo chọn, không đổi được. Cả hai dùng chung tin, giá và lãi suất. Mỗi người một sổ.'
+ const note=ROOM.role==='join'?'Bạn vào phòng này. Các lựa chọn do người tạo chọn, không đổi được. Cả hai dùng chung tin, giá và lãi suất. Mỗi người một sổ.'
   :(ROOM.players<2?'Đang chờ người thứ hai. Cả hai dùng chung tin, giá và lãi suất. Mỗi người một sổ.':'Đủ 2 người. Cả hai dùng chung tin, giá và lãi suất. Mỗi người một sổ.');
  const startBtn=ROOM.role==='host'
-  ?`<button class="rstart" id="rstart" ${ROOM.players<2?'disabled':''} onclick="roomStart()">Bắt đầu khi đủ 2 người</button>`
+  ?`<button class="rstart" id="rstart" ${ROOM.players<2?'disabled':''} onclick="roomStart()">${ROOM.players<2?'Bắt đầu khi đủ 2 người':'Bắt đầu'}</button>`
   :`<button class="rstart" id="rstart" disabled>Chờ người tạo bắt đầu</button>`;
  $('app',`<div class="card" id="rlobby"><h3>Phòng đấu</h3>
  <div class="lab">Dự án</div><div class="chips" id="rproj">${pchips}</div>
@@ -347,10 +355,11 @@ function drawLobby(){if(!ROOM)return;$('bar','');document.getElementById('bar').
  <div class="lab">Thu nhập cả phòng</div><div class="chips" id="rinc">${ichips}</div>
  ${incNote}
  <div class="lab">Mã phòng</div><div class="rcode" id="rcode">${esc(ROOM.code)}</div>
+ ${ROOM.role==='host'?`<div class="lab">Link mời</div><div class="rlink" id="rlinkbox">${esc(roomLink(ROOM.code))}</div><button type="button" class="alt rcopy" id="rcopy" onclick="copyRoomLink()">Sao chép link</button>`:''}
  <div class="note" id="rnote">${note}</div>
  ${startBtn}</div>`);
 }
-function roomPick(k,v){if(!ROOM||ROOM.role==='join'||ROOM.phase!=='lobby')return; ROOM[k]=v; drawLobby();
+function roomPick(k,v){if(!ROOM||ROOM.role==='join'||ROOM.players>=2||ROOM.phase!=='lobby')return; ROOM[k]=v; drawLobby();
  roomFetch('/rooms/'+ROOM.code+'/settings',{token:ROOM.token,project:ROOM.project,quarters:ROOM.quarters,income:ROOM.income}).then(st=>{ROOM.sig='';roomApply(st)}).catch(()=>{})}
 async function openDuel(){
  const api=roomApi(); if(!api){$('app',`<div class="card">Phòng đấu chưa mở trên trang này.</div>`);return}
@@ -730,5 +739,23 @@ async function share(){const {t,pct,ann}=window._res,txt=`Mình là "${t.name}" 
   if(navigator.canShare&&navigator.canShare({files:[f]}))return navigator.share({files:[f],text:txt+' '+location.href});
   if(navigator.share)return navigator.share({title:'Nhà Đầu Tư Tí Hon',text:txt,url:location.href})}catch(e){}
  navigator.clipboard.writeText(txt+' '+location.href);alert('Đã sao chép nội dung chia sẻ!')}
-load().then(start);
+load().then(async()=>{
+ let code='';
+ try{code=(new URLSearchParams(location.search).get('phong')||'').replace(/\D/g,'')}catch(e){}
+ if(code.length===4&&roomApi()){
+  try{
+   const st=await roomFetch('/rooms/'+code+'/join',{});
+   ROOM={}; roomFrom(st,st.token); ROOM.phase='lobby'; ROOM.sig=''; drawLobby(); roomArm();
+   return;
+  }catch(e){
+   const m=String(e&&e.message||e);
+   const msg=m==='full'?'Phòng đã đủ 2 người.':m==='started'?'Phòng này đã bắt đầu.':m==='no-room'?'Không thấy phòng này.':'Không vào được phòng.';
+   start();
+   const app=document.getElementById('app');
+   if(app)app.insertAdjacentHTML('afterbegin','<div class="card" id="rerr">'+esc(msg)+'</div>');
+   return;
+  }
+ }
+ start();
+});
 </script></body></html>
