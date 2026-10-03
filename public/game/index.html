@@ -1,65 +1,65 @@
 <!doctype html>
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Nhà Đầu Tư Tí Hon — game mô phỏng bất động sản</title>
+<title>Ván đầu tư — game mô phỏng bất động sản</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8F%A0%3C/text%3E%3C/svg%3E">
-<meta property="og:title" content="Nhà Đầu Tư Tí Hon — bạn là nhà đầu tư kiểu gì?">
+<meta property="og:title" content="Ván đầu tư — bạn là nhà đầu tư kiểu gì?">
 <meta property="og:description" content="Game mô phỏng 3 phút: đọc tin, mua bán, vay, cho thuê và nhận danh hiệu.">
 <style>
-:root{--bg:#0f2e2a;--card:#16433d;--card2:#1d544c;--gold:#e7b84b;--up:#8fe3a1;--down:#ff9b8a;--tx:#f3f7f5}
+:root{--bg:#f4f7f4;--card:#ffffff;--card2:#ffffff;--gold:#e7b84b;--up:#1f7a45;--down:#c2412d;--tx:#142824;--soft:#e7f0ec;--line:#d5e2dc}
 *{box-sizing:border-box}body{font-family:system-ui,-apple-system,sans-serif;margin:0;background:var(--bg);color:var(--tx)}
 .wrap{max-width:560px;margin:auto;padding:12px 12px 110px}
-.card{background:var(--card);border-radius:14px;padding:12px;margin:8px 0}
+.card{background:var(--card);border-radius:14px;padding:12px;margin:8px 0;border:1px solid #e3ece7}
 .top{display:flex;justify-content:space-between;gap:6px;font-size:.85em;position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:5}
 .top b{display:block;font-size:1.15em}
-.news{background:linear-gradient(135deg,#2a5d55,#1d4a44);border-left:4px solid var(--gold)}
+.news{background:#fff;border-left:4px solid var(--gold)}
 .src{font-size:.8em;opacity:.8;margin-top:4px}
 .zone{display:grid;grid-template-columns:1fr auto;gap:4px 8px;align-items:center}
 .zone .nm{font-weight:600}.zone small{opacity:.75}
-.price{text-align:right;font-weight:700}.up{color:var(--up)}.down{color:var(--down)}.flat{color:#c9d6d2}
+.price{text-align:right;font-weight:700}.up{color:var(--up)}.down{color:var(--down)}.flat{color:#5c726c}
 .acts{grid-column:1/3;display:flex;gap:6px}.acts button{flex:1;padding:8px 4px;font-size:.8em}
 button{font:inherit;background:var(--gold);color:#1b1b1b;border:0;border-radius:10px;padding:9px 12px;font-weight:600;cursor:pointer}
-button.alt{background:#2c6b62;color:#fff}button.ghost{background:transparent;color:var(--tx);text-decoration:underline;padding:6px}
+button.alt{background:var(--soft);color:var(--tx)}button.ghost{background:transparent;color:var(--tx);text-decoration:underline;padding:6px}
 button:disabled{opacity:.35;cursor:not-allowed}
 #lockbtns button.held:disabled{opacity:1;cursor:default}
-.bar{position:fixed;left:0;right:0;bottom:0;background:#0b2421;border-top:1px solid #2c6b62;padding:10px 12px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;justify-content:center;z-index:9}
+.bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 12px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;justify-content:center;z-index:9}
 .bar:empty{display:none}.bar .main{flex:1;max-width:260px;font-size:1.05em}
 .modal{position:fixed;inset:0;background:#000a;display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
 .modal .card{max-width:480px;width:100%;background:var(--card2);max-height:92vh;overflow:auto}
-.tag{display:inline-block;font-size:.72em;background:#0b2421;border-radius:6px;padding:2px 6px;margin-left:4px}
-.hero{display:block;width:100%;height:auto;aspect-ratio:1200/460;object-fit:cover;border-radius:10px;margin-bottom:8px;background:#2c6b62}
+.tag{display:inline-block;font-size:.72em;background:var(--soft);border-radius:6px;padding:2px 6px;margin-left:4px}
+.hero{display:block;width:100%;height:auto;aspect-ratio:1200/460;object-fit:cover;border-radius:10px;margin-bottom:8px;background:#c5d6ce}
 .warn{font-size:.75em;opacity:.65;text-align:center;margin:12px 0}
 .row{display:flex;justify-content:space-between;padding:3px 0}
 h1,h2,h3{margin:.3em 0}
 /* bản đồ phân khu */
 .map{position:relative;width:100%;aspect-ratio:366/430;border-radius:16px;overflow:hidden;background:#d7ead9;margin:8px 0 4px;user-select:none;-webkit-user-select:none}
 .map svg.bg{position:absolute;inset:0;width:100%;height:100%;display:block}
-.tile{position:absolute;background:#0f2e2aee;color:var(--tx);border-radius:10px;padding:3px 8px;box-shadow:0 3px 8px #0006;border:1.5px solid #ffffff22;display:flex;flex-direction:column;justify-content:center;cursor:pointer;line-height:1.25;-webkit-tap-highlight-color:transparent}
-.tile b{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile{position:absolute;background:#fff;color:var(--tx);border-radius:10px;padding:3px 8px;box-shadow:0 1px 3px #1428241a;border:1.5px solid var(--line);display:flex;flex-direction:column;justify-content:center;cursor:pointer;line-height:1.25;-webkit-tap-highlight-color:transparent}
+.tile b{font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tile .pr{font-size:12px;font-weight:600;white-space:nowrap}
 .tile .pr i{font-style:normal;margin-left:3px}.tile .pr i.fl{font-size:10.5px;font-weight:500}
 .tile:active{transform:scale(.97)}
-.tile.sel{border-color:#fff}
-.tile.hot{border:2px solid var(--gold);animation:glow 1.6s ease-in-out infinite}
-@keyframes glow{0%,100%{box-shadow:0 0 0 3px #e7b84b55,0 0 8px #e7b84b88}50%{box-shadow:0 0 0 5px #e7b84b88,0 0 18px #e7b84bdd}}
+.tile.sel,.tile.hot{border:2px solid var(--gold)}
+.tile.flash{animation:pxflash 200ms ease-out 1}
+@keyframes pxflash{from{background:#e7b84b}to{background:#fff}}
 .own{position:absolute;top:-9px;right:-8px;background:var(--gold);color:#1b1b1b;border-radius:10px;font-weight:700;font-size:10.5px;padding:1px 6px;font-style:normal;box-shadow:0 1px 3px #0006}
-.lock{position:absolute;top:-10px;left:-9px;font-size:11px;font-style:normal;background:#0b2421;border:1px solid var(--gold);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center}
+.lock{position:absolute;top:-10px;left:-9px;font-size:11px;font-style:normal;background:#fff;border:1px solid var(--gold);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center}
 .hint{font-size:.75em;opacity:.8;text-align:center;margin:4px 0 8px}
 .hint .g{color:var(--gold);font-weight:700}
 /* bottom sheet */
 .dim{position:fixed;inset:0;background:#0008;z-index:8}
 .sheet{position:fixed;left:0;right:0;margin:0 auto;max-width:560px;bottom:var(--barh,64px);background:var(--card2);border-radius:18px 18px 0 0;padding:8px 14px 14px;box-shadow:0 -6px 20px #0008;z-index:10;max-height:calc(100vh - var(--barh,64px) - 40px);overflow:auto}
-.dim.anim{animation:fade .2s ease-out}.sheet.anim{animation:up .25s ease-out}
-@keyframes up{from{transform:translateY(100%)}}@keyframes fade{from{opacity:0}}
-.grab{width:40px;height:4px;border-radius:2px;background:#ffffff55;margin:0 auto 8px}
+.dim.anim{animation:fade 180ms ease-out}.sheet.anim,.lgb.rise,.modal.rise .card{animation:rise 180ms ease-out}
+@keyframes rise{from{transform:translateY(100%)}}@keyframes fade{from{opacity:0}}
+.grab{width:40px;height:4px;border-radius:2px;background:#c5d6ce;margin:0 auto 8px}
 .sheet .x{position:absolute;right:8px;top:6px;background:transparent;color:var(--tx);font-size:18px;padding:4px 8px;opacity:.7}
 .sheet .hd{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;padding-right:26px}
 .sheet .hd b{font-size:17px}.sheet .hd small{font-size:12px;opacity:.8}
 .spark{display:block;width:100%;height:auto;margin:8px 0 4px}
-.chip{display:inline-block;font-size:11.5px;background:#0b2421;border-radius:6px;padding:3px 7px;margin:2px 4px 2px 0}
+.chip{display:inline-block;font-size:11.5px;background:var(--soft);border-radius:6px;padding:3px 7px;margin:2px 4px 2px 0}
 .chip.hotc{border:1px solid var(--gold)}
 .sheet .acts{display:flex;gap:8px;margin-top:10px}.sheet .acts button{flex:1;font-size:13px;line-height:1.35;padding:9px 3px}.acts button small{display:block;font-size:12px;white-space:nowrap}.acts button small.why{white-space:normal;font-size:10.5px;font-weight:500;opacity:.9;margin-top:2px}.sheet .acts button.loanbuy{flex:1.45}.loanbuy small.why{margin:0 0 1px}
 /* popup cuối quý */
-.pnl{text-align:center;padding:4px 0 10px;margin-bottom:8px;border-bottom:1px solid #ffffff22}
+.pnl{text-align:center;padding:4px 0 10px;margin-bottom:8px;border-bottom:1px solid var(--line)}
 .pnl small{display:block;font-size:.9em;opacity:.85}
 .pnl .big{font-size:46px;font-weight:800;line-height:1.1;letter-spacing:-.5px}
 .pnl .sub{font-size:.75em;opacity:.7;margin-top:2px}
@@ -68,76 +68,76 @@ h1,h2,h3{margin:.3em 0}
 .dnote{display:block;font-size:.78em;opacity:.8;margin:0 4px 6px}
 /* v3: độ dài ván, vay ngân hàng */
 .chips{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}.chips.col{flex-direction:column}
-.chipb{flex:1;min-width:56px;background:#0b2421;color:var(--tx);border:1.5px solid #2c6b62;padding:8px 4px;line-height:1.25;font-size:.9em}
+.chipb{flex:1;min-width:56px;background:var(--soft);color:var(--tx);border:1.5px solid #c5d6ce;padding:8px 4px;line-height:1.25;font-size:.9em}
 .chipb small{display:block;font-size:11px;opacity:.75;font-weight:500}.chipb.on{background:var(--gold);color:#1b1b1b;border-color:var(--gold)}.chipb.on small{opacity:.85}
 .chipb.pk{text-align:left;padding:8px 10px}.chipb.inc{display:flex;align-items:baseline;gap:10px;padding:7px 10px}.chipb.inc b{min-width:52px;white-space:nowrap}.chipb.inc small{display:inline;font-size:11.5px}
 .note{display:block;opacity:.78;font-size:.78em;margin-top:6px;line-height:1.35}
 .lab{font-size:.8em;opacity:.8;margin-top:10px}
-.sum{background:#0b242199;border-radius:10px;padding:8px 10px;margin:10px 0 6px}.sum .row{align-items:baseline;gap:8px}.r{text-align:right}
-.binfo{font-size:.78em;line-height:1.2;display:flex;flex-direction:column;justify-content:center;padding:0 6px;min-width:112px;opacity:.95}.binfo b{font-size:1.2em;color:var(--gold)}
+.sum{background:var(--soft);border-radius:10px;padding:8px 10px;margin:10px 0 6px}.sum .row{align-items:baseline;gap:8px}.r{text-align:right}
+.binfo{font-size:.78em;line-height:1.2;display:flex;flex-direction:column;justify-content:center;padding:0 6px;min-width:112px;opacity:.95}.binfo b{font-size:1.2em;color:var(--tx)}
 .pf .pfh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}.pf .pfh small{opacity:.75;font-size:.75em}
-.pfrow,.urow{background:#0b242199;border-radius:10px;padding:7px 9px;margin-top:6px;font-size:.85em;line-height:1.35}.pfrow{cursor:pointer}
+.pfrow,.urow{background:var(--soft);border-radius:10px;padding:7px 9px;margin-top:6px;font-size:.85em;line-height:1.35}.pfrow{cursor:pointer}
 .pfrow .l1,.urow .l1{display:flex;justify-content:space-between;gap:8px;align-items:baseline}.pfrow .l1 small,.urow .l1 small{opacity:.8;font-size:.85em;text-align:right}
 .l2{font-weight:600}.l3{font-size:.85em;opacity:.85;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:2px 6px}.l3 b{color:var(--gold);font-weight:600}
 .urow{font-size:.82em}.units{margin-top:4px}
-button.mini{background:#2c6b62;color:#fff;font-size:11.5px;padding:5px 8px;border-radius:8px;flex:none}
+button.mini{background:var(--soft);color:var(--tx);}font-size:11.5px;padding:5px 8px;border-radius:8px;flex:none}
 .acts.col{flex-direction:column;gap:2px}.sheet .acts button.buyb{flex:none;width:100%;font-size:14px;padding:10px 8px}.sheet .acts button.buyb small{white-space:normal}.acts button small.det{white-space:normal;font-size:10.5px;font-weight:500;opacity:.9}
 button.ghost.cfg{font-size:12.5px;padding:4px;opacity:.9}
-.note2{font-size:.85em;background:#0b242199;border-radius:8px;padding:6px 8px;margin:6px 0}.promo-end{border-left:3px solid var(--gold)}.firesale{border-left:3px solid var(--down)}
+.note2{font-size:.85em;background:var(--soft);border-radius:8px;padding:6px 8px;margin:6px 0}.promo-end{border-left:3px solid var(--gold)}.firesale{border-left:3px solid var(--down)}
 .res .vs{margin-top:4px;font-weight:600}.compact .one{margin:6px 0;font-size:.95em}
 .res{text-align:center}.res .big{font-size:40px;font-weight:800}
 .lesson{display:flex;gap:8px;align-items:flex-start;font-size:.95em;line-height:1.4;border-left:4px solid var(--gold)}.lesson i{font-style:normal}
-.mw{display:inline-block;margin-top:6px;font-size:.78em;font-weight:600;background:#0b2421;border:1px solid #ffffff33;border-radius:6px;padding:2px 7px}
-.tips{display:flex;flex-direction:column;gap:4px;margin:2px 0 8px}.tips span{font-size:.8em;background:#16433d;border-radius:8px;padding:5px 9px;line-height:1.3}
-.rulesb{display:block;margin:0 auto 8px;font-size:.8em;padding:5px 12px;background:#2c6b62;color:#fff}
+.mw{display:inline-block;margin-top:6px;font-size:.78em;font-weight:600;background:var(--soft);border:1px solid #ffffff33;border-radius:6px;padding:2px 7px}
+.tips{display:flex;flex-direction:column;gap:4px;margin:2px 0 8px}.tips span{font-size:.8em;background:var(--soft);border-radius:8px;padding:5px 9px;line-height:1.3}
+.rulesb{display:block;margin:0 auto 8px;font-size:.8em;padding:5px 12px;background:var(--soft);color:var(--tx)}
 #rules ul{padding-left:18px;margin:6px 0;font-size:.9em;line-height:1.45}#rules li{margin:3px 0}#rules .warn{text-align:left;margin:8px 0}
 #buyp .acts,#prep .acts{display:flex;gap:8px;margin-top:8px}#buyp .acts button{flex:1}#prep .acts.col button{width:100%;margin:3px 0}
 #buyp .card{padding:14px}#buyp h3{margin:0 0 2px;font-size:19px}.bpsub{font-size:12.5px;opacity:.8;margin-bottom:10px}
-.bphero{background:#0b2421;border-radius:12px;padding:10px 12px;border:1.5px solid var(--gold)}.bpbig{display:flex;gap:8px}.bpbig>div{flex:1}.bpbig small{display:block;font-size:11.5px;opacity:.75}.bpbig b{font-size:21px}
+.bphero{background:var(--soft);border-radius:12px;padding:10px 12px;border:1.5px solid var(--gold)}.bpbig{display:flex;gap:8px}.bpbig>div{flex:1}.bpbig small{display:block;font-size:11.5px;opacity:.75}.bpbig b{font-size:21px}
 .bpok{margin-top:6px;font-size:12.5px;line-height:1.4}.bpwarn{margin-top:6px;font-size:12.5px;color:var(--down);line-height:1.4}.bpinfo{margin-top:6px;font-size:12.5px;opacity:.85;line-height:1.4}
 #buyp .lab{font-size:12.5px;margin:10px 0 0}#buyp .chips{margin-top:5px;flex-wrap:nowrap}#buyp .chipb{min-width:0;padding:7px 2px;font-size:14px;line-height:1.2}#buyp .chipb small{font-size:10.5px}
 .bplink{background:none;color:var(--gold);padding:0;font-weight:600;font-size:13px;white-space:nowrap}.bplab{display:flex;justify-content:space-between;align-items:center}
-.bppk{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#0b2421;border:1.5px solid var(--gold);border-radius:10px;padding:7px 10px;font-size:13.5px;margin-top:5px}.bppk small{display:block;font-size:11.5px;opacity:.75;font-weight:400}
+.bppk{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--soft);border:1.5px solid var(--gold);border-radius:10px;padding:7px 10px;font-size:13.5px;margin-top:5px}.bppk small{display:block;font-size:11.5px;opacity:.75;font-weight:400}
 .bpdet{display:block;margin-top:8px;font-size:12.5px;font-weight:500;text-decoration:underline;white-space:normal;text-align:left}.bpdetail{margin:5px 0 0;padding:6px 10px;font-size:13px}.bpdetail .row{padding:1px 0}.bpdetail .note{margin-top:3px;line-height:1.3}
-.bppl{background:#0b2421;border-radius:10px;overflow:hidden;margin-top:5px}.bppr{display:grid;grid-template-columns:1fr auto auto;gap:8px;width:100%;padding:7px 10px;font-size:13px;border-top:1px solid #1d544c;border-radius:0;align-items:center;text-align:left;background:none;color:var(--tx);font-weight:400}
+.bppl{background:var(--soft);border-radius:10px;overflow:hidden;margin-top:5px}.bppr{display:grid;grid-template-columns:1fr auto auto;gap:8px;width:100%;padding:7px 10px;font-size:13px;border-top:1px solid var(--line);border-radius:0;align-items:center;text-align:left;background:none;color:var(--tx);font-weight:400}
 .bppr:first-child{border-top:0}.bppr.on{background:#e7b84b22;box-shadow:inset 3px 0 0 var(--gold)}.bppr small{display:block;font-size:11px;opacity:.7;font-weight:400}.bppr .r{font-weight:700;text-align:right;white-space:nowrap}.bppr .r small{font-weight:400}.bppr .m{font-size:12px;text-align:right;opacity:.9;min-width:44px}.bppr.hd{font-size:11px;opacity:.65;padding:5px 10px}
 .bpfix{font-size:12.5px;text-decoration:underline;white-space:normal;text-align:left}.bpfoot{font-size:11.5px;opacity:.75;margin-top:6px}#buyp .acts{margin-top:9px}#buyp .acts button.bpgo{flex:2.2;line-height:1.25;font-size:14px;font-weight:700}#buyp .acts button.bpgo small{display:block;font-size:11.5px;font-weight:500}#buyp #bpshort{font-size:12.5px;margin:8px 0 0}
 /* v3.7 sổ tài chính */
 .tnw{cursor:pointer}.top b.tap{display:table;border-bottom:1.5px dashed var(--gold);padding-bottom:1px}
 .lg{position:fixed;inset:0;background:#000a;display:flex;align-items:flex-end;justify-content:center;z-index:30}
 .lgb{background:var(--card2);border-radius:18px 18px 0 0;width:100%;max-width:560px;max-height:92vh;overflow:auto;padding:10px 14px 18px;box-shadow:0 -6px 20px #0008}
-.lghandle{width:42px;height:4px;background:#ffffff33;border-radius:4px;margin:2px auto 8px}.lghrow{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.lghrow h3{margin:0;font-size:17px}
+.lghandle{width:42px;height:4px;background:#c5d6ce;border-radius:4px;margin:2px auto 8px}.lghrow{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.lghrow h3{margin:0;font-size:17px}
 .lgx{background:transparent;color:var(--tx);font-size:20px;opacity:.7;padding:4px 6px;font-weight:400}
-.lgtabs{display:flex;gap:4px;background:#0b2421;border-radius:10px;padding:3px;margin:6px 0 10px}.lgtab{flex:1;background:none;color:var(--tx);padding:7px 4px;font-size:12.5px;font-weight:600;border-radius:8px;opacity:.7}.lgtab.on{background:var(--gold);color:#1b1b1b;opacity:1}
-.lgeq{background:#0b2421;border:1.5px solid var(--gold);border-radius:12px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.lgeq small{display:block;font-size:11.5px;opacity:.75}.lgeq b{font-size:20px}.lgeq .r{text-align:right}.lgeq .r b{font-size:16px}
-.lgsec{font-size:12px;opacity:.75;margin:10px 0 4px;font-weight:600;letter-spacing:.02em}.lgchip{display:inline-block;background:#0b2421;border:1px solid #2c6b62;border-radius:6px;padding:1px 6px;font-size:11px;margin-left:4px}
-.lgrow.deplock{cursor:pointer}.lgbox{background:#0b2421;border-radius:12px;overflow:hidden}.lgrow{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:8px 10px;border-top:1px solid #1d544c;font-size:13.5px;line-height:1.35}
+.lgtabs{display:flex;gap:4px;background:var(--soft);border-radius:10px;padding:3px;margin:6px 0 10px}.lgtab{flex:1;background:none;color:var(--tx);padding:7px 4px;font-size:12.5px;font-weight:600;border-radius:8px;opacity:.7}.lgtab.on{background:var(--gold);color:#1b1b1b;opacity:1}
+.lgeq{background:var(--soft);border:1.5px solid var(--gold);border-radius:12px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.lgeq small{display:block;font-size:11.5px;opacity:.75}.lgeq b{font-size:20px}.lgeq .r{text-align:right}.lgeq .r b{font-size:16px}
+.lgsec{font-size:12px;opacity:.75;margin:10px 0 4px;font-weight:600;letter-spacing:.02em}.lgchip{display:inline-block;background:var(--soft);border:1px solid #c5d6ce;border-radius:6px;padding:1px 6px;font-size:11px;margin-left:4px}
+.lgrow.deplock{cursor:pointer}.lgbox{background:var(--soft);border-radius:12px;overflow:hidden}.lgrow{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:8px 10px;border-top:1px solid var(--line);font-size:13.5px;line-height:1.35}
 .lgrow:first-child{border-top:0}.lgrow small{display:block;font-size:11.5px;opacity:.7;font-weight:400}.lgrow .amt{font-weight:700;white-space:nowrap}.lgrow.tot{background:#e7b84b18;font-weight:700}.lgrow.tot .amt:not(.up):not(.down){color:var(--gold)}.lgz{opacity:.5}.lgrow.sub{background:none;font-weight:600;font-size:12.5px;padding:5px 10px}.lgrow.sub .amt:not(.up):not(.down){color:inherit}
-.lgbal{display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap;font-size:12.5px;margin:8px 2px 0;opacity:.9}.lgrecon{font-size:12px;line-height:1.45;margin:8px 2px 0;padding:8px 10px;background:#0b2421;border-radius:10px;border-left:3px solid var(--gold)}.lgrecon small{opacity:.7}.lgrecon b{font-weight:700}.lgnote{font-size:11.5px;opacity:.7;margin-top:8px;line-height:1.4}
-.lgkpi{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}.lgkpi .c{background:#0b2421;border-radius:10px;padding:9px 10px}.lgkpi small{display:block;font-size:11px;opacity:.7}.lgkpi b{font-size:16px}.lgkpi .ok{color:var(--up)}.lgkpi .c.wide{grid-column:1/-1}.lgkpi .warn{color:var(--down)}
+.lgbal{display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap;font-size:12.5px;margin:8px 2px 0;opacity:.9}.lgrecon{font-size:12px;line-height:1.45;margin:8px 2px 0;padding:8px 10px;background:var(--soft);border-radius:10px;border-left:3px solid var(--gold)}.lgrecon small{opacity:.7}.lgrecon b{font-weight:700}.lgnote{font-size:11.5px;opacity:.7;margin-top:8px;line-height:1.4}
+.lgkpi{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}.lgkpi .c{background:var(--soft);border-radius:10px;padding:9px 10px}.lgkpi small{display:block;font-size:11px;opacity:.7}.lgkpi b{font-size:16px}.lgkpi .ok{color:var(--up)}.lgkpi .c.wide{grid-column:1/-1}.lgkpi .warn{color:var(--down)}
 /* hồ sơ khoản vay */
 .lfh{display:flex;align-items:center;gap:8px}.lfh h3{margin:0;font-size:17px;flex:1}.lfback{background:transparent;border:0;color:var(--gold);font-size:22px;padding:0 2px;line-height:1}
 .lfsub{font-size:12.5px;opacity:.8;margin:2px 0 10px 26px}
-.lfnums{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}.lfnums div{background:#0b2421;border-radius:10px;padding:8px 6px}.lfnums small{display:block;font-size:11px;opacity:.7}.lfnums b{font-size:15px}
+.lfnums{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}.lfnums div{background:var(--soft);border-radius:10px;padding:8px 6px}.lfnums small{display:block;font-size:11px;opacity:.7}.lfnums b{font-size:15px}
 .lfst{margin:8px 2px 0;font-size:12.5px;line-height:1.4}.lfst b{color:var(--gold)}
-.lfchart{background:#0b2421;border-radius:12px;padding:8px 8px 4px}.lfcap{display:flex;justify-content:space-between;font-size:11px;opacity:.75;margin-bottom:2px}
-.lftbl{width:100%;border-collapse:collapse;font-size:12.5px;background:#0b2421;border-radius:12px;overflow:hidden}
+.lfchart{background:var(--soft);border-radius:12px;padding:8px 8px 4px}.lfcap{display:flex;justify-content:space-between;font-size:11px;opacity:.75;margin-bottom:2px}
+.lftbl{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--soft);border-radius:12px;overflow:hidden}
 .lftbl th{font-size:11px;font-weight:600;opacity:.65;text-align:right;padding:6px 5px}.lftbl th:first-child,.lftbl td:first-child{text-align:left}
-.lftbl td{padding:7px 5px;text-align:right;border-top:1px solid #1d544c;font-variant-numeric:tabular-nums}
+.lftbl td{padding:7px 5px;text-align:right;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
 .lftbl tr.now{background:#e7b84b22;box-shadow:inset 3px 0 0 var(--gold)}.lftbl tr.flip td{border-top:1px dashed #e7b84b88}
 .lftag{color:var(--gold);font-size:10.5px;display:block;font-weight:600}
-.lfbtn{margin-top:12px;width:100%;border:1.5px solid #2c6b62;background:#0b2421;color:#9fb2ad;border-radius:10px;padding:10px;font-weight:700;font-size:14px;text-align:left}
+.lfbtn{margin-top:12px;width:100%;border:1.5px solid var(--line);background:var(--soft);color:#5c726c;border-radius:10px;padding:10px;font-weight:700;font-size:14px;text-align:left}
 .lfbtn:disabled{opacity:1;cursor:not-allowed}.lfbtn small{display:block;font-weight:500;font-size:12px;opacity:.9;margin-top:2px}
 .lgloan{cursor:pointer}
 
 /* đấu 2 người, máy này. Solo không bật ROOM. */
-.rclock{margin:0 0 8px;background:#0b2421;border-radius:10px;padding:8px 10px}
-.rclock .track{height:8px;background:#2c6b62;border-radius:6px;overflow:hidden;margin-bottom:6px}
+.rclock{margin:0 0 8px;background:var(--soft);border-radius:10px;padding:8px 10px}
+.rclock .track{height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin-bottom:6px}
 .rclock .track i{display:block;height:100%;background:var(--gold);width:0}
 .rclock .row{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;gap:8px}
 .rclock b{font-size:16px;color:var(--gold)}
 .rclock small{opacity:.75}
-.rwait{margin:0 0 8px;background:#123e38;border:1.5px solid var(--up);border-radius:10px;padding:10px}
+.rwait{margin:0 0 8px;background:var(--soft);border:1.5px solid var(--up);border-radius:10px;padding:10px}
 .rwait b{display:block;color:var(--up);font-size:16px}
 .rwait small{display:block;margin-top:3px;font-size:12.5px;opacity:.85;line-height:1.4}
 .map.locked{opacity:.4;pointer-events:none}
@@ -145,12 +145,12 @@ button.ghost.cfg{font-size:12.5px;padding:4px;opacity:.9}
 #roomfloat{position:fixed;top:8px;left:0;right:0;z-index:25;display:flex;justify-content:center;pointer-events:none}
 #roomfloat:empty{display:none}
 #roomfloat .rf{width:min(536px,calc(100% - 24px))}
-.rfnote{margin:4px 0 0;text-align:center;background:#0b2421ee;border-radius:8px;padding:4px 8px}
+.rfnote{margin:4px 0 0;text-align:center;background:#ffffff;border-radius:8px;padding:4px 8px}
 .rcode{font-size:28px;letter-spacing:4px;font-weight:800;color:var(--gold);margin:4px 0}
 .rlink{font-size:14px;word-break:break-all;line-height:1.4;margin:2px 0 0;color:var(--gold)}
 .rlock{font-weight:700;font-size:16px;line-height:1.35;margin-top:2px}
 button.rcopy{width:100%;margin-top:8px}
-button.rstart{width:100%;margin-top:10px;background:#2c6b62;color:#d5e4e0}
+button.rstart{width:100%;margin-top:10px;background:var(--soft);color:var(--tx)}
 button.rstart:not(:disabled){background:var(--gold);color:#1b1b1b}
 button.chipb.lock{position:static;top:auto;left:auto;width:auto;height:auto;min-width:56px;border-radius:0;display:inline-block;flex:1;font-size:.9em;align-items:stretch;justify-content:flex-start;opacity:.85;cursor:default;pointer-events:none}button.chipb.lock.on{background:var(--gold);color:#1b1b1b;opacity:1}
 .rdil{border-left:4px solid var(--gold)}
@@ -158,12 +158,12 @@ button.chipb.lock{position:static;top:auto;left:auto;width:auto;height:auto;min-
 .rdil .dilacts{display:flex;flex-direction:column;gap:6px}
 .rdil .dilacts button{width:100%;margin:0;text-align:left}
 .rdil .dilacts button small{display:block;font-size:12px;font-weight:500;line-height:1.35;margin-top:4px;white-space:normal}
-.rjoin{display:flex;gap:6px;margin-top:8px}.rjoin input{flex:1;min-width:0;border-radius:10px;border:1.5px solid #2c6b62;background:#0b2421;color:inherit;padding:8px 10px;font:inherit}
-#depcard input,#breakcard input{width:100%;box-sizing:border-box;border-radius:10px;border:1.5px solid #2c6b62;background:#0b2421;color:inherit;padding:8px 10px;font:inherit;margin:4px 0 8px}#depcard .acts,#breakcard .acts{margin-top:4px}
+.rjoin{display:flex;gap:6px;margin-top:8px}.rjoin input{flex:1;min-width:0;border-radius:10px;border:1.5px solid #c5d6ce;background:var(--soft);color:inherit;padding:8px 10px;font:inherit}
+#depcard input,#breakcard input{width:100%;box-sizing:border-box;border-radius:10px;border:1.5px solid #c5d6ce;background:var(--soft);color:inherit;padding:8px 10px;font:inherit;margin:4px 0 8px}#depcard .acts,#breakcard .acts{margin-top:4px}
 </style></head><body><div class="wrap" id="app"></div><div id="bar" class="bar"></div><div id="sheet"></div><div id="modal"></div><div id="ledger"></div><div id="loanfile"></div><div id="roomfloat"></div>
 <script src="engine.js"></script>
 <script>
-let D,G,sel=null,sheetAnim=false,selQ=null,selInc=null,BP=null,ROOM=null,ROOM_T=null;const E=Engine;
+let D,G,sel=null,sheetAnim=false,priceFlash=false,ledgerAnim=false,popAnim=false,selQ=null,selInc=null,BP=null,ROOM=null,ROOM_T=null;const E=Engine;
 const $=(id,h)=>{document.getElementById(id).innerHTML=h;if(id==='modal'||id==='loanfile')syncFloat()};
 const fmt=n=>(n<0?'-':'')+Math.round(Math.abs(n)).toLocaleString('vi-VN')+' tr';
 const sgn=n=>{const v=Math.round(n);return (v>0?'+':v<0?'\u2212':'')+Math.abs(v).toLocaleString('vi-VN')+' tr'};
@@ -185,7 +185,7 @@ function setInc(id){selInc=id;document.querySelectorAll('#incChips button').forE
 const dtiMsg=()=>(incR().dtiBlockedMsg||'Vượt hạn mức nợ trên thu nhập').replace(/\.\s*$/,'');
 function start(){ROOM=null;if(ROOM_T){clearInterval(ROOM_T);ROOM_T=null}const rf=document.getElementById('roomfloat');if(rf)rf.innerHTML='';const bar0=document.getElementById('bar');if(bar0)bar0.classList.remove('room');sel=null;BP=null;LG=null;$('ledger','');$('loanfile','');selQ=getLen();selInc=getInc();$('bar','');$('modal','');$('sheet','');
  const best=localStorage.bdsBestAnn;
- $('app',`<h1>Nhà Đầu Tư Tí Hon</h1><div class="card">Bạn có <b id="introQ">${selQ} quý (${selQ/4} năm)</b> để làm giàu. Mỗi quý có một tin tức, nhưng <b>tin chưa chắc đã đúng</b>: hãy xem nguồn tin rồi quyết định mua (có thể vay ngân hàng), bán hay cho thuê. Chốt quý xong mới biết tin thật hay giả.</div>
+ $('app',`<h1>Ván đầu tư</h1><div class="card">Bạn có <b id="introQ">${selQ} quý (${selQ/4} năm)</b> để làm giàu. Mỗi quý có một tin tức, nhưng <b>tin chưa chắc đã đúng</b>: hãy xem nguồn tin rồi quyết định mua (có thể vay ngân hàng), bán hay cho thuê. Chốt quý xong mới biết tin thật hay giả.</div>
  <div class="card"><b>Độ dài ván</b><div class="chips" id="lenChips">${lenOpts().map(q=>`<button class="chipb${q===selQ?' on':''}" data-q="${q}" onclick="setLen(${q})">${q} quý<small>${q/4} năm</small></button>`).join('')}</div><small class="note">Ván dài có thêm tin tức, tình huống, và đủ thời gian để khoản vay hết ưu đãi rồi thả nổi lãi.</small></div>`+
  (incOpts().length?`<div class="card" id="incCard"><b>Thu nhập mỗi tháng</b> <small>(kê khai khi vay)</small><div class="chips col" id="incChips">${incOpts().map(o=>`<button class="chipb pk inc${o.id===selInc?' on':''}" data-inc="${o.id}" onclick="setInc('${o.id}')"><b>${esc(o.label)}</b><small>${esc(o.hint||'')}</small></button>`).join('')}</div>${incR().pickerNote?`<small class="note" id="incNote">${esc(incR().pickerNote)}</small>`:''}</div>`:'')+
  D.projects.map(p=>`<div class="card">${p.image?`<img class="hero" src="${p.image}" alt="${esc(p.name)}">`:''}<b>${p.name}</b><br><small>${p.tagline||''} · Vốn ${fmt(p.startCapital)}</small><br><button style="margin-top:8px" data-pick="${p.id}" onclick="pick('${p.id}')">Chơi dự án này</button></div>`).join('')+
@@ -304,7 +304,7 @@ function roomStep(){
  ROOM.phase='between'; ROOM.oppReady=false; ROOM.youReady=false;
  showQuarter(adv.res);
 }
-function roomContinue(){if(ROOM&&ROOM.phase==='between')ROOM.phase='play'; draw()}
+function roomContinue(){if(ROOM&&ROOM.phase==='between')ROOM.phase='play';priceFlash=true;draw()}
 function roomSubmitWorth(){
  if(!ROOM||ROOM.worthSent||!G)return; ROOM.worthSent=true;
  roomFetch('/rooms/'+ROOM.code+'/worth',{token:ROOM.token,worth:E.worth(G),start:G.p.startCapital,cash:G.cash,units:G.units.length,debt:E.debt(G),holds:G.units.map(u=>{const z=E.zone(G,u.zone);return {name:z.name,price:z.cur}}),fee:E.ledger(G).saleFeeR}).then(roomApply).catch(()=>{ROOM.worthSent=false});
@@ -448,7 +448,7 @@ function mapSVG(zs){
  R.forEach((r,i)=>{const c=PARCEL[i%PARCEL.length];fg+=`<rect x="${X(r.x-2.5)}" y="${Y(r.y-3)}" width="${X(r.w+5)}" height="${Y(r.h+6)}" rx="12" fill="${c[0]}" stroke="${c[1]}" stroke-width="2"/>`});
  return `<svg class="bg" viewBox="0 0 ${MW} ${MH}" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7cc4d8"/><stop offset="1" stop-color="#3f93b5"/></linearGradient><pattern id="wave" width="30" height="12" patternUnits="userSpaceOnUse"><path d="M0 6 q7.5 -5 15 0 t15 0" fill="none" stroke="#ffffff55" stroke-width="1.5"/></pattern></defs><rect width="${MW}" height="${MH}" fill="#d7ead9"/>${bg}${fg}${ov}${lab}</svg>`} // thứ tự: nền (rừng, biển, công viên, đường) → lô đất → hồ → nhãn
 function tileHTML(z){const r=rectOf(z),o=own(z.id).length,l=leasing(z.id).length,arr=G.round>1?(flat(z.last)?'<i class="flat fl">đứng giá</i>':`<i class="${z.last>=0?'up':'down'}">${z.last>=0?'▲':'▼'}</i>`):'';
- return `<div class="tile${hot(z)?' hot':''}${sel===z.id?' sel':''}" role="button" tabindex="0" data-zone="${z.id}" style="left:${r.x}%;top:${r.y}%;width:${r.w}%;height:${r.h}%" onclick="openZone('${z.id}')" title="${esc(z.name)}">
+ return `<div class="tile${hot(z)?' hot':''}${sel===z.id?' sel':''}${priceFlash&&G.round>1&&!flat(z.last)?' flash':''}" role="button" tabindex="0" data-zone="${z.id}" style="left:${r.x}%;top:${r.y}%;width:${r.w}%;height:${r.h}%" onclick="openZone('${z.id}')" title="${esc(z.name)}">
  <b>${esc(short(z))}</b><span class="pr">${fmt(z.cur)}${arr}</span>${o?`<em class="own">×${o}</em>`:''}${l?`<em class="lock" title="Đang cho thuê">🔒</em>`:''}</div>`}
 function cardHTML(x){ // dạng thẻ cũ (khi phân khu không có tọa độ bản đồ)
  const o=own(x.id),bq=E.buyQuote(G,x.id),tu=E.sellTarget(G,x.id),sq=tu&&E.sellQuote(G,tu),canRent=free(x.id).some(u=>!u.leaseUntil);
@@ -481,7 +481,7 @@ function depositCard(){const c=depOn();if(!c||!G||G.done)return '';const dem=(c.
  return `<div class="card" id="depcard"><b>Tiền gửi</b><p class="note">Rút ngay ${pr(dem.ratePctYear)}/năm trên tiền mặt. Khóa thì lãi cộng vào khoản khóa, chưa rút được.</p>${cash>1e-6&&!busy?`<label class="note">Số tiền khóa<input id="lockin" inputmode="decimal" value="${trIn(cash)}" onblur="fmtIn(this)"></label><div class="acts" id="lockbtns">${btns}</div>`:''}${rows}</div>`}
 function doLock(id){if(roomLocked()||!G)return;const amt=readTr(document.getElementById('lockin'),G.cash);if(!(amt>1e-9))return;let ok=true;if(G.duel)ok=E.duelAct(G,'lock',id,amt);else ok=!!E.lockDeposit(G,id,amt);if(ok&&G.duel)roomCommit('lock',id,amt);draw()}
 function breakCopy(q){const a=`Rút ${fmt(q.amtR)} khỏi khoản khóa đến quý ${q.openRound}, đang ${pr(q.ratePctYear)}/năm.`;const b=(q.termR||q.clawR)?`Đã cộng ${fmt(q.termR)} lãi ${pr(q.ratePctYear)}/năm. Giữ ${fmt(q.keptR)} lãi ${pr(q.demand)}/năm. Trừ ${fmt(q.clawR)}. `:'';const c=q.restR?`Còn ${fmt(q.restR)} giữ đến quý ${q.openRound}, vẫn ${pr(q.ratePctYear)}/năm.`:'';return `<p id="breakcopy">${a}<br>${b}Thực nhận ${fmt(q.netR)}.${c?`<br>${c}`:''}</p>`}
-function openBreak(id){if(roomLocked()||!G)return;const l=(G.locks||[]).find(x=>x.id===id);if(!l)return;$('modal',`<div class="modal" onclick="if(event.target===this)closeModal()"><div class="card" id="breakcard"><h3>Rút trước hạn</h3><label class="note">Số tiền rút<input id="breakin" inputmode="decimal" value="${trIn(l.balance)}" onblur="fmtIn(this)" oninput="paintBreak(${id})"></label><div id="breakbody"></div><div class="acts col"><button id="breakyes" onclick="doBreak(${id})">Rút trước hạn</button><button class="alt" id="breakno" onclick="closeModal()">Giữ nguyên</button></div></div></div>`);paintBreak(id)}
+function openBreak(id){if(roomLocked()||!G)return;const l=(G.locks||[]).find(x=>x.id===id);if(!l)return;$('modal',`<div class="modal rise" onclick="if(event.target===this)closeModal()"><div class="card" id="breakcard"><h3>Rút trước hạn</h3><label class="note">Số tiền rút<input id="breakin" inputmode="decimal" value="${trIn(l.balance)}" onblur="fmtIn(this)" oninput="paintBreak(${id})"></label><div id="breakbody"></div><div class="acts col"><button id="breakyes" onclick="doBreak(${id})">Rút trước hạn</button><button class="alt" id="breakno" onclick="closeModal()">Giữ nguyên</button></div></div></div>`);paintBreak(id)}
 function paintBreak(id){const l=(G.locks||[]).find(x=>x.id===id);if(!l)return;const q=E.breakQuote(G,id,readTr(document.getElementById('breakin'),l.balance));const box=document.getElementById('breakbody');if(box&&q)box.innerHTML=breakCopy(q)}
 function doBreak(id){if(roomLocked()||!G)return;const l=(G.locks||[]).find(x=>x.id===id);if(!l)return;const amt=readTr(document.getElementById('breakin'),l.balance);$('modal','');let ok=true;if(G.duel)ok=E.duelAct(G,'break',id,amt);else ok=!!E.breakDeposit(G,id,amt);if(ok&&G.duel)roomCommit('break',id,amt);draw();if(LG)drawLedger()}
 function draw(){
@@ -502,7 +502,7 @@ function draw(){
  const bar=document.getElementById('bar');
  if(ROOM&&ROOM.phase==='wait'){$('bar','');bar.classList.remove('room')}
  else{$('bar',`<div class="binfo" id="binfo">${im>0?`Trả góp ngân hàng<b>~${mTxt(im)}/tháng</b>`:`Chưa vay<b>ngân hàng</b>`}</div><button class="main" onclick="next()">Chốt quý ▶</button>`);bar.classList.toggle('room',!!(ROOM&&ROOM.phase==='play'))}
- document.documentElement.style.setProperty('--barh',bar.offsetHeight+'px');
+ document.documentElement.style.setProperty('--barh',bar.offsetHeight+'px');priceFlash=false;
  if(ROOM&&ROOM.phase==='play')ROOM.hold=false;
  drawSheet();
  if(!ROOM&&G.dilemma){const d=G.dilemma;$('modal',`<div class="modal"><div class="card" id="dilemma"><h3>⚖️ Tình huống</h3><p>${d.text}</p>${d.options.map((o,i)=>`<button ${i?'class="alt"':''} style="margin:4px" onclick="choose(${i})">${o.label}</button>${dNote(o)}`).join('')}</div></div>`)} else if(!BP)$('modal','');
@@ -523,7 +523,7 @@ function dNote(o){const e=o.effect||{},out=[];
  return out.length?`<small class="dnote">${out.join('; ')}.</small>`:''}
 /* ---------- luật chơi (trước đây là đoạn chữ xám dưới bản đồ) ---------- */
 function openRules(){const M=G.M;
- $('modal',`<div class="modal" onclick="if(event.target===this)closeModal()"><div class="card" id="rules"><h3>📘 Luật chơi</h3><ul>
+ $('modal',`<div class="modal rise" onclick="if(event.target===this)closeModal()"><div class="card" id="rules"><h3>📘 Luật chơi</h3><ul>
  <li>Mỗi quý có 1 tin, <b>tin chưa chắc đúng</b>: xem nguồn rồi mua, bán hoặc cho thuê. Chốt quý mới biết tin thật hay giả.</li>
  <li>Mua có thể vay ngân hàng tới ${M.maxLtvPct}% giá căn: lãi ưu đãi, hết ưu đãi thì thả nổi (lãi cơ sở + biên độ).</li>
  <li>Mỗi quý trừ 3 tháng trả góp gốc + lãi. Mua xong phải còn đủ tiền góp 1 quý (tính theo lãi thả nổi).</li>
@@ -540,12 +540,12 @@ function chart(z){const h=z.hist||[z.cur];if(h.length<2)return `<div class="chip
  const sp=mx-mn;
  const px=i=>pl+(W-pl-pr)*i/(n-1),py=v=>pt+(H-pt-pb)*(1-(v-mn)/sp);
  const pts=h.map((v,i)=>px(i).toFixed(1)+','+py(v).toFixed(1)).join(' ');
- const up=h[n-1]>=h[0],col=up?'#8fe3a1':'#ff9b8a';
+ const up=h[n-1]>=h[0],col=up?'#1f7a45':'#c2412d';
  const o=own(z.id),cost=o.length?o.reduce((a,u)=>a+u.cost,0)/o.length:0;
  let s=`<svg class="spark" viewBox="0 0 ${W} ${H}" role="img" aria-label="Biểu đồ giá các quý trước"><polygon points="${px(0)},${H-pb} ${pts} ${px(n-1)},${H-pb}" fill="${col}22"/><polyline points="${pts}" fill="none" stroke="#e7b84b" stroke-width="2.5" stroke-linejoin="round"/>`;
- if(cost&&cost>=mn-sp*.1&&cost<=mx+sp*.1){const y=Math.max(pt,Math.min(H-pb,py(cost)));s+=`<path d="M${pl} ${y} H${W-pr}" stroke="#ffffff88" stroke-dasharray="4 3"/><text x="${W*.42}" y="${y>(H-pb+pt)/2?y-4:y+11}" font-size="9" fill="#ffffffcc" text-anchor="middle">giá vốn TB ${fmt(cost)}</text>`}
- h.forEach((v,i)=>{s+=`<circle cx="${px(i)}" cy="${py(v)}" r="${i===n-1?4:2.5}" fill="${i===n-1?'#e7b84b':'#f3f7f5'}"/><text x="${px(i)}" y="${H-3}" font-size="9" fill="#ffffff99" text-anchor="${i===0?'start':i===n-1?'end':'middle'}">${i===n-1?'Nay':'Q'+(i+1)}</text>`});
- s+=`<text x="${W-pr}" y="10" font-size="9" fill="#ffffffaa" text-anchor="end">cao nhất ${fmt(hi)} · thấp nhất ${fmt(lo)}</text></svg>`;return s}
+ if(cost&&cost>=mn-sp*.1&&cost<=mx+sp*.1){const y=Math.max(pt,Math.min(H-pb,py(cost)));s+=`<path d="M${pl} ${y} H${W-pr}" stroke="#14282455" stroke-dasharray="4 3"/><text x="${W*.42}" y="${y>(H-pb+pt)/2?y-4:y+11}" font-size="9" fill="#142824" text-anchor="middle">giá vốn TB ${fmt(cost)}</text>`}
+ h.forEach((v,i)=>{s+=`<circle cx="${px(i)}" cy="${py(v)}" r="${i===n-1?4:2.5}" fill="${i===n-1?'#e7b84b':'#142824'}"/><text x="${px(i)}" y="${H-3}" font-size="9" fill="#5c726c" text-anchor="${i===0?'start':i===n-1?'end':'middle'}">${i===n-1?'Nay':'Q'+(i+1)}</text>`});
+ s+=`<text x="${W-pr}" y="10" font-size="9" fill="#5c726c" text-anchor="end">cao nhất ${fmt(hi)} · thấp nhất ${fmt(lo)}</text></svg>`;return s}
 function drawSheet(){if(!sel||!G||G.done){$('sheet','');return}
  const z=E.zone(G,sel);if(!z){$('sheet','');return}
  const o=own(z.id),f=free(z.id),ls=leasing(z.id),lk=o.filter(u=>E.locked(G,u)&&!ls.includes(u)),canRent=f.some(u=>!u.leaseUntil);
@@ -572,11 +572,11 @@ function why(z,k){const o=own(z.id);if(!o.length)return '<small class="why">Chư
  return `<small class="why">${lk.some(u=>u.leaseUntil)?'Đang cho thuê':'Đang khóa'}, mở lại sau ${n} quý</small>`}
 /* ---------- v3.7 sổ tài chính (bước 1): chạm "Tài sản ròng" trên thanh trên ---------- */
 let LG=null;
-function openLedger(){if(!G||G.done)return;LG={tab:LG&&LG.tab||0};drawLedger()}
+function openLedger(){if(!G||G.done)return;LG={tab:LG&&LG.tab||0};ledgerAnim=true;drawLedger()}
 function closeLedger(){LG=null;$('ledger','');$('loanfile','')}
 function lgAmt(v,sign){if(!v)return '<span class="amt lgz">0</span>';return `<span class="amt${sign&&v>0?' up':sign&&v<0?' down':''}">${sign?sgn(v):fmt(v)}</span>`}
 function lgRow(label,sub,amt,cls,attrs){return `<div class="lgrow${cls?' '+cls:''}"${attrs||''}><div>${label}${sub?`<small>${sub}</small>`:''}</div>${amt}</div>`}
-function drawLedger(){if(!LG||!G)return;const L=E.ledger(G),t=LG.tab,nm=x=>esc(x.name)+(x.multi?` (căn ${x.n})`:''),eqR=L.equityR,dl=L.delta;
+function drawLedger(){if(!LG||!G)return;const rise=ledgerAnim?' rise':'';ledgerAnim=false;const L=E.ledger(G),t=LG.tab,nm=x=>esc(x.name)+(x.multi?` (căn ${x.n})`:''),eqR=L.equityR,dl=L.delta;
  const tabs=['Cân đối','Thu chi quý','Chỉ số'].map((s,i)=>`<button class="lgtab${i===t?' on':''}" data-tab="${i}" onclick="LG.tab=${i};drawLedger()">${s}</button>`).join('');
  let body='';
  if(t===0){const dr=L.depositRatePctYear,pen=G.units.some(u=>u.loan&&E.penaltyPct(G,u)>0);
@@ -612,7 +612,7 @@ function drawLedger(){if(!LG||!G)return;const L=E.ledger(G),t=LG.tab,nm=x=>esc(x
   const t5=d?`<div class="c wide" id="kpi-dti"><small>Nợ trên thu nhập</small><b class="${dp==null||d.pct>d.maxPct+1e-9?'warn':d.pay<=1e-9?'ok':''}">${dp==null?'vượt':dp+'%'}</b><small>góp ~${mTxt(d.pay)}/tháng · tối đa ${d.maxPct}% của ${mTxt(d.base)} (thu nhập ${esc(G.inc.label)}${d.rentM>0.05?` + ${G.inc.rentCountPct}% tiền thuê`:''})</small></div>`:'';
   body=`<div class="lgsec">CHỈ SỐ NGÂN HÀNG HAY NHÌN</div><div class="lgkpi" id="lgkpi">${t1+t2+t3+t4+t5}</div>
   ${d?`<div class="lgnote" id="lgdtinote">${esc(incR().ledgerNote||'')}</div>`:''}`}
- $('ledger',`<div class="lg" id="lgback" onclick="if(event.target===this)closeLedger()"><div class="lgb" id="lgbody"><div class="lghandle"></div>
+ $('ledger',`<div class="lg" id="lgback" onclick="if(event.target===this)closeLedger()"><div class="lgb${rise}" id="lgbody"><div class="lghandle"></div>
  <div class="lghrow"><h3>📒 Sổ tài chính</h3><button class="lgx" id="lgx" onclick="closeLedger()" aria-label="Đóng">✕</button></div><div class="lgtabs">${tabs}</div><div id="lgtab${t}">${body}</div></div></div>`)}
 function openLoanFile(uid){if(roomLocked()||!LG||!G)return;LG.loan=uid;drawLoanFile()}
 function closeLoanFile(){if(LG)LG.loan=null;$('loanfile','')}
@@ -623,15 +623,15 @@ function loanChart(F){const W=340,H=132,L=34,R=6,T=10,B=108,pts=F.path,n=pts.len
  const top=(max/1000).toLocaleString('vi-VN',{maximumFractionDigits:2});
  const nx=x(n-1),gx=x(gi),x0=x(0),near=gx-x0<54||nx-gx<64;
  const endLab=near?`<text x="${Math.min(W-4,Math.max(gx+2,L+2))}" y="${T+11}" text-anchor="${nx-gx<64?'end':'start'}" fill="#e7b84b" font-size="10">hết ván</text>`:`<text x="${gx-18}" y="124" fill="#e7b84b" font-size="10">hết ván</text>`;
- const nowLab=`<text x="${x0}" y="124" fill="#c9d6d2" font-size="10">nay</text>`;
+ const nowLab=`<text x="${x0}" y="124" fill="#5c726c" font-size="10">nay</text>`;
  return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="132" id="lfchart" aria-label="Dư nợ đến hết hạn">
- <line x1="${L}" y1="${T}" x2="${L}" y2="${B}" stroke="#2c6b62"/><line x1="${L}" y1="${B}" x2="${W-4}" y2="${B}" stroke="#2c6b62"/>
- <text x="1" y="12" fill="#c9d6d2" font-size="10">${top}</text><text x="18" y="${B}" fill="#c9d6d2" font-size="10">0</text>
- <polyline fill="none" stroke="#ff9b8a" stroke-width="2.4" points="${seg(0,gi)}"/>
- ${gi<n-1?`<polyline fill="none" stroke="#ff9b8a" stroke-width="2.4" stroke-dasharray="4 3" points="${seg(gi,n-1)}"/>`:''}
+ <line x1="${L}" y1="${T}" x2="${L}" y2="${B}" stroke="#c5d6ce"/><line x1="${L}" y1="${B}" x2="${W-4}" y2="${B}" stroke="#c5d6ce"/>
+ <text x="1" y="12" fill="#5c726c" font-size="10">${top}</text><text x="18" y="${B}" fill="#5c726c" font-size="10">0</text>
+ <polyline fill="none" stroke="#c2412d" stroke-width="2.4" points="${seg(0,gi)}"/>
+ ${gi<n-1?`<polyline fill="none" stroke="#c2412d" stroke-width="2.4" stroke-dasharray="4 3" points="${seg(gi,n-1)}"/>`:''}
  <line id="lfend" x1="${gx}" y1="${T}" x2="${gx}" y2="${B}" stroke="#e7b84b" stroke-dasharray="2 2"/>
  <circle cx="${gx}" cy="${y(pts[gi].bal)}" r="3.5" fill="#e7b84b"/>
- ${nowLab}${endLab}${n>1?`<text x="${W-4}" y="124" text-anchor="end" fill="#c9d6d2" font-size="10">năm ${F.termYears}</text>`:''}</svg>`}
+ ${nowLab}${endLab}${n>1?`<text x="${W-4}" y="124" text-anchor="end" fill="#5c726c" font-size="10">năm ${F.termYears}</text>`:''}</svg>`}
 function drawLoanFile(){if(!LG||LG.loan==null)return;const F=E.loanFile(G,LG.loan);if(!F){closeLoanFile();return}
  const nm=esc(F.name)+(F.multi?` (căn ${F.n})`:''),paidR=F.rows.reduce((a,r)=>a+r.pR,0);
  const cap=F.endBalR<=0?`Hết ván khoản này đã trả hết. Đường không dự đoán giá nhà.`
@@ -642,7 +642,7 @@ function drawLoanFile(){if(!LG||LG.loan==null)return;const F=E.loanFile(G,LG.loa
   :`Ưu đãi còn <b>${F.fixedQ} quý</b>. Khoản vay hết hạn trong kỳ cố định.`);
  const trs=F.rows.map(r=>{const tags=[r.round===G.round?'đang ở':'',r.tagEnd?'hết ưu đãi':'',r.tagFloat?('thả nổi '+pr(F.floatRate)):''] .filter(Boolean);
   return `<tr class="${r.round===G.round?'now':''}${r.tagFloat?' flip':''}" data-round="${r.round}" data-pay="${r.payR}" data-i="${r.iR}" data-p="${r.pR}" data-bal="${r.balR}"><td>${r.round}${tags.map(t=>`<small class="lftag">${t}</small>`).join('')}</td><td>${lfNum(r.payR)}</td><td>${lfNum(r.iR)}</td><td>${lfNum(r.pR)}</td><td>${lfNum(r.balR)}</td></tr>`}).join('');
- $('loanfile',`<div class="lg" id="lfback" onclick="if(event.target===this)closeLoanFile()"><div class="lgb" id="lfbody"><div class="lghandle"></div>
+ $('loanfile',`<div class="lg" id="lfback" onclick="if(event.target===this)closeLoanFile()"><div class="lgb rise" id="lfbody"><div class="lghandle"></div>
  <div class="lfh"><button class="lfback" id="lfbackbtn" onclick="closeLoanFile()" aria-label="Quay lại">‹</button><h3>Hồ sơ khoản vay</h3><button class="lgx" id="lfx" onclick="closeLedger()" aria-label="Đóng">✕</button></div>
  <div class="lfsub" id="lfsub">${nm} · ${esc(F.pkgName)}</div>
  <div class="lfnums" id="lfnums"><div><small>Dư nợ còn</small><b id="lfbal">${fmt(F.balR)}</b></div><div><small>Góp tháng này</small><b id="lfmonth">≈ ${mTxt(F.month)}</b></div><div><small>Lãi đang áp</small><b id="lfrate">${pr(F.rate)}/năm</b></div></div>
@@ -659,14 +659,14 @@ function drawLoanFile(){if(!LG||LG.loan==null)return;const F=E.loanFile(G,LG.loa
 
 function ltvChoices(){const m=E.maxLtv(G);return [...new Set(G.M.ltvOptionsPct.filter(x=>x<=m).concat([m]))].sort((a,b)=>a-b)}
 function devPkg(){const d=G.perks.devSupport;return {id:E.DEV_ID,name:'Hỗ trợ lãi suất của chủ đầu tư',bank:`giá +${pr(d.priceMarkupPct||0)}${d.grace?', ân hạn gốc':''}`,promoRatePctYear:d.customerRatePctYear||0,promoMonths:d.months||0,floatMarginPct:G.M.packages[0].floatMarginPct}}
-function openBuy(id){if(roomLocked())return;const M=G.M;BP={id,ltv:Math.min(M.defaultLtvPct,E.maxLtv(G)),term:M.defaultTermYears,pkg:G.perks.devSupport?E.DEV_ID:M.packages[0].id,open:false,det:false};if(G.duel)E.duelSheet(G,{kind:'buy',id});drawBuy()}
+function openBuy(id){if(roomLocked())return;popAnim=true;const M=G.M;BP={id,ltv:Math.min(M.defaultLtvPct,E.maxLtv(G)),term:M.defaultTermYears,pkg:G.perks.devSupport?E.DEV_ID:M.packages[0].id,open:false,det:false};if(G.duel)E.duelSheet(G,{kind:'buy',id});drawBuy()}
 function closeModal(){BP=null;if(G&&G.duel&&!G.duel.lock)E.duelSheet(G,null);$('modal','')}
 /* v3.6: số tiền lên đầu (trả trước, góp/tháng, tiền mặt còn lại, cảnh báo hết ưu đãi); gói vay thu 1 dòng + "Đổi gói" mở bảng 3 cột; thời hạn ghi tiền góp; gốc/lãi + phạt vào "Chi tiết" */
 const qTxt=m=>m%3===0?(m/3)+' quý':m+' tháng'; // tháng -> quý (ưu đãi 6/12/18/24 tháng = 2/4/6/8 quý)
 // gợi ý khi không mua được: thiết lập gần nhất mà engine thấy đủ tiền (bấm để áp dụng); không có thì chọn căn rẻ hơn / bán bớt
 function fixText(f,pkgs){const a=[];if(f.changed.ltv)a.push(f.ltvPct?'vay '+f.ltvPct+'%':'không vay');if(f.changed.term)a.push(f.termYears+' năm');if(f.changed.pkg){const k=pkgs.find(k=>k.id===f.pkgId);a.push('gói '+(k?k.name:f.pkgId))}return 'Chọn '+a.join(', ')+' thì đủ'}
 function fixHTML(f,pkgs){return f?`<button class="bplink bpfix" id="bpfix" data-fix="${f.ltvPct}|${f.termYears}|${f.pkgId}" onclick="BP.ltv=${f.ltvPct};BP.term=${f.termYears};BP.pkg='${f.pkgId}';drawBuy()">${esc(fixText(f,pkgs))} ›</button>`:'Chọn căn rẻ hơn hoặc bán bớt căn khác.'}
-function drawBuy(){if(!BP)return;const M=G.M,z=E.zone(G,BP.id),o={ltvPct:BP.ltv,termYears:BP.term,pkgId:BP.pkg},q=E.buyQuote(G,BP.id,o);
+function drawBuy(){if(!BP)return;const rise=popAnim?' rise':'';popAnim=false;const M=G.M,z=E.zone(G,BP.id),o={ltvPct:BP.ltv,termYears:BP.term,pkgId:BP.pkg},q=E.buyQuote(G,BP.id,o);
  const pkgs=(G.perks.devSupport?[devPkg()]:[]).concat(M.packages),cur=pkgs.find(k=>k.id===q.pkg.id)||q.pkg,margins=[...new Set(pkgs.map(k=>k.floatMarginPct))],oneM=margins.length===1;
  const style=M.repayment==='annuity'?'góp đều hằng tháng':'gốc chia đều, lãi tính trên dư nợ giảm dần',disc=G.perks.discount?` (đã giảm ${pr(G.perks.discount.pct)})`:'';
  const pp=q.postPromo,grace=q.dev&&G.perks.devSupport&&G.perks.devSupport.grace?G.perks.devSupport.months||0:(M.graceMonths||0);
@@ -689,7 +689,7 @@ function drawBuy(){if(!BP)return;const M=G.M,z=E.zone(G,BP.id),o={ltvPct:BP.ltv,
  <div class="row"><span>Tháng đầu</span><b>gốc ${mTxt(q.firstMonth.p)} + lãi ${mTxt(q.firstMonth.i)}</b></div>
  <small class="note">Lãi ${pr(q.promoRate)}/năm trong ${q.promoMonths} tháng, rồi thả nổi ≈ ${pr(q.floatRate)}/năm (lãi cơ sở ${pr(q.base)} + biên độ ${pr(q.margin)}). ${style[0].toUpperCase()+style.slice(1)}${grace?`, ân hạn gốc ${grace} tháng`:''}. Mỗi quý trừ 3 tháng trả góp, quý đầu ≈ ${fmt(q.firstQuarter.total)}.</small>
  <small class="note" id="bppen">Bán căn hoặc trả nợ trước hạn: phạt ${M.prepayPenaltyPctByYear.map(pr).join(' / ')} dư nợ theo năm vay thứ 1 / 2 / …</small></div>`:''}`:''}`;
- $('modal',`<div class="modal" id="buyp"><div class="card"><h3>🏦 Mua ${esc(z.name)}</h3><div class="bpsub">Giá ${fmt(q.price)}${disc} · bạn đang có ${fmt(G.cash)} tiền mặt</div>
+ $('modal',`<div class="modal${rise}" id="buyp"><div class="card"><h3>🏦 Mua ${esc(z.name)}</h3><div class="bpsub">Giá ${fmt(q.price)}${disc} · bạn đang có ${fmt(G.cash)} tiền mặt</div>
  ${hero}${BP.open&&q.loan?table:opts}
  ${q.ok?'':`<p class="down" id="bpshort">${buyWhy(q)}. ${fixHTML(E.buyFix(G,BP.id,o),pkgs)}</p>`}
  <div class="acts"><button id="buyok" class="bpgo" ${q.ok?'':'disabled'} onclick="confirmBuy()">Mua · trả trước ${fmt(q.down)}${q.loan?`<small>vay ${fmt(q.loan)}</small>`:''}</button><button class="alt" onclick="closeModal()">Thôi</button></div></div></div>`)}
@@ -697,7 +697,7 @@ function confirmBuy(){if(!BP||roomLocked())return;const o={ltvPct:BP.ltv,termYea
 /* ---------- trả bớt nợ ---------- */
 function askPrepay(uid){const u=E.unit(G,uid);if(!u||!u.loan)return;const bal=u.loan.bal,pct=E.penaltyPct(G,u),z=E.zone(G,u.zone);
  const b=(amt,label,cls)=>{const q=E.prepayQuote(G,uid,amt);return `<button class="${cls||'alt'}" data-amt="${Math.round(q.amount)}" ${q.ok?'':'disabled'} onclick="doPrepay(${uid},${amt})">${label}<small>cần ${fmt(q.total)} tiền mặt${q.penalty?` (gồm phạt ${fmt(q.penalty)})`:''}</small></button>`};
- $('modal',`<div class="modal" id="prep"><div class="card"><h3>💸 Trả bớt nợ</h3><p>${esc(z.name)}: dư nợ ${fmt(bal)}, đang góp ~${mTxt(E.quarterPreview(G,u).total/3)}/tháng. Phạt trả trước hạn ${pr(pct)} (năm vay thứ ${Math.floor(u.loan.m/12)+1}). Trả bớt thì tiền góp hằng tháng giảm.</p>
+ $('modal',`<div class="modal rise" id="prep"><div class="card"><h3>💸 Trả bớt nợ</h3><p>${esc(z.name)}: dư nợ ${fmt(bal)}, đang góp ~${mTxt(E.quarterPreview(G,u).total/3)}/tháng. Phạt trả trước hạn ${pr(pct)} (năm vay thứ ${Math.floor(u.loan.m/12)+1}). Trả bớt thì tiền góp hằng tháng giảm.</p>
  <div class="acts col">${[200,500,1000].filter(x=>x<bal-0.5).map(x=>b(x,'Trả '+fmt(x))).join('')}${b(bal,'Tất toán '+fmt(bal),'')}<button class="ghost" onclick="closeModal()">Thôi</button></div></div></div>`)}
 function doPrepay(uid,amt){if(roomLocked())return;$('modal','');let ok=true;if(G.duel)ok=E.duelAct(G,'prepay',uid,amt);else E.prepay(G,uid,amt);if(ok!==false&&G.duel)roomCommit('prepay',uid,amt);draw()}
 function act(k,id){if(roomLocked())return;let ok=true;if(G.duel)ok=E.duelAct(G,k,id);else{if(k==='buy')E.buy(G,id);if(k==='sell')E.sell(G,id);if(k==='rent')E.rent(G,id)}if(ok!==false&&G.duel)roomCommit(k,id);draw()}
@@ -717,10 +717,10 @@ function showQuarter(r){const p=Math.round(r.pnl),zn=id=>esc(short(E.zone(G,id))
   .concat(r.fireSales.map(x=>`<p class="note2 firesale">🚨 <b>Không đủ tiền trả góp</b>, ngân hàng phát mãi căn ${zn(x.zone)}: bán ${fmt(x.price)} (thấp hơn thị trường ${G.M.fireSaleDiscountPct}%), trừ phí, trả nợ ${fmt(x.debt)}${x.penalty?` và phạt trả trước ${fmt(x.penalty)}`:''}, bạn còn nhận ${fmt(x.net)}.</p>`))
   .concat(G.cash<0?[`<p class="note2 firesale">⚠️ Tiền mặt đang âm ${fmt(-G.cash)}: bán các căn còn lại cũng không đủ trả nợ ngân hàng. Hãy bán bớt hoặc cho thuê để bù.</p>`]:[])
   .concat(r.ltvCap?[`<p class="note2 base">🏦 Ngân hàng hạ tỷ lệ cho vay tối đa còn ${r.ltvCap.pct}% giá căn cho khoản vay mới, trong ${r.ltvCap.until-r.round} quý tới.</p>`]:[]).join('');
- const btn=`<button id="qnext" style="margin-top:10px;width:100%" onclick="${G.done?'end()':(ROOM?'roomContinue()':'draw()')}">${G.done?'Xem kết quả':r.quiet?'Tiếp ▶':'Sang quý '+G.round+' ▶'}</button>`;
+ const btn=`<button id="qnext" style="margin-top:10px;width:100%" onclick="goOn()">${G.done?'Xem kết quả':r.quiet?'Tiếp ▶':'Sang quý '+G.round+' ▶'}</button>`;
  $('bar','');
- if(r.quiet){$('modal',`<div class="modal"><div class="card compact" id="qpop">${pnl}<p class="one">${r.truth?'✅':'❌'} ${esc(r.ev.text)} <small>(tin ${r.truth?'thật':'giả'})</small></p><p class="zl" id="qzl">${G.zones.map((z,i)=>`<span class="${chc(z.last)}">${esc(short(z))} ${flat(z.last)?'đứng giá':sp(z.last)}${i<G.zones.length-1?' ·':''}</span>`).join(' ')}</p>${rentRow}${pay}${notes}${btn}</div></div>`);return}
- $('modal',`<div class="modal"><div class="card" id="qpop">${pnl}
+ if(r.quiet){$('modal',`<div class="modal rise"><div class="card compact" id="qpop">${pnl}<p class="one">${r.truth?'✅':'❌'} ${esc(r.ev.text)} <small>(tin ${r.truth?'thật':'giả'})</small></p><p class="zl" id="qzl">${G.zones.map((z,i)=>`<span class="${chc(z.last)}">${esc(short(z))} ${flat(z.last)?'đứng giá':sp(z.last)}${i<G.zones.length-1?' ·':''}</span>`).join(' ')}</p>${rentRow}${pay}${notes}${btn}</div></div>`);return}
+ $('modal',`<div class="modal rise"><div class="card" id="qpop">${pnl}
  <h3>${r.truth?'✅ Tin là THẬT':'❌ Tin là GIẢ'}</h3><p style="opacity:.85">${r.ev.text}<br><small>Nguồn: ${r.ev.source||''}</small></p>
  ${G.zones.map(z=>`<div class="row"><span>${z.name}</span><span class="${chc(z.last)}">${pc(z.last)}</span></div>`).join('')}
  ${rentRow}${pay}${notes}${btn}</div></div>`)}
@@ -729,6 +729,7 @@ const sp=n=>(n>=0?'+':'\u2212')+Math.abs(n).toFixed(1).replace('.',',')+'%';
 function saveBench(){const c=depOn();if(c){const o=(c.options||[]).find(x=>x.termQuarters===4);return o?{d:+o.ratePctYear,name:'khóa 4 quý'}:null}const d=(D.rules||{}).deposit12mPctYear;return d==null?null:{d,name:'gửi tiết kiệm'}}
 function vsSave(ann){const b=saveBench();if(!b)return null;const x=Math.round((ann-b.d)*10)/10,v=Math.abs(x).toFixed(1).replace('.',',');
  return {txt:x>0?`Hơn ${b.name} ${pr(b.d)}/năm: +${v} điểm/năm`:x<0?`Kém ${b.name} ${pr(b.d)}/năm: \u2212${v} điểm/năm`:`Ngang ${b.name} ${pr(b.d)}/năm`,up:x>=0}}
+function goOn(){if(G.done){end();return}priceFlash=true;if(ROOM){roomContinue();return}draw()}
 function end(){sel=null;BP=null;$('sheet','');$('modal','');$('bar','');if(!G._fin){G._fin=1;track('finish',{q:G.totalQ})}const R=E.result(G),t=R.title,pct=R.profitPct,ann=R.annualPct;
  const best=parseFloat(localStorage.bdsBestAnn||'-1e9');if(ann>best)localStorage.bdsBestAnn=ann.toFixed(1);
  const c=D.cta||{};
@@ -742,21 +743,21 @@ function end(){sel=null;BP=null;$('sheet','');$('modal','');$('bar','');if(!G._f
  <div style="text-align:center;margin-top:6px"><button class="ghost" onclick="share()">Chia sẻ</button><button class="ghost" onclick="saveImg()">Tải ảnh</button>${c.formUrl?`<a href="${c.formUrl}" target="_blank" rel="noopener"><button class="ghost">Để lại thông tin</button></a>`:''}<button class="ghost" id="replay" onclick="track('replay');start()">Chơi lại</button></div>
  <p class="warn">${D.disclaimer||''}</p>`);drawCard(t,pct,ann);window._res={t,pct,ann}}
 function drawCard(t,pct,ann){const c=document.getElementById('cv'),x=c.getContext('2d');
- const g=x.createLinearGradient(0,0,1080,1080);g.addColorStop(0,'#0f2e2a');g.addColorStop(1,'#2c6b62');x.fillStyle=g;x.fillRect(0,0,1080,1080);
- x.fillStyle='#e7b84b';x.fillRect(80,80,920,8);x.textAlign='center';x.fillStyle='#f3f7f5';
- x.font='600 44px system-ui';x.fillText('NHÀ ĐẦU TƯ TÍ HON',540,200);x.font='36px system-ui';x.fillText(G.p.name,540,260);
- x.fillStyle='#e7b84b';x.font='bold 84px system-ui';wrap(x,t.name,540,440,900,96);
- x.fillStyle='#f3f7f5';x.font='40px system-ui';wrap(x,t.desc,540,620,880,52);
- x.font='bold 120px system-ui';x.fillStyle=pct>=0?'#8fe3a1':'#ff9b8a';x.fillText(sp(pct),540,840);
- x.fillStyle='#f3f7f5';x.font='38px system-ui';x.fillText(`sau ${G.totalQ} quý · ≈ ${sp(ann)}/năm`,540,900);
- const vs=vsSave(ann);if(vs){x.font='600 34px system-ui';x.fillStyle=vs.up?'#8fe3a1':'#ffb4a6';x.fillText(vs.txt,540,952);x.fillStyle='#f3f7f5'}
+ const g=x.createLinearGradient(0,0,1080,1080);g.addColorStop(0,'#f4f7f4');g.addColorStop(1,'#ffffff');x.fillStyle=g;x.fillRect(0,0,1080,1080);
+ x.fillStyle='#e7b84b';x.fillRect(80,80,920,8);x.textAlign='center';x.fillStyle='#142824';
+ x.font='600 44px system-ui';x.fillText('VÁN ĐẦU TƯ',540,200);x.font='36px system-ui';x.fillText(G.p.name,540,260);
+ x.fillStyle='#142824';x.font='bold 84px system-ui';wrap(x,t.name,540,440,900,96);
+ x.fillStyle='#142824';x.font='40px system-ui';wrap(x,t.desc,540,620,880,52);
+ x.font='bold 120px system-ui';x.fillStyle=pct>=0?'#1f7a45':'#c2412d';x.fillText(sp(pct),540,840);
+ x.fillStyle='#142824';x.font='38px system-ui';x.fillText(`sau ${G.totalQ} quý · ≈ ${sp(ann)}/năm`,540,900);
+ const vs=vsSave(ann);if(vs){x.font='600 34px system-ui';x.fillStyle=vs.up?'#1f7a45':'#c2412d';x.fillText(vs.txt,540,952);x.fillStyle='#142824'}
  x.font='30px system-ui';x.fillText('Bạn là nhà đầu tư kiểu gì? Chơi thử ngay!',540,1005);x.font='22px system-ui';x.globalAlpha=.7;x.fillText('Game mô phỏng, giá và lãi suất không phải số thật',540,1045);x.globalAlpha=1}
 function wrap(x,t,cx,y,w,lh){const ws=t.split(' ');let l='',ls=[];ws.forEach(v=>{const tt=l?l+' '+v:v;if(x.measureText(tt).width>w){ls.push(l);l=v}else l=tt});ls.push(l);ls.forEach((v,i)=>x.fillText(v,cx,y+i*lh))}
-function saveImg(){const a=document.createElement('a');a.download='nha-dau-tu-ti-hon.png';a.href=document.getElementById('cv').toDataURL('image/png');a.click()}
-async function share(){const {t,pct,ann}=window._res,txt=`Mình là "${t.name}" (${sp(pct)} sau ${G.totalQ} quý, ≈ ${sp(ann)}/năm${(v=>v?', '+v.txt.toLowerCase():'')(vsSave(ann))}) trong game Nhà Đầu Tư Tí Hon! Bạn là nhà đầu tư kiểu gì?`;
+function saveImg(){const a=document.createElement('a');a.download='van-dau-tu.png';a.href=document.getElementById('cv').toDataURL('image/png');a.click()}
+async function share(){const {t,pct,ann}=window._res,txt=`Mình là "${t.name}" (${sp(pct)} sau ${G.totalQ} quý, ≈ ${sp(ann)}/năm${(v=>v?', '+v.txt.toLowerCase():'')(vsSave(ann))}) trong game Ván đầu tư! Bạn là nhà đầu tư kiểu gì?`;
  try{const b=await new Promise(r=>document.getElementById('cv').toBlob(r));const f=new File([b],'ket-qua.png',{type:'image/png'});
   if(navigator.canShare&&navigator.canShare({files:[f]}))return navigator.share({files:[f],text:txt+' '+location.href});
-  if(navigator.share)return navigator.share({title:'Nhà Đầu Tư Tí Hon',text:txt,url:location.href})}catch(e){}
+  if(navigator.share)return navigator.share({title:'Ván đầu tư',text:txt,url:location.href})}catch(e){}
  navigator.clipboard.writeText(txt+' '+location.href);alert('Đã sao chép nội dung chia sẻ!')}
 load().then(async()=>{
  let code='';
