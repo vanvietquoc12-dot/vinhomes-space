@@ -1,7 +1,12 @@
 <!doctype html>
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Ván đầu tư — game mô phỏng bất động sản</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8F%A0%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="img/icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#f4f7f4">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ván đầu tư">
 <meta property="og:title" content="Ván đầu tư — bạn là nhà đầu tư kiểu gì?">
 <meta property="og:description" content="Game mô phỏng 3 phút: đọc tin, mua bán, vay, cho thuê và nhận danh hiệu.">
 <style>
@@ -778,4 +783,6 @@ load().then(async()=>{
  }
  start();
 });
-</script></body></html>
+</script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}</script>
+</body></html>

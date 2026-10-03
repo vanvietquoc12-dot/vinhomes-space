@@ -650,7 +650,7 @@
     "loanModel": "mortgage",
     "_loanModelNote": "legacy = dung rules.loan (engine v2). Khi engine v3 san sang, coder doi thanh \"mortgage\" de dung rules.mortgage + mortgageDilemmas.",
     "deposit12mPctYear": 6.8,
-    "_deposit12mNote": "Lãi tiết kiệm 12 tháng tại nhóm 4 ngân hàng lớn (Big4), tra ngày 28/9/2026. Tiền mặt nằm im trong game được hưởng lãi này (quy ra theo quý, trả trên tiền mặt còn lại sau khi mua bán trong quý), đồng thời là mốc so sánh trên màn kết quả.",
+    "_deposit12mNote": "Mức cũ 6,8%/năm, nhóm 4 ngân hàng lớn, tra 28/9/2026. Không còn áp cho tiền mặt khi depositChoice.enabled. Mốc trên màn kết quả là khóa 4 quý, 5,9%/năm.",
     "quietMaxChangePct": 5,
     "_quietNote": "15 tin nhỏ được gắn quiet: true; phần giá do tin tạo ra tối đa 5% (giảm một nửa so với bản trước). Cộng tăng giá thường và dao động ngẫu nhiên, giá phân khu trong quý yên ắng thường đổi 3 đến 5%, có lúc tới 10% ở biệt thự. Chỉ thu gọn từ ván 12 quý; khoảng 1 trong 4,4 quý (người không vay) đến 1 trong 5 quý (người vay). Tin có baseRateChangePct hoặc ltvCapPct, quý hết ưu đãi và quý phát mãi luôn hiện đầy đủ. r-bond không đổi lãi cơ sở nên giữ quiet. Tăng giá các phân khu được nâng thêm 1,2%/năm để bù.",
     "income": {
@@ -752,7 +752,7 @@
     },
     "depositChoice": {
       "enabled": true,
-      "_note": "Chưa bật. Engine chưa đọc. Solo vẫn dùng deposit12mPctYear 6,8% cho đến khi máy tính chuyển sang 3 lựa chọn. Lãi là %/năm, lãi quý = (1+năm)^(1/4)-1, không phải mức đó mỗi quý.",
+      "_note": "Đã bật. Tiền mặt chỉ hưởng Rút ngay 0,1%/năm. Khóa 1 quý 2,4%/năm, khóa 4 quý 5,9%/năm. Lãi là %/năm, lãi quý = (1+năm)^(1/4)-1. Không đọc deposit12mPctYear 6,8% khi khối này bật.",
       "defaultId": "demand",
       "options": [
         {
