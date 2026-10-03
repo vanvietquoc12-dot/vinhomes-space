@@ -20,6 +20,7 @@
 button{font:inherit;background:var(--gold);color:#1b1b1b;border:0;border-radius:10px;padding:9px 12px;font-weight:600;cursor:pointer}
 button.alt{background:#2c6b62;color:#fff}button.ghost{background:transparent;color:var(--tx);text-decoration:underline;padding:6px}
 button:disabled{opacity:.35;cursor:not-allowed}
+#lockbtns button.held:disabled{opacity:1;cursor:default}
 .bar{position:fixed;left:0;right:0;bottom:0;background:#0b2421;border-top:1px solid #2c6b62;padding:10px 12px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;justify-content:center;z-index:9}
 .bar:empty{display:none}.bar .main{flex:1;max-width:260px;font-size:1.05em}
 .modal{position:fixed;inset:0;background:#000a;display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
@@ -469,16 +470,18 @@ function portfolioHTML(){if(!G.units.length)return '';
  return `<div class="card pf" id="pf"><div class="pfh"><b>Danh mục của bạn</b><small>Lãi cơ sở NH ${pr(G.baseRate)}/năm</small></div>`+
  G.units.map(u=>{const z=E.zone(G,u.zone);return `<div class="pfrow" data-uid="${u.uid}" onclick="openZone('${u.zone}')"><div class="l1"><b>${esc(short(z))}</b><small>${u.loan?'vay còn '+fmt(u.loan.bal):'đã trả đủ'}${E.leased(G,u)?' · 🔒 cho thuê':E.locked(G,u)?' · ⛓ khóa':''}</small></div><div class="l2">${flowHTML(u)}</div>${u.loan?`<div class="l3">${promoTxt(u)}</div>`:''}</div>`}).join('')+`</div>`}
 function depOn(){return E.depositChoice?E.depositChoice(D):null}
+const trIn=n=>Math.round(n).toLocaleString('vi-VN');
+function fmtIn(el){const n=readTr(el,0);if(n>0)el.value=trIn(n)}
 function readTr(el,full){if(!el)return full;const t=String(el.value||'').trim().replace(/\s/g,'').replace(/tr$/i,'');if(!t)return full;const n=Number(t.replace(/\./g,'').replace(',','.'));if(!Number.isFinite(n)||n<=0)return 0;if(Math.round(n)===Math.round(full))return full;return n}
 function depositCard(){const c=depOn();if(!c||!G||G.done)return '';const dem=(c.options||[]).find(o=>o.id===c.defaultId)||(c.options||[])[0];const cash=Math.max(0,G.cash),busy=roomLocked();
  const rows=(G.locks||[]).map(l=>`<button type="button" class="alt" id="lockrow-${l.id}" onclick="openBreak(${l.id})">${fmt(l.balance)} · ${pr(l.ratePctYear)}/năm · khóa đến quý ${l.openRound}</button>`).join('');
  const btns=(c.options||[]).map(o=>!(o.termQuarters>0)
-    ?`<button type="button" class="on" id="lock-${o.id}" disabled>${esc(o.label)}<small>${pr(o.ratePctYear)}/năm</small></button>`
+    ?`<button type="button" class="held" id="lock-${o.id}" aria-pressed="true" disabled>${esc(o.label)}<small>đang chọn · ${pr(o.ratePctYear)}/năm</small></button>`
     :`<button type="button" id="lock-${o.id}" ${cash>1e-6&&!busy?'':'disabled'} onclick="doLock('${o.id}')">${esc(o.label)}<small>${pr(o.ratePctYear)}/năm</small></button>`).join('');
- return `<div class="card" id="depcard"><b>Tiền gửi</b><p class="note">Rút ngay ${pr(dem.ratePctYear)}/năm trên tiền mặt. Khóa thì lãi cộng vào khoản khóa, chưa rút được.</p>${cash>1e-6&&!busy?`<label class="note">Số tiền khóa<input id="lockin" inputmode="decimal" value="${Math.round(cash)}"></label><div class="acts" id="lockbtns">${btns}</div>`:''}${rows}</div>`}
+ return `<div class="card" id="depcard"><b>Tiền gửi</b><p class="note">Rút ngay ${pr(dem.ratePctYear)}/năm trên tiền mặt. Khóa thì lãi cộng vào khoản khóa, chưa rút được.</p>${cash>1e-6&&!busy?`<label class="note">Số tiền khóa<input id="lockin" inputmode="decimal" value="${trIn(cash)}" onblur="fmtIn(this)"></label><div class="acts" id="lockbtns">${btns}</div>`:''}${rows}</div>`}
 function doLock(id){if(roomLocked()||!G)return;const amt=readTr(document.getElementById('lockin'),G.cash);if(!(amt>1e-9))return;let ok=true;if(G.duel)ok=E.duelAct(G,'lock',id,amt);else ok=!!E.lockDeposit(G,id,amt);if(ok&&G.duel)roomCommit('lock',id,amt);draw()}
 function breakCopy(q){const a=`Rút ${fmt(q.amtR)} khỏi khoản khóa đến quý ${q.openRound}, đang ${pr(q.ratePctYear)}/năm.`;const b=(q.termR||q.clawR)?`Đã cộng ${fmt(q.termR)} lãi ${pr(q.ratePctYear)}/năm. Giữ ${fmt(q.keptR)} lãi ${pr(q.demand)}/năm. Trừ ${fmt(q.clawR)}. `:'';const c=q.restR?`Còn ${fmt(q.restR)} giữ đến quý ${q.openRound}, vẫn ${pr(q.ratePctYear)}/năm.`:'';return `<p id="breakcopy">${a}<br>${b}Thực nhận ${fmt(q.netR)}.${c?`<br>${c}`:''}</p>`}
-function openBreak(id){if(roomLocked()||!G)return;const l=(G.locks||[]).find(x=>x.id===id);if(!l)return;$('modal',`<div class="modal" onclick="if(event.target===this)closeModal()"><div class="card" id="breakcard"><h3>Rút trước hạn</h3><label class="note">Số tiền rút<input id="breakin" inputmode="decimal" value="${Math.round(l.balance)}" oninput="paintBreak(${id})"></label><div id="breakbody"></div><div class="acts col"><button id="breakyes" onclick="doBreak(${id})">Rút trước hạn</button><button class="alt" id="breakno" onclick="closeModal()">Giữ nguyên</button></div></div></div>`);paintBreak(id)}
+function openBreak(id){if(roomLocked()||!G)return;const l=(G.locks||[]).find(x=>x.id===id);if(!l)return;$('modal',`<div class="modal" onclick="if(event.target===this)closeModal()"><div class="card" id="breakcard"><h3>Rút trước hạn</h3><label class="note">Số tiền rút<input id="breakin" inputmode="decimal" value="${trIn(l.balance)}" onblur="fmtIn(this)" oninput="paintBreak(${id})"></label><div id="breakbody"></div><div class="acts col"><button id="breakyes" onclick="doBreak(${id})">Rút trước hạn</button><button class="alt" id="breakno" onclick="closeModal()">Giữ nguyên</button></div></div></div>`);paintBreak(id)}
 function paintBreak(id){const l=(G.locks||[]).find(x=>x.id===id);if(!l)return;const q=E.breakQuote(G,id,readTr(document.getElementById('breakin'),l.balance));const box=document.getElementById('breakbody');if(box&&q)box.innerHTML=breakCopy(q)}
 function doBreak(id){if(roomLocked()||!G)return;const l=(G.locks||[]).find(x=>x.id===id);if(!l)return;const amt=readTr(document.getElementById('breakin'),l.balance);$('modal','');let ok=true;if(G.duel)ok=E.duelAct(G,'break',id,amt);else ok=!!E.breakDeposit(G,id,amt);if(ok&&G.duel)roomCommit('break',id,amt);draw();if(LG)drawLedger()}
 function draw(){
@@ -725,7 +728,7 @@ const sp=n=>(n>=0?'+':'\u2212')+Math.abs(n).toFixed(1).replace('.',',')+'%';
 /* so với gửi tiết kiệm: tiền mặt trong game cũng hưởng lãi này (engine v3.5) nên so sánh công bằng */
 function saveBench(){const c=depOn();if(c){const o=(c.options||[]).find(x=>x.termQuarters===4);return o?{d:+o.ratePctYear,name:'khóa 4 quý'}:null}const d=(D.rules||{}).deposit12mPctYear;return d==null?null:{d,name:'gửi tiết kiệm'}}
 function vsSave(ann){const b=saveBench();if(!b)return null;const x=Math.round((ann-b.d)*10)/10,v=Math.abs(x).toFixed(1).replace('.',',');
- return {txt:x>0?`Hơn ${b.name} ${pr(b.d)}/năm: +${v} điểm`:x<0?`Kém ${b.name} ${pr(b.d)}/năm: \u2212${v} điểm`:`Ngang ${b.name} ${pr(b.d)}/năm`,up:x>=0}}
+ return {txt:x>0?`Hơn ${b.name} ${pr(b.d)}/năm: +${v} điểm/năm`:x<0?`Kém ${b.name} ${pr(b.d)}/năm: \u2212${v} điểm/năm`:`Ngang ${b.name} ${pr(b.d)}/năm`,up:x>=0}}
 function end(){sel=null;BP=null;$('sheet','');$('modal','');$('bar','');if(!G._fin){G._fin=1;track('finish',{q:G.totalQ})}const R=E.result(G),t=R.title,pct=R.profitPct,ann=R.annualPct;
  const best=parseFloat(localStorage.bdsBestAnn||'-1e9');if(ann>best)localStorage.bdsBestAnn=ann.toFixed(1);
  const c=D.cta||{};
