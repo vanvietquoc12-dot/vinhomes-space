@@ -87,6 +87,13 @@ h1,h2,h3{margin:.3em 0}
 .urow{font-size:.82em}.units{margin-top:4px}
 button.mini{background:var(--soft);color:var(--tx);font-size:11.5px;padding:5px 8px;border-radius:8px;flex:none}
 .acts.col{flex-direction:column;gap:2px}.sheet .acts button.buyb{flex:none;width:100%;font-size:14px;padding:10px 8px}.sheet .acts button.buyb small{white-space:normal}.acts button small.det{white-space:normal;font-size:10.5px;font-weight:500;opacity:.9}
+.lvbox{background:#fff8e6;border:1px solid #e7b84b;border-radius:14px;padding:12px;margin:10px 0;display:flex;flex-direction:column;gap:10px}
+.lvtop{display:flex;align-items:center;justify-content:space-between}.lvmm{background:#e7f0ec;color:#142824;border:0;border-radius:999px;padding:8px 14px;font-weight:600;font-size:13px}
+.lvpct{text-align:center}.lvpct b{display:block;font-size:34px;line-height:1.05;color:#142824}.lvpct small{color:#5c726c;font-size:11.5px}
+.lvr{width:100%;height:28px;margin:0;-webkit-appearance:none;appearance:none;background:transparent}.lvr::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:linear-gradient(90deg,#e7b84b var(--p,100%),#d9e2dd var(--p,100%))}.lvr::-moz-range-track{height:6px;border-radius:3px;background:linear-gradient(90deg,#e7b84b var(--p,100%),#d9e2dd var(--p,100%))}.lvr::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:#e7b84b;border:3px solid #fff;box-shadow:0 1px 3px #0003;margin-top:-9px}.lvr::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#e7b84b;border:3px solid #fff}
+.lvnums{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;text-align:center}.lvnums small{display:block;color:#5c726c;font-size:11px}.lvnums b{font-size:14.5px;color:#142824}
+.lvmsg{font-size:12px;color:#5c726c;text-align:center}.lvmsg:empty{display:none}
+.lvbox .buyb{width:100%;margin:0}.lvbox .buyb small{display:block;font-weight:400;font-size:12px;margin-top:2px}
 button.ghost.cfg{display:block;width:100%;box-sizing:border-box;font-size:12.5px;padding:6px 4px;opacity:.9;white-space:normal;text-align:left}
 .note2{font-size:.85em;background:var(--soft);border-radius:8px;padding:6px 8px;margin:6px 0}.promo-end{border-left:3px solid var(--gold)}.firesale{border-left:3px solid var(--down)}
 .res .vs{margin-top:4px;font-weight:600}.compact .one{margin:6px 0;font-size:.95em}
@@ -559,16 +566,21 @@ function drawSheet(){if(!sel||!G||G.done){$('sheet','');return}
  const a=sheetAnim?' anim':'';sheetAnim=false;
  const units=o.map((u,i)=>`<div class="urow" data-uid="${u.uid}"><div class="l1"><b>Căn ${i+1}</b><small>mua ${fmt(u.cost)}${u.loan?' · vay còn '+fmt(u.loan.bal):' · không vay'}${E.leased(G,u)?' · 🔒 đang cho thuê':E.locked(G,u)?' · ⛓ đang khóa':''}</small></div>
   <div class="l2">${flowHTML(u)}</div>${u.loan?`<div class="l3"><span>${promoTxt(u)}</span><button class="mini" data-prepay="${u.uid}" onclick="askPrepay(${u.uid})">Trả bớt nợ</button></div>`:''}</div>`).join('');
- const buyB=`<button data-act="buy" class="buyb" data-ltv="${bq.ltvPct}" ${bq.ok?'':'disabled'} onclick="act('buy','${z.id}')">${bq.loan?`Mua${disc} · vay ${bq.ltvPct}% · góp ~${mTxt(bq.firstMonth.total)}/tháng`:`Mua${disc} bằng tiền mặt ${fmt(bq.price)}`}<small>${bq.ok?(bq.loan?`Trả trước ${fmt(bq.down)} · vay ${fmt(bq.loan)}, ${bq.termYears} năm, ${esc(bq.pkg.name)}`:`Giá ${fmt(bq.price)}`):buyWhy(bq)}</small></button>`;
+ const lv=ltvSteps(z.id),cur=SLV[z.id]!=null?Math.min(SLV[z.id],lv.stop):Math.min(bq.ltvPct,lv.stop),bi=lv.steps.indexOf(cur)<0?lv.steps.indexOf(lv.stop):lv.steps.indexOf(cur);
+ const buyB=`<div class="lvbox" id="lvbox" data-z="${z.id}"><div class="lvtop"><button class="lvmm" onclick="lvSet('${z.id}',0)">0%</button><div class="lvpct"><b id="lvpct"></b><small>tỷ lệ vay</small></div><button class="lvmm" onclick="lvSet('${z.id}',${lv.stop})">Vay tối đa ${lv.stop}%</button></div>
+ <input type="range" id="lvr" class="lvr" min="0" max="${lv.steps.length-1}" step="1" value="${bi}" aria-label="Tỷ lệ vay" oninput="lvShow('${z.id}',+this.value)" style="--stop:${lv.steps.length>1?lv.steps.indexOf(lv.stop)/(lv.steps.length-1)*100:100}%">
+ <div class="lvnums"><div><small>Trả trước</small><b id="lvdown"></b></div><div><small>Số vay</small><b id="lvloan"></b></div><div><small>Góp</small><b id="lvpay"></b></div></div>
+ <div class="lvmsg" id="lvmsg"></div>
+ <button data-act="buy" class="buyb" id="lvgo" onclick="lvBuy('${z.id}')"></button><button class="ghost cfg" id="buycfg" onclick="openBuy('${z.id}')">Đổi thời hạn, gói vay ›</button></div>`;
  const sellDet=sq?(sq.debt?`giá ${fmt(sq.gross+sq.fee)} − phí ${fmt(sq.fee)} − trả nợ ${fmt(sq.debt)}${sq.penalty?` − phạt ${fmt(sq.penalty)}`:''}`:`đã trừ phí ${Math.round(G.fee*100)}%`):'';
  $('sheet',`<div class="dim${a}" onclick="closeSheet()"></div><div class="sheet${a}" id="zsheet" role="dialog" aria-label="${esc(z.name)}"><div class="grab"></div><button class="x" onclick="closeSheet()" aria-label="Đóng">✕</button>
  <div class="hd"><div><b>${esc(z.name)}</b><br><small>${z.type} · ${vol(z.risk)}</small></div><div style="text-align:right"><b>${fmt(z.cur)}</b><br><small class="${chc(z.last)}">${G.round>1?pc(z.last)+' quý trước':'Giá mở bán'}</small></div></div>
  ${chart(z)}
  <div>${hot(z)?'<span class="chip hotc">📰 Tin quý này nhắc tới phân khu này</span>':mwNow()?'<span class="chip">🌐 Tin quý này ảnh hưởng toàn thị trường</span>':''}<span class="chip">Bạn đang giữ ${o.length} căn</span>${ls.length?`<span class="chip">🔒 còn nhận ${rentTxt(left,lq)}</span>`:''}${lk.length?`<span class="chip">⛓ ${lk.length} căn khóa chuyển nhượng · còn ${Math.max(...lk.map(u=>u.lockUntil-G.round))} quý</span>`:''}${G.perks.discount?`<span class="chip">🎟️ Mua rẻ hơn ${G.perks.discount.pct}%, khóa ${G.perks.discount.lock} quý</span>`:''}</div>
  ${units?`<div class="units">${units}</div>`:''}
- <div class="acts col">${buyB}<button class="ghost cfg" id="buycfg" onclick="openBuy('${z.id}')">Tùy chỉnh khoản vay (tỷ lệ vay, thời hạn, gói) ›</button></div>
+ ${buyB}
  <div class="acts"><button data-act="sell" class="alt" ${sq&&sq.ok?'':'disabled'} onclick="act('sell','${z.id}')">Bán, nhận ${sq?fmt(sq.net):''}<small class="det">${sellDet}</small>${!tu?why(z,'sell'):(!sq.ok?'<small class="why">Tiền bán không đủ trả nợ ngân hàng</small>':'')}</button>
- <button data-act="rent" class="alt" ${canRent?'':'disabled'} onclick="act('rent','${z.id}')">Cho thuê<small>${rentTxt(E.rentQuote(G,z),E.LEASE_Q)}</small>${canRent?'':why(z,'rent')}</button></div></div>`)}
+ <button data-act="rent" class="alt" ${canRent?'':'disabled'} onclick="act('rent','${z.id}')">Cho thuê<small>${rentTxt(E.rentQuote(G,z),E.LEASE_Q)}</small>${canRent?'':why(z,'rent')}</button></div></div>`);lvShow(z.id,bi)}
 function buyWhy(q){const base=q.why==='dti'?dtiMsg():q.why==='down'?`Thiếu ${fmt(q.down-G.cash)} tiền trả trước (cần ${fmt(q.down)})`:`Cần giữ lại ~${fmt(q.reserve)} để trả góp ${q.reserveQuarters>1?q.reserveQuarters+' quý':'1 quý'} (tính theo lãi thả nổi)`;return (q.why==='down'||q.why==='reserve')&&(G.locks||[]).some(l=>l.balance>0.5)?base+'. Một phần tiền đang khóa':base}
 function why(z,k){const o=own(z.id);if(!o.length)return '<small class="why">Chưa có căn</small>';
  const ls=o.filter(u=>u.leaseUntil&&u.leaseUntil>G.round),lk=o.filter(u=>E.locked(G,u));
@@ -664,7 +676,7 @@ function drawLoanFile(){if(!LG||LG.loan==null)return;const F=E.loanFile(G,LG.loa
 
 function ltvChoices(){const m=E.maxLtv(G);return [...new Set(G.M.ltvOptionsPct.filter(x=>x<=m).concat([m]))].sort((a,b)=>a-b)}
 function devPkg(){const d=G.perks.devSupport;return {id:E.DEV_ID,name:'Hỗ trợ lãi suất của chủ đầu tư',bank:`giá +${pr(d.priceMarkupPct||0)}${d.grace?', ân hạn gốc':''}`,promoRatePctYear:d.customerRatePctYear||0,promoMonths:d.months||0,floatMarginPct:G.M.packages[0].floatMarginPct}}
-function openBuy(id){if(roomLocked())return;popAnim=true;const M=G.M;BP={id,ltv:Math.min(M.defaultLtvPct,E.maxLtv(G)),term:M.defaultTermYears,pkg:G.perks.devSupport?E.DEV_ID:M.packages[0].id,open:false,det:false};if(G.duel)E.duelSheet(G,{kind:'buy',id});drawBuy()}
+function openBuy(id){if(roomLocked())return;popAnim=true;const M=G.M;BP={id,ltv:SLV[id]!=null?SLV[id]:Math.min(M.defaultLtvPct,E.maxLtv(G)),term:M.defaultTermYears,pkg:G.perks.devSupport?E.DEV_ID:M.packages[0].id,open:false,det:false};if(G.duel)E.duelSheet(G,{kind:'buy',id});drawBuy()}
 function closeModal(){BP=null;if(G&&G.duel&&!G.duel.lock)E.duelSheet(G,null);$('modal','')}
 /* v3.6: số tiền lên đầu (trả trước, góp/tháng, tiền mặt còn lại, cảnh báo hết ưu đãi); gói vay thu 1 dòng + "Đổi gói" mở bảng 3 cột; thời hạn ghi tiền góp; gốc/lãi + phạt vào "Chi tiết" */
 const qTxt=m=>m%3===0?(m/3)+' quý':m+' tháng'; // tháng -> quý (ưu đãi 6/12/18/24 tháng = 2/4/6/8 quý)
@@ -705,6 +717,14 @@ function askPrepay(uid){const u=E.unit(G,uid);if(!u||!u.loan)return;const bal=u.
  $('modal',`<div class="modal rise" id="prep"><div class="card"><h3>💸 Trả bớt nợ</h3><p>${esc(z.name)}: dư nợ ${fmt(bal)}, đang góp ~${mTxt(E.quarterPreview(G,u).total/3)}/tháng. Phạt trả trước hạn ${pr(pct)} (năm vay thứ ${Math.floor(u.loan.m/12)+1}). Trả bớt thì tiền góp hằng tháng giảm.</p>
  <div class="acts col">${[200,500,1000].filter(x=>x<bal-0.5).map(x=>b(x,'Trả '+fmt(x))).join('')}${b(bal,'Tất toán '+fmt(bal),'')}<button class="ghost" onclick="closeModal()">Thôi</button></div></div></div>`)}
 function doPrepay(uid,amt){if(roomLocked())return;$('modal','');let ok=true;if(G.duel)ok=E.duelAct(G,'prepay',uid,amt);else E.prepay(G,uid,amt);if(ok!==false&&G.duel)roomCommit('prepay',uid,amt);draw()}
+let SLV={};
+function ltvSteps(id){const m=ltvChoices().slice(-1)[0]||0,st=[];for(let v=0;v<m;v+=10)st.push(v);st.push(m);const q={};let stop=0,blocked=false;for(const v of st){q[v]=E.buyQuote(G,id,{ltvPct:v});if(!blocked&&q[v].why!=='dti')stop=v;else blocked=true}return {steps:st,q,stop,blocked:st.some(v=>v>stop)}}
+function lvShow(id,i){const lv=ltvSteps(id),r=document.getElementById('lvr');let v=lv.steps[i];const hit=v>lv.stop;if(hit){v=lv.stop;i=lv.steps.indexOf(v);if(r)r.value=i}SLV[id]=v;const q=lv.q[v],disc=G.perks.discount?' (−'+G.perks.discount.pct+'%)':'',T=(k,h)=>{const e=document.getElementById(k);if(e)e.innerHTML=h};
+ T('lvpct',v+'%');T('lvdown',fmt(q.down));T('lvloan',q.loan?fmt(q.loan):'0 tr');T('lvpay',q.loan?'~'+mTxt(q.firstMonth.total)+'/tháng':'0 tr/tháng');if(r)r.style.setProperty('--p',(lv.steps.length>1?i/(lv.steps.length-1)*100:100)+'%');
+ T('lvmsg',lv.blocked&&(hit||v===lv.stop)?esc(dtiMsg())+' từ mức '+lv.steps[lv.steps.indexOf(lv.stop)+1]+'%':(!q.ok?buyWhy(q):''));
+ const g=document.getElementById('lvgo');if(g){g.disabled=!q.ok;g.innerHTML=(q.loan?`Mua${disc} · vay ${v}%`:`Mua${disc} · trả đủ`)+`<small>${q.loan?`Trả trước ${fmt(q.down)} · ${q.termYears} năm, ${esc(q.pkg.name)}`:`Giá ${fmt(q.price)}`}</small>`}}
+function lvSet(id,v){const lv=ltvSteps(id);const r=document.getElementById('lvr'),i=lv.steps.indexOf(Math.min(v,lv.stop));if(r)r.value=i;lvShow(id,i)}
+function lvBuy(id){if(roomLocked())return;const o={ltvPct:SLV[id]!=null?SLV[id]:0};let ok=true;if(G.duel)ok=E.duelAct(G,'buy',id,o);else E.buy(G,id,o);if(ok!==false&&G.duel)roomCommit('buy',id,o);draw()}
 function act(k,id){if(roomLocked())return;let ok=true;if(G.duel)ok=E.duelAct(G,k,id);else{if(k==='buy')E.buy(G,id);if(k==='sell')E.sell(G,id);if(k==='rent')E.rent(G,id)}if(ok!==false&&G.duel)roomCommit(k,id);draw()}
 function choose(i){if(roomLocked())return;let ok=true;if(G.duel)ok=E.duelAct(G,'choose',i);else E.choose(G,i);if(ok!==false&&G.duel)roomCommit('choose',i);draw()}
 function next(){if(ROOM&&ROOM.phase==='play'){sel=null;BP=null;LG=null;$('ledger','');$('loanfile','');$('sheet','');$('modal','');if(G.duel&&G.duel.pending)E.duelSheet(G,null);E.duelChot(G);ROOM.phase='wait';ROOM.youReady=true;draw();roomFetch('/rooms/'+ROOM.code+'/chot',{token:ROOM.token,quarter:G.round}).then(roomApply).catch(e=>{console.log('chotfail', e); window._roomErr=String(e)});return}if(ROOM&&(ROOM.phase==='wait'||ROOM.phase==='between'||ROOM.phase==='finishing'||ROOM.phase==='done'))return;sel=null;BP=null;LG=null;$('ledger','');$('loanfile','');$('sheet','');showQuarter(E.endQuarter(G))}
