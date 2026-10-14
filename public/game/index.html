@@ -87,6 +87,7 @@ h1,h2,h3{margin:.3em 0}
 .urow{font-size:.82em}.units{margin-top:4px}
 button.mini{background:var(--soft);color:var(--tx);font-size:11.5px;padding:5px 8px;border-radius:8px;flex:none}
 .acts.col{flex-direction:column;gap:2px}.sheet .acts button.buyb{flex:none;width:100%;font-size:14px;padding:10px 8px}.sheet .acts button.buyb small{white-space:normal}.acts button small.det{white-space:normal;font-size:10.5px;font-weight:500;opacity:.9}
+.qbl .qbq{flex:0 0 30px;text-align:left;font-weight:600}.qbcol,.qbl span{flex:1 1 0}.qbl span:not(.qbq){padding-left:0}.qbars .qbh{font-weight:600;margin-bottom:8px}.qbc{position:relative;height:150px;display:flex;padding-left:30px}.qbcol{position:relative;height:100%}.qbcol i{position:absolute;left:18%;right:18%;border-radius:3px}.qup{background:#1f7a45}.qdn{background:#c2412d}.qb0{position:absolute;left:30px;right:0;top:50%;border-top:1px solid #c9d6d0}.qbl{display:flex;font-size:11px;color:#5c726c;text-align:center;margin:4px 0 8px}
 .qprog{margin:-4px 0 8px;font-size:12px;color:#5c726c;text-align:center}
 .tut{position:fixed;z-index:1000;background:#fff;border:2px solid #e7b84b;border-radius:12px;padding:10px 12px;box-shadow:0 4px 14px #0002;color:#142824;font-size:14px;line-height:1.35;box-sizing:border-box}
 .tutft{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:12px;color:#5c726c}.tutft button{background:none;border:0;color:#142824;text-decoration:underline;font-size:12.5px;padding:4px 0}
@@ -776,10 +777,20 @@ function saveBench(){const c=depOn();if(c){const o=(c.options||[]).find(x=>x.ter
 function vsSave(ann){const b=saveBench();if(!b)return null;const x=Math.round((ann-b.d)*10)/10,v=Math.abs(x).toFixed(1).replace('.',',');
  return {txt:x>0?`Hơn ${b.name} ${pr(b.d)}/năm: +${v} điểm/năm`:x<0?`Kém ${b.name} ${pr(b.d)}/năm: \u2212${v} điểm/năm`:`Ngang ${b.name} ${pr(b.d)}/năm`,up:x>=0}}
 function goOn(){if(G.done){end();return}priceFlash=true;if(ROOM){roomContinue();return}draw()}
+const rw=n=>(n<0?-1:1)*Math.round(Math.abs(n));
+function qBars(){const cap=G.p.startCapital,H=G.history||[];let prev=rw(cap);return H.map((h,i)=>{const w=rw(h.worth),d=w-prev;prev=w;return {q:i+1,w,d}})}
+function qBarsHTML(){const b=qBars();if(!b.length)return '';const mx=Math.max(1,...b.map(x=>Math.abs(x.d))),sum=b.reduce((a,x)=>a+x.d,0);
+ const best=b.reduce((a,x)=>x.d>a.d?x:a,b[0]),worst=b.reduce((a,x)=>x.d<a.d?x:a,b[0]),sg=n=>(n>0?'+':n<0?'\u2212':'')+Math.abs(n).toLocaleString('vi-VN')+' tr';
+ const W=100/b.length;
+ return `<div class="card qbars" id="qbars" data-sum="${sum}" data-final="${b[b.length-1].w}" data-cap="${rw(G.p.startCapital)}"><div class="qbh">Tài sản ròng tăng giảm theo quý</div>
+ <div class="qbc">${b.map(x=>{const h=Math.abs(x.d)/mx*50;return `<div class="qbcol" style="width:${W}%" data-d="${x.d}"><i class="${x.d>=0?'qup':'qdn'}" style="height:${Math.max(x.d?2:0,h)}%;${x.d>=0?'bottom:50%':'top:50%'}"></i></div>`}).join('')}<b class="qb0"></b></div>
+ <div class="qbl"><span class="qbq">Quý</span>${b.map(x=>`<span style="width:${W}%">${x.q}</span>`).join('')}</div>
+ <div class="row"><span>Quý tốt nhất</span><b class="${best.d>=0?'up':'down'}">Quý ${best.q}: ${sg(best.d)}</b></div><div class="row"><span>Quý tệ nhất</span><b class="${worst.d>=0?'up':'down'}">Quý ${worst.q}: ${sg(worst.d)}</b></div>
+ <div class="row"><span>Cộng ${b.length} quý</span><b>${sg(sum)}</b></div></div>`}
 function end(){sel=null;BP=null;$('sheet','');$('modal','');$('bar','');if(!G._fin){G._fin=1;track('finish',{q:G.totalQ})}const R=E.result(G),t=R.title,pct=R.profitPct,ann=R.annualPct;
  const best=parseFloat(localStorage.bdsBestAnn||'-1e9');if(ann>best)localStorage.bdsBestAnn=ann.toFixed(1);
  const c=D.cta||{};
- $('app',`<canvas id="cv" width="1080" height="1080" style="width:100%;border-radius:14px;margin-top:8px"></canvas>
+ $('app',`<canvas id="cv" width="1080" height="1350" style="width:100%;border-radius:14px;margin-top:8px"></canvas>${qBarsHTML()}
  ${(l=>`<div class="card lesson" id="lesson" data-key="${l.key}"><i>💡</i><span>${esc(l.text)}</span></div>`)(E.lesson(G))}
  ${ROOM?`<div class="card" id="duelend">Người có tài sản ròng cao hơn thắng. Vốn đầu vào bằng nhau (${fmt(G.p.startCapital)}).</div>`:''}<div class="card"><div class="row"><span>Tài sản ròng cuối ván</span><b>${fmt(R.worth)}</b></div><div class="row"><span>Số giao dịch</span><b>${R.trades}</b></div><div class="row"><span>Tiền thuê đã nhận</span><b>${fmt(G.stats.rent)}</b></div>${depOn()||(D.rules||{}).deposit12mPctYear!=null?`<div class="row"><span>Lãi tiền gửi đã nhận</span><b id="rdep">${fmt(R.depositInterest)}</b></div>`:''}${depOn()&&G.stats.lockInterest>0.5?`<div class="row"><span>Lãi khóa, cộng vào khoản khóa</span><b id="rlock">${fmt(G.stats.lockInterest)}</b></div>`:''}
  <div class="row"><span>Lãi ngân hàng đã trả</span><b id="rint">${fmt(R.interestPaid)}</b></div>${R.penalties>0?`<div class="row"><span>Phạt trả nợ trước hạn</span><b>${fmt(R.penalties)}</b></div>`:''}
@@ -788,17 +799,19 @@ function end(){sel=null;BP=null;$('sheet','');$('modal','');$('bar','');if(!G._f
  <a id="zalo" href="${c.zaloUrl||'#'}" target="_blank" rel="noopener" onclick="track('zalo')"><button style="width:100%;font-size:1.15em;padding:14px">${c.label||'Nhắn Zalo tư vấn'}</button></a>
  <div style="text-align:center;margin-top:6px"><button class="ghost" onclick="share()">Chia sẻ</button><button class="ghost" onclick="saveImg()">Tải ảnh</button>${c.formUrl?`<a href="${c.formUrl}" target="_blank" rel="noopener"><button class="ghost">Để lại thông tin</button></a>`:''}<button class="ghost" id="replay" onclick="track('replay');start()">Chơi lại</button></div>
  <p class="warn">${D.disclaimer||''}</p>`);drawCard(t,pct,ann);window._res={t,pct,ann}}
-function drawCard(t,pct,ann){const c=document.getElementById('cv'),x=c.getContext('2d');
- const g=x.createLinearGradient(0,0,1080,1080);g.addColorStop(0,'#f4f7f4');g.addColorStop(1,'#ffffff');x.fillStyle=g;x.fillRect(0,0,1080,1080);
- x.fillStyle='#e7b84b';x.fillRect(80,80,920,8);x.textAlign='center';x.fillStyle='#142824';
- x.font='600 44px system-ui';x.fillText('VÁN ĐẦU TƯ',540,200);x.font='36px system-ui';x.fillText(G.p.name,540,260);
- x.fillStyle='#142824';x.font='bold 84px system-ui';wrap(x,t.name,540,440,900,96);
- x.fillStyle='#142824';x.font='40px system-ui';wrap(x,t.desc,540,620,880,52);
- x.font='bold 120px system-ui';x.fillStyle=pct>=0?'#1f7a45':'#c2412d';x.fillText(sp(pct),540,840);
- x.fillStyle='#142824';x.font='38px system-ui';x.fillText(`sau ${G.totalQ} quý · ≈ ${sp(ann)}/năm`,540,900);
- const vs=vsSave(ann);if(vs){x.font='600 34px system-ui';x.fillStyle=vs.up?'#1f7a45':'#c2412d';x.fillText(vs.txt,540,952);x.fillStyle='#142824'}
- x.font='30px system-ui';x.fillText('Bạn là nhà đầu tư kiểu gì? Chơi thử ngay!',540,1005);x.font='22px system-ui';x.globalAlpha=.7;x.fillText('Game mô phỏng, giá và lãi suất không phải số thật',540,1045);x.globalAlpha=1}
-function wrap(x,t,cx,y,w,lh){const ws=t.split(' ');let l='',ls=[];ws.forEach(v=>{const tt=l?l+' '+v:v;if(x.measureText(tt).width>w){ls.push(l);l=v}else l=tt});ls.push(l);ls.forEach((v,i)=>x.fillText(v,cx,y+i*lh))}
+function drawCard(t,pct,ann){const c=document.getElementById('cv'),x=c.getContext('2d'),R=E.result(G);
+ x.fillStyle='#f4f7f4';x.fillRect(0,0,1080,1350);x.fillStyle='#ffffff';rr(x,50,50,980,1250,40);x.fill();
+ x.fillStyle='#e7b84b';x.fillRect(110,110,860,8);x.textAlign='center';x.fillStyle='#142824';
+ x.font='600 44px system-ui';x.fillText('VÁN ĐẦU TƯ',540,200);x.font='34px system-ui';x.fillStyle='#5c726c';x.fillText(G.p.name,540,252);
+ x.fillStyle='#142824';x.font='bold 78px system-ui';const nl=wrap(x,t.name,540,380,880,90);
+ let y=380+(nl-1)*90+200;x.font='bold 150px system-ui';x.fillStyle=pct>=0?'#1f7a45':'#c2412d';x.fillText(sp(pct),540,y);
+ x.fillStyle='#142824';x.font='38px system-ui';x.fillText(`sau ${G.totalQ} quý · ≈ ${sp(ann)}/năm`,540,y+66);
+ const vs=vsSave(ann);if(vs){x.font='600 34px system-ui';x.fillStyle=vs.up?'#1f7a45':'#c2412d';x.fillText(vs.txt,540,y+118)}
+ const tiles=[['Tài sản ròng cuối ván',fmt(R.worth)],['Tiền thuê đã nhận',fmt(G.stats.rent)],['Lãi ngân hàng đã trả',fmt(R.interestPaid)],['Số giao dịch',String(R.trades)]];
+ const ty=y+170;tiles.forEach((v,k)=>{const cx=110+(k%2)*440,cy=ty+Math.floor(k/2)*170;x.fillStyle='#e7f0ec';rr(x,cx,cy,420,150,24);x.fill();x.fillStyle='#5c726c';x.font='30px system-ui';x.fillText(v[0],cx+210,cy+56);x.fillStyle='#142824';x.font='bold 50px system-ui';x.fillText(v[1],cx+210,cy+118)});
+ x.fillStyle='#142824';x.font='30px system-ui';x.fillText('Bạn là nhà đầu tư kiểu gì? Chơi thử ngay!',540,1235);x.font='22px system-ui';x.globalAlpha=.7;x.fillText('Game mô phỏng, giá và lãi suất không phải số thật',540,1272);x.globalAlpha=1}
+function rr(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()}
+function wrap(x,t,cx,y,w,lh){const ws=t.split(' ');let l='',ls=[];ws.forEach(v=>{const tt=l?l+' '+v:v;if(x.measureText(tt).width>w){ls.push(l);l=v}else l=tt});ls.push(l);ls.forEach((v,i)=>x.fillText(v,cx,y+i*lh));return ls.length}
 function saveImg(){const a=document.createElement('a');a.download='van-dau-tu.png';a.href=document.getElementById('cv').toDataURL('image/png');a.click()}
 async function share(){const {t,pct,ann}=window._res,txt=`Mình là "${t.name}" (${sp(pct)} sau ${G.totalQ} quý, ≈ ${sp(ann)}/năm${(v=>v?', '+v.txt.toLowerCase():'')(vsSave(ann))}) trong game Ván đầu tư! Bạn là nhà đầu tư kiểu gì?`;
  try{const b=await new Promise(r=>document.getElementById('cv').toBlob(r));const f=new File([b],'ket-qua.png',{type:'image/png'});
